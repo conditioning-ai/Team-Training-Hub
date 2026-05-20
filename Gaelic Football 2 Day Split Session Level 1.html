@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TMC Performance | Full Body S&P – Level 1 · 2-Day</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap');
+
+  :root {
+    --black:    #0d0d0d;
+    --dark:     #161616;
+    --card:     #1e1e1e;
+    --border:   #2a2a2a;
+    --gold:     #c9a227;
+    --gold-lt:  #e8c458;
+    --grey:     #888;
+    --grey-lt:  #bbb;
+    --white:    #f5f5f5;
+    --plyo:     #ffe699;
+    --power:    #fc9186;
+    --main:     #fb7265;
+    --supp:     #b4c6e7;
+    --warm:     #b6d7a8;
+    --mcgill:   #a8d5b5;
+    --spec-acc: #9b7fe8;
+    --day1:     #c9a227;
+    --day2:     #5a9fd4;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--black); color: var(--white); font-family: 'Barlow', sans-serif; font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+
+  /* ── NAV ── */
+  nav { position: sticky; top: 0; z-index: 100; background: var(--black); border-bottom: 2px solid var(--gold); padding: 0 16px; display: flex; align-items: center; justify-content: space-between; height: 50px; }
+  .nav-brand { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 18px; letter-spacing: 0.12em; color: var(--gold); text-transform: uppercase; }
+  .nav-right { display: flex; align-items: center; gap: 10px; }
+  .nav-label { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 600; color: var(--grey); letter-spacing: 0.1em; text-transform: uppercase; }
+  .nav-pill { background: var(--gold); color: var(--black); font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.08em; text-transform: uppercase; }
+
+  /* ── HERO ── */
+  .hero { background: linear-gradient(160deg, #1a1400 0%, #0d0d0d 60%, #0a0a14 100%); border-bottom: 1px solid var(--border); padding: 28px 16px 24px; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(201,162,39,0.04) 39px, rgba(201,162,39,0.04) 40px); pointer-events: none; }
+  .hero-eyebrow { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.18em; color: var(--gold); text-transform: uppercase; margin-bottom: 4px; }
+  .hero-title { font-family: 'Barlow Condensed', sans-serif; font-size: 34px; font-weight: 900; line-height: 1; text-transform: uppercase; letter-spacing: 0.02em; color: var(--white); margin-bottom: 4px; }
+  .hero-title span { color: var(--gold); }
+  .hero-subtitle { font-size: 12px; color: var(--grey-lt); margin-bottom: 16px; font-weight: 300; }
+  .hero-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 10px; border-radius: 4px; border: 1px solid; }
+  .tag-gold  { color: var(--gold);    border-color: var(--gold);   background: rgba(201,162,39,0.08); }
+  .tag-grey  { color: var(--grey-lt); border-color: var(--border); background: rgba(255,255,255,0.04); }
+  .tag-plyo  { color: #a87800;        border-color: #c9a227;       background: rgba(255,230,100,0.12); }
+  .tag-blue  { color: #7aabdc;        border-color: #4a88c4;       background: rgba(74,136,196,0.12); }
+  .tag-day1  { color: var(--day1);    border-color: var(--day1);   background: rgba(201,162,39,0.08); }
+  .tag-day2  { color: var(--day2);    border-color: var(--day2);   background: rgba(90,159,212,0.08); }
+
+  /* ── DAY SWITCHER ── */
+  .day-switcher { display: flex; gap: 0; border-bottom: 2px solid var(--border); background: var(--dark); position: sticky; top: 50px; z-index: 90; }
+  .day-btn { flex: 1; height: 48px; border: none; background: transparent; cursor: pointer; font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--grey); border-bottom: 3px solid transparent; margin-bottom: -2px; transition: color 0.2s, border-color 0.2s, background 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; -webkit-tap-highlight-color: transparent; }
+  .day-btn .day-num { width: 22px; height: 22px; border-radius: 50%; font-size: 12px; font-weight: 900; display: flex; align-items: center; justify-content: center; transition: background 0.2s, color 0.2s; }
+  .day-btn:hover { background: rgba(255,255,255,0.03); }
+  .day-btn[data-day="1"].active { color: var(--day1); border-bottom-color: var(--day1); }
+  .day-btn[data-day="2"].active { color: var(--day2); border-bottom-color: var(--day2); }
+  .day-btn[data-day="1"].active .day-num { background: var(--day1); color: var(--black); }
+  .day-btn[data-day="2"].active .day-num { background: var(--day2); color: var(--black); }
+  .day-btn .day-sub { font-size: 9px; font-weight: 600; letter-spacing: 0.12em; opacity: 0.7; }
+
+  /* ── DAY PANELS ── */
+  .day-panel { display: none; }
+  .day-panel.active { display: block; }
+
+  /* ── DAY STRIPE ── */
+  .day-stripe { padding: 10px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); }
+  .day-stripe-d1 { background: rgba(201,162,39,0.06); border-left: 3px solid var(--day1); }
+  .day-stripe-d2 { background: rgba(90,159,212,0.06); border-left: 3px solid var(--day2); }
+  .day-stripe-title { font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.08em; }
+  .d1 .day-stripe-title { color: var(--day1); }
+  .d2 .day-stripe-title { color: var(--day2); }
+  .day-stripe-meta { font-size: 11px; color: var(--grey); }
+
+  /* ── LEGEND ── */
+  .legend { padding: 12px 16px; background: var(--dark); border-bottom: 1px solid var(--border); display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; }
+  .legend-label { font-family: 'Barlow Condensed', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--grey); margin-right: 4px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--grey-lt); }
+  .swatch { width: 11px; height: 11px; border-radius: 2px; flex-shrink: 0; }
+
+  /* ── ACCORDION ── */
+  .section { margin: 0 0 2px; }
+  .accordion-btn { width: 100%; background: var(--card); border: none; border-bottom: 1px solid var(--border); padding: 0 16px; height: 52px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; text-align: left; color: var(--white); transition: background 0.2s; -webkit-tap-highlight-color: transparent; }
+  .accordion-btn:hover { background: #222; }
+  .accordion-btn.active { background: #1a1a10; border-left: 3px solid var(--gold); }
+  .accordion-btn.special-btn { background: #14102a; }
+  .accordion-btn.special-btn.active { background: #1c1630; border-left-color: var(--spec-acc); }
+  .acc-left { display: flex; align-items: center; gap: 12px; }
+  .acc-icon { width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+  .acc-icon-warm   { background: rgba(182,215,168,0.15); }
+  .acc-icon-plyo   { background: rgba(255,230,153,0.15); }
+  .acc-icon-power  { background: rgba(252,145,134,0.15); }
+  .acc-icon-tri    { background: rgba(201,162,39,0.15); }
+  .acc-icon-spec   { background: rgba(155,127,232,0.15); }
+  .acc-title { font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+  .acc-meta { font-size: 11px; color: var(--grey); margin-top: 1px; font-weight: 400; font-family: 'Barlow', sans-serif; text-transform: none; letter-spacing: 0; }
+  .acc-chevron { color: var(--gold); font-size: 18px; transition: transform 0.25s; font-style: normal; display: inline-block; }
+  .acc-chevron.open { transform: rotate(180deg); }
+  .accordion-body { display: none; background: var(--dark); border-bottom: 2px solid var(--border); overflow: hidden; animation: slideDown 0.2s ease; }
+  .accordion-body.open { display: block; }
+  @keyframes slideDown { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── SECTION INTRO ── */
+  .section-intro { padding: 12px 16px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border); font-size: 12px; color: var(--grey-lt); line-height: 1.6; }
+  .section-intro strong { color: var(--gold); }
+
+  /* ── BLOCK HEADER ── */
+  .block-header { padding: 10px 16px 6px; display: flex; align-items: center; gap: 10px; }
+  .block-badge { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 800; letter-spacing: 0.1em; padding: 3px 10px; border-radius: 4px; text-transform: uppercase; flex-shrink: 0; }
+  .badge-warm   { background: var(--warm);    color: #1a3a10; }
+  .badge-mcgill { background: var(--mcgill);  color: #0a2a15; }
+  .badge-plyo   { background: var(--plyo);    color: #3a2800; }
+  .badge-power  { background: var(--power);   color: #5a0800; }
+  .badge-main   { background: var(--main);    color: #5a0400; }
+  .badge-supp   { background: var(--supp);    color: #0a1e40; }
+  .badge-triset { background: var(--gold);    color: var(--black); }
+  .block-title { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 700; color: var(--grey-lt); text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* ── TABLE ── */
+  .tbl-wrap { padding: 0 16px 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { width: 100%; border-collapse: collapse; min-width: 500px; font-size: 12px; }
+  thead tr { background: #111; }
+  thead th { font-family: 'Barlow Condensed', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--grey); padding: 7px 8px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  tbody tr { border-bottom: 1px solid rgba(255,255,255,0.04); transition: background 0.15s; }
+  tbody tr:hover { background: rgba(255,255,255,0.03); }
+  td { padding: 9px 8px; vertical-align: middle; line-height: 1.4; }
+  td:first-child { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 11px; letter-spacing: 0.08em; white-space: nowrap; }
+  td.ex-name { font-weight: 600; color: var(--white); }
+  td.note-cell { font-size: 11px; color: var(--grey); font-style: italic; }
+
+  .row-warm   { background: rgba(182,215,168,0.06); }
+  .row-mcgill { background: rgba(168,213,181,0.08); }
+  .row-plyo   { background: rgba(255,230,153,0.06); }
+  .row-power  { background: rgba(252,145,134,0.07); }
+  .row-main   { background: rgba(251,114,101,0.07); }
+  .row-supp   { background: rgba(180,198,231,0.07); }
+  .row-warm   td:first-child { color: #5a9e4a; }
+  .row-mcgill td:first-child { color: #3a9e6a; }
+  .row-plyo   td:first-child { color: #c9a000; }
+  .row-power  td:first-child { color: #e05a4a; }
+  .row-main   td:first-child { color: #e84a36; }
+  .row-supp   td:first-child { color: #4a88c4; }
+
+  /* ── TAGS ── */
+  .rir-tag { display: inline-block; font-family: 'Barlow Condensed', sans-serif; font-size: 10px; font-weight: 700; background: rgba(180,198,231,0.12); border: 1px solid rgba(180,198,231,0.3); color: #7aabdc; padding: 2px 7px; border-radius: 3px; letter-spacing: 0.06em; white-space: nowrap; }
+  .iso-tag  { display: inline-block; font-size: 10px; font-weight: 700; background: rgba(155,127,232,0.12); border: 1px solid rgba(155,127,232,0.3); color: #b89eee; padding: 2px 7px; border-radius: 3px; font-family: 'Barlow Condensed', sans-serif; letter-spacing: 0.06em; white-space: nowrap; }
+  .max-tag  { display: inline-block; font-size: 10px; font-weight: 700; background: rgba(252,145,134,0.12); border: 1px solid rgba(252,145,134,0.3); color: #fc9186; padding: 2px 7px; border-radius: 3px; font-family: 'Barlow Condensed', sans-serif; letter-spacing: 0.06em; white-space: nowrap; }
+
+  /* ── TRI-SET CONNECTOR ── */
+  .triset-connector { display: flex; align-items: center; gap: 8px; padding: 4px 16px 4px 60px; font-size: 10px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); opacity: 0.7; }
+  .triset-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--gold) 0%, transparent 100%); opacity: 0.3; }
+
+  /* ── EXERCISE LINKS ── */
+  a.ex-link { color: inherit; text-decoration: none; border-bottom: 1px dashed rgba(201,162,39,0.4); transition: color 0.15s, border-color 0.15s; }
+  a.ex-link:hover { color: var(--gold-lt); border-bottom-color: var(--gold); }
+  a.ex-link:visited { color: inherit; }
+
+  /* ── SPECIAL CIRCUITS ── */
+  .special-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; padding: 12px; background: var(--border); }
+  @media (max-width: 520px) { .special-grid { grid-template-columns: 1fr; } }
+  .spec-card { background: #0f0d1e; padding: 14px 14px 16px; cursor: pointer; transition: background 0.2s; }
+  .spec-card:hover { background: #14102a; }
+  .spec-card.open  { background: #16122c; }
+  .spec-card-hdr { display: flex; align-items: center; justify-content: space-between; }
+  .spec-name { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--white); display: flex; align-items: center; gap: 7px; }
+  .spec-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--spec-acc); flex-shrink: 0; }
+  .spec-body { display: none; margin-top: 12px; }
+  .spec-body.open { display: block; }
+  .spec-ex { padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+  .spec-ex:last-child { border-bottom: none; }
+  .spec-ex-name { font-size: 12px; font-weight: 600; color: var(--white); flex: 1; }
+  .spec-ex-detail { font-size: 11px; color: var(--grey); text-align: right; flex-shrink: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; }
+  .spec-note { margin-top: 10px; font-size: 11px; color: var(--grey); font-style: italic; line-height: 1.5; padding: 8px; background: rgba(155,127,232,0.06); border-left: 2px solid var(--spec-acc); border-radius: 0 4px 4px 0; }
+  .spec-choose { font-size: 10px; color: var(--spec-acc); font-family: 'Barlow Condensed', sans-serif; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.8; margin-top: 6px; }
+  .spec-chevron { color: var(--spec-acc); font-size: 14px; transition: transform 0.25s; font-style: normal; }
+  .spec-chevron.open { transform: rotate(180deg); }
+
+  /* ── COACHING CUE ── */
+  .cue-box { margin: 0 16px 16px; padding: 10px 14px; background: rgba(201,162,39,0.06); border-left: 3px solid var(--gold); border-radius: 0 6px 6px 0; font-size: 12px; color: var(--grey-lt); line-height: 1.6; }
+  .cue-box strong { color: var(--gold-lt); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: 4px; }
+
+  /* ── FOOTER ── */
+  .prog-footer { padding: 24px 16px; background: var(--dark); border-top: 1px solid var(--border); text-align: center; }
+  .prog-footer p { font-size: 11px; color: var(--grey); line-height: 1.7; }
+  .prog-footer strong { color: var(--gold); }
+  .footer-brand { font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 900; color: var(--gold); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; }
+
+  .section-gap { height: 8px; background: var(--black); }
+  .sub-note { font-size: 11px; color: var(--grey); }
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav>
+  <span class="nav-brand">TMC Performance</span>
+  <div class="nav-right">
+    <span class="nav-label">Senior GFC</span>
+    <span class="nav-pill">Level 1 · 2-Day</span>
+  </div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<div class="hero">
+  <div class="hero-eyebrow">Full Body Strength &amp; Power · 2-Day Split · Senior Gaelic Football</div>
+  <div class="hero-title">Full Body <span>S&amp;P</span> — 2 Day</div>
+  <div class="hero-subtitle">Level 1 · Moderate Volume &amp; Intensity · Lower Dominant + Upper / Full Chain</div>
+  <div class="hero-tags">
+    <span class="tag tag-day1">Day 1 — Lower</span>
+    <span class="tag tag-day2">Day 2 — Upper / Full Chain</span>
+    <span class="tag tag-plyo">Extensive Plyos</span>
+    <span class="tag tag-grey">Power / Ballistic</span>
+    <span class="tag tag-grey">Special Circuits</span>
+  </div>
+</div>
+
+<!-- ══ DAY SWITCHER ══ -->
+<div class="day-switcher">
+  <button class="day-btn active" data-day="1" onclick="switchDay(1)">
+    <div class="day-num">1</div>
+    <div>
+      <div>Day 1</div>
+      <div class="day-sub">Lower Dominant</div>
+    </div>
+  </button>
+  <button class="day-btn" data-day="2" onclick="switchDay(2)">
+    <div class="day-num">2</div>
+    <div>
+      <div>Day 2</div>
+      <div class="day-sub">Upper / Full Chain</div>
+    </div>
+  </button>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     DAY 1 – LOWER BODY DOMINANT
+══════════════════════════════════════════════════ -->
+<div class="day-panel active" id="day1">
+
+  <div class="day-stripe day-stripe-d1 d1">
+    <div>
+      <div class="day-stripe-title">Day 1 — Lower Body Dominant</div>
+      <div class="day-stripe-meta">Full RAMP · Lower Plyos · Jump Squat Power · 3 × Lower Tri-Sets · ~70–80 min</div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span class="legend-label">Key:</span>
+    <div class="legend-item"><div class="swatch" style="background:var(--warm)"></div>Warm-Up</div>
+    <div class="legend-item"><div class="swatch" style="background:var(--mcgill)"></div>Spinal Stability</div>
+    <div class="legend-item"><div class="swatch" style="background:var(--plyo)"></div>Plyometric</div>
+    <div class="legend-item"><div class="swatch" style="background:var(--power)"></div>Power / Ballistic</div>
+    <div class="legend-item"><div class="swatch" style="background:var(--main)"></div>Main Compound</div>
+    <div class="legend-item"><div class="swatch" style="background:var(--supp)"></div>Supplementary</div>
+  </div>
+
+  <!-- ── D1 WARM-UP ── -->
+  <div class="section-gap"></div>
+  <div class="section">
+    <button class="accordion-btn active" onclick="toggleAcc('d1-warmup', this)">
+      <div class="acc-left">
+        <div class="acc-icon acc-icon-warm">🌡️</div>
+        <div>
+          <div class="acc-title">Spinal Stability Warm-Up</div>
+          <div class="acc-meta">RAMP Protocol · Raise → Activate → Mobilise → Potentiate · ~15 min</div>
+        </div>
+      </div>
+      <i class="acc-chevron open" id="chev-d1-warmup">▾</i>
+    </button>
+    <div class="accordion-body open" id="d1-warmup">
+      <div class="section-intro"><strong>Protocol:</strong> Full RAMP sequence every Day 1 session. Raise phase elevates core temperature. Activate/Mobilise uses the spinal stability sequence to load the spine safely and pattern correct movement before lower body loading. Potentiate bridges into the plyometric block.</div>
+
+      <div class="block-header"><span class="block-badge badge-warm">Raise</span><span class="block-title">General Elevation</span></div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th style="width:52px">Block</th><th>Exercise</th><th>Intensity</th><th>Sets</th><th>Duration</th><th>Tempo</th><th>Rest</th></tr></thead>
+        <tbody>
+          <tr class="row-warm"><td>R1</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=assault+bike+warm+up+technique" target="_blank" rel="noopener" class="ex-link">Easy Jog / Assault Bike</a></td><td>50–60% MHR</td><td>1</td><td>5 min</td><td>Easy</td><td>AMAN</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="block-header"><span class="block-badge badge-mcgill">Activate · Stability</span><span class="block-title">Spinal Stability – Core Big 3</span></div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th style="width:52px">Block</th><th>Exercise</th><th>Intensity</th><th>Sets</th><th>Reps / Hold</th><th>Tempo</th><th>Rest</th></tr></thead>
+        <tbody>
+          <tr class="row-mcgill"><td>M1</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=modified+curl+up+spinal+stability+exercise" target="_blank" rel="noopener" class="ex-link">Modified Curl-Up</a></td><td>Controlled</td><td>1</td><td>10s hold × 3</td><td>Static / Exhale</td><td>None</td></tr>
+          <tr class="row-mcgill"><td>M2</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=bird+dog+exercise+tutorial" target="_blank" rel="noopener" class="ex-link">Bird Dog</a> <span class="sub-note">(Contralateral arm/leg)</span></td><td>Controlled</td><td>1</td><td>8 ea / 10s hold</td><td>Slow extend → pause</td><td>None</td></tr>
+          <tr class="row-mcgill"><td>M3</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=side+plank+exercise+tutorial" target="_blank" rel="noopener" class="ex-link">Side Bridge / Side Plank</a></td><td>Controlled</td><td>1</td><td>30s ea side</td><td><span class="iso-tag">ISOMETRIC</span></td><td>15s</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="cue-box"><strong>Stability Big 3 Cues</strong>Curl-Up: one leg bent, hands under lumbar curve — do <em>not</em> flatten the back. Bird Dog: brace abdomen, squeeze glute on extended leg, no lumbar rotation. Side Bridge: stacked feet or modified (knee down), drive hip up, neutral spine throughout.</div>
+
+      <div class="block-header"><span class="block-badge badge-mcgill">Mobilise</span><span class="block-title">Spine Hygiene &amp; Hip Opening</span></div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th style="width:52px">Block</th><th>Exercise</th><th>Intensity</th><th>Sets</th><th>Reps</th><th>Tempo</th><th>Rest</th></tr></thead>
+        <tbody>
+          <tr class="row-mcgill"><td>Mob1</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=cat+camel+spinal+mobility+exercise" target="_blank" rel="noopener" class="ex-link">Cat-Camel</a> <span class="sub-note">(Spinal hygiene)</span></td><td>Rhythmic / Easy</td><td>1</td><td>10 cycles</td><td>Slow / Fluent</td><td>None</td></tr>
+          <tr class="row-mcgill"><td>Mob2</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=dead+bug+exercise+tutorial" target="_blank" rel="noopener" class="ex-link">Dead Bug</a> <span class="sub-note">(Lower limb extension)</span></td><td>Controlled</td><td>1</td><td>8 ea</td><td>Slow lower</td><td>None</td></tr>
+          <tr class="row-warm"><td>Mob3</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=deep+lunge+hip+flexor+stretch+tutorial" target="_blank" rel="noopener" class="ex-link">Deep Lunge Hip Flexor Stretch</a></td><td>Easy</td><td>1</td><td>45s ea</td><td>Static hold</td><td>None</td></tr>
+          <tr class="row-warm"><td>Mob4</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=90+90+hip+rotation+floor+exercise" target="_blank" rel="noopener" class="ex-link">90/90 Hip Rotation (Floor)</a></td><td>Easy</td><td>1</td><td>8 ea</td><td>Controlled</td><td>None</td></tr>
+          <tr class="row-warm"><td>Mob5</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=glute+bridge+exercise+tutorial" target="_blank" rel="noopener" class="ex-link">Glute Bridge</a> <span class="sub-note">(Activation)</span></td><td>Controlled</td><td>1</td><td>10</td><td>2s hold at top</td><td>None</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="block-header"><span class="block-badge badge-plyo">Potentiate</span><span class="block-title">Movement Prep &amp; CNS Priming</span></div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th style="width:52px">Block</th><th>Exercise</th><th>Intensity</th><th>Sets</th><th>Reps / Distance</th><th>Tempo</th><th>Rest</th></tr></thead>
+        <tbody>
+          <tr class="row-warm"><td>Pot1</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=a+skip+drill+tutorial+sprint+mechanics" target="_blank" rel="noopener" class="ex-link">A-Skip (High Knee March)</a></td><td>Rhythm</td><td>2</td><td>15 m</td><td>Drill pace</td><td>Walk back</td></tr>
+          <tr class="row-plyo"><td>Pot2</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=rudimentary+skipping+series+plyometric+drills" target="_blank" rel="noopener" class="ex-link">Rudimentary Skipping Series</a></td><td>Rhythm</td><td>2</td><td>15 m each</td><td>Fluid / Soft</td><td>Walk back</td></tr>
+          <tr class="row-plyo"><td>Pot3</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=ankle+hops+bilateral+plyometric+exercise" target="_blank" rel="noopener" class="ex-link">Two-Foot Ankle Hops (in-place)</a></td><td><span class="max-tag">MAX HEIGHT</span></td><td>2</td><td>10</td><td>Elastic / Fast ground</td><td>30″</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- ── D1 PLYOMETRICS ── -->
+  <div class="section-gap"></div>
+  <div class="section">
+    <button class="accordion-btn" onclick="toggleAcc('d1-plyo', this)">
+      <div class="acc-left">
+        <div class="acc-icon acc-icon-plyo">⚡</div>
+        <div>
+          <div class="acc-title">Extensive Plyometrics — Lower Body</div>
+          <div class="acc-meta">Bilateral &amp; Unilateral · Ground Contact Quality · ~90–100 contacts</div>
+        </div>
+      </div>
+      <i class="acc-chevron" id="chev-d1-plyo">▾</i>
+    </button>
+    <div class="accordion-body" id="d1-plyo">
+      <div class="section-intro"><strong>Day 1 focus:</strong> Lower body plyometric qualities — vertical stiffness, horizontal power, and lateral elasticity. Volume is slightly higher than the single-session version (4 sets on key exercises) as this is the dedicated lower plyo day. All jumps: soft landings, knees tracking toes, no valgus on landing.</div>
+      <div class="block-header"><span class="block-badge badge-plyo">P1–P4</span><span class="block-title">Lower Body Plyometric Progression</span></div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th style="width:52px">Block</th><th>Exercise</th><th>Intensity</th><th>Sets</th><th>Reps</th><th>Tempo</th><th>Rest</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr class="row-plyo"><td>P1</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=jump+rope+skipping+plyometric+exercise" target="_blank" rel="noopener" class="ex-link">Jump Rope / Skipping (Bilateral)</a></td><td>Light</td><td>3</td><td>30s</td><td>Rhythmic</td><td>30″</td><td class="note-cell">Forefoot contact; continuous rhythm</td></tr>
+          <tr class="row-plyo"><td>P2</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=box+jump+step+down+technique+landing+mechanics" target="_blank" rel="noopener" class="ex-link">Box Jump – Step Down</a> <span class="sub-note">(30–40 cm box)</span></td><td><span class="max-tag">MAX HEIGHT</span></td><td>4</td><td>5</td><td>Explosive / Stick landing</td><td>60″</td><td class="note-cell">Step down; do NOT jump off</td></tr>
+          <tr class="row-plyo"><td>P3</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=standing+broad+jump+technique+tutorial" target="_blank" rel="noopener" class="ex-link">Broad Jump (Standing)</a></td><td><span class="max-tag">MAX DIST</span></td><td>4</td><td>4</td><td>Full hip extension at take-off</td><td>45″</td><td class="note-cell">Stick landing; reset fully between reps</td></tr>
+          <tr class="row-plyo"><td>P4</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=lateral+bound+exercise+plyometric+tutorial" target="_blank" rel="noopener" class="ex-link">Lateral Bound</a> <span class="sub-note">(Bilateral → Unilateral)</span></td><td><span class="max-tag">MAX DIST</span></td><td>4</td><td>4 ea</td><td>Explosive push / Stick landing</td><td>60″</td><td class="note-cell">Start bilateral; progress to unilateral if quality allows</td></tr>
+        </tbody>
+      </table></div>
+      <div class="cue-box"><strong>Day 1 Plyo Intent</strong>Quality of landing is the priority at Level 1. If knee valgus, groin sag, or trunk collapse appears on landing, strip back and cue. Total ground contacts ~90–100 for this session. Med Ball work moves to Day 2.</div>
+    </div>
+  </div>
+
+  <!-- ── D1 POWER ── -->
+  <div class="section-gap"></div>
+  <div class="section">
+    <button class="accordion-btn" onclick="toggleAcc('d1-power', this)">
+      <div class="acc-left">
+        <div class="acc-icon acc-icon-power">💥</div>
+        <div>
+          <div class="acc-title">Power Block — Lower Body</div>
+          <div class="acc-meta">Jump Squat · Med Ball Scoop · Intent-Based Loading · Full Recovery</div>
+        </div>
+      </div>
+      <i class="acc-chevron" id="chev-d1-power">▾</i>
+    </button>
+    <div class="accordion-body" id="d1-power">
+      <div class="section-intro"><strong>Coaching intent:</strong> Day 1 power work targets lower body force-velocity — Jump Squat for vertical power, Med Ball Scoop for hip extension drive. Jump Squat volume increased to 5 sets (from 4) as this is the dedicated lower day. Bar must feel fast every rep — if it doesn't, the load is too heavy.</div>
+      <div class="block-header"><span class="block-badge badge-power">O1–O2</span><span class="block-title">Ballistic Lower Body</span></div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th style="width:52px">Block</th><th>Exercise</th><th>Intensity / Load</th><th>Sets</th><th>Reps</th><th>Tempo</th><th>Rest</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr class="row-power"><td>O1</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=jump+squat+exercise+tutorial+technique" target="_blank" rel="noopener" class="ex-link">Jump Squat</a> <span class="sub-note">(BW or light load)</span></td><td><span class="max-tag">MAX INTENT</span></td><td>5</td><td>4</td><td>Explosive</td><td>2–3 min</td><td class="note-cell">Bar must feel fast; stop set if quality drops</td></tr>
+          <tr class="row-power"><td>O2</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=med+ball+scoop+toss+anterior+throw+tutorial" target="_blank" rel="noopener" class="ex-link">Med Ball Scoop Throw (Anterior)</a></td><td><span class="max-tag">MAX EFFORT</span></td><td>4</td><td>5</td><td>Hip drive → explosive release</td><td>60″</td><td class="note-cell">3–4 kg ball; drive from hips not arms</td></tr>
+        </tbody>
+      </table></div>
+      <div class="cue-box"><strong>Power Block – Loading Guidance</strong>Jump Squat: BW or empty bar to start. The purpose is speed of movement — load only if the bar feels light and bar speed is maintained. Scoop Throw: this is a hip hinge to an explosive jump, not a bicep curl — the arms follow the hips.</div>
+    </div>
+  </div>
+
+  <!-- ── D1 TRI-SETS ── -->
+  <div class="section-gap"></div>
+  <div class="section">
+    <button class="accordion-btn" onclick="toggleAcc('d1-trisets', this)">
+      <div class="acc-left">
+        <div class="acc-icon acc-icon-tri">🏋️</div>
+        <div>
+          <div class="acc-title">3 × Tri-Sets — Lower Strength</div>
+          <div class="acc-meta">Squat · Hip Hinge · Single Limb · Posterior Chain Prehab · Accessories</div>
+        </div>
+      </div>
+      <i class="acc-chevron" id="chev-d1-trisets">▾</i>
+    </button>
+    <div class="accordion-body" id="d1-trisets">
+      <div class="section-intro"><strong>Structure:</strong> 3 lower-dominant tri-sets. Tri-A pairs the main squat pattern with the primary hinge — both at 4 sets to take advantage of the dedicated lower day. Tri-B is single limb + hamstring prehab stack. Tri-C is lower accessories and core. Move directly between exercises; rest 90–120s after each tri-set round. <strong>Load by feel — RIR on all work.</strong></div>
+
+      <!-- TRI-A -->
+      <div class="block-header"><span class="block-badge badge-triset">Tri-Set A</span><span class="block-title">Squat Pattern · Hip Hinge · Adductor Stability</span></div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th style="width:52px">Block</th><th>Exercise</th><th>Load / Effort</th><th>Sets</th><th>Reps</th><th>Tempo</th><th>Rest</th></tr></thead>
+        <tbody>
+          <tr class="row-main"><td>A1</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=back+squat+box+squat+technique+tutorial" target="_blank" rel="noopener" class="ex-link">Back Squat / Box Squat</a> <span class="sub-note">(Day 1 Options)</span></td><td><span class="rir-tag">RIR 3–4</span></td><td>4</td><td>6</td><td>Exp. concentric</td><td>10″ → next</td></tr>
+          <tr class="row-main"><td>A2</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=romanian+deadlift+tutorial+technique+RDL" target="_blank" rel="noopener" class="ex-link">Romanian Deadlift</a></td><td><span class="rir-tag">RIR 2–3</span></td><td>4</td><td>8</td><td>3s ecc. / Exp. return</td><td>10″ → next</td></tr>
+          <tr class="row-supp"><td>A3</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=copenhagen+side+plank+adductor+exercise" target="_blank" rel="noopener" class="ex-link">Copenhagen Side Plank</a></td><td><span class="iso-tag">ISOMETRIC</span></td><td>3</td><td>25–35s ea</td><td>Static hold</td><td>90–120″ then repeat A</td></tr>
+        </tbody>
+      </table></div>
+      <div class="triset-connector"><div class="triset-line"></div>A1 → A2 → A3 · Rest · Repeat × 4 / 4 / 3<div class="triset-line" style="background:linear-gradient(90deg,transparent,var(--gold))"></div></div>
+
+      <!-- TRI-B -->
+      <div class="block-header"><span class="block-badge badge-triset">Tri-Set B</span><span class="block-title">Single Limb Lower · Hamstring Prehab Stack</span></div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th style="width:52px">Block</th><th>Exercise</th><th>Load / Effort</th><th>Sets</th><th>Reps</th><th>Tempo</th><th>Rest</th></tr></thead>
+        <tbody>
+          <tr class="row-main"><td>B1</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=bulgarian+split+squat+tutorial+technique" target="_blank" rel="noopener" class="ex-link">Bulgarian Split Squat</a> <span class="sub-note">(DB or BB)</span></td><td><span class="rir-tag">RIR 2–3</span></td><td>4</td><td>8 ea</td><td>3s ecc. / Exp. drive</td><td>10″ → next</td></tr>
+          <tr class="row-supp"><td>B2</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=floor+hamstring+curl+slider+physio+ball+exercise" target="_blank" rel="noopener" class="ex-link">Floor Hamstring Curls</a> <span class="sub-note">(Sliders or Physio ball)</span></td><td><span class="rir-tag">RIR 0–1</span></td><td>4</td><td>12–15</td><td>Cont. tension</td><td>10″ → next</td></tr>
+          <tr class="row-supp"><td>B3</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=reverse+nordic+curl+exercise+tutorial" target="_blank" rel="noopener" class="ex-link">Reverse Nordic Curl</a></td><td><span class="rir-tag">RIR 1–2</span></td><td>3</td><td>8</td><td>3–4s ecc. lower</td><td>90–120″ then repeat B</td></tr>
+        </tbody>
+      </table></div>
+      <div class="triset-connector"><div class="triset-line"></div>B1 → B2 → B3 · Rest · Repeat × 4 / 4 / 3<div class="triset-line" style="background:linear-gradient(90deg,transparent,var(--gold))"></div></div>
+
+      <!-- TRI-C -->
+      <div class="block-header"><span class="block-badge badge-triset">Tri-Set C</span><span class="block-title">Hip / Glute Accessory · Core</span></div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th style="width:52px">Block</th><th>Exercise</th><th>Load / Effort</th><th>Sets</th><th>Reps</th><th>Tempo</th><th>Rest</th></tr></thead>
+        <tbody>
+          <tr class="row-main"><td>C1</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=hip+thrust+barbell+technique+tutorial" target="_blank" rel="noopener" class="ex-link">Hip Thrust</a> <span class="sub-note">(BB or DB)</span></td><td><span class="rir-tag">RIR 2–3</span></td><td>3</td><td>10</td><td>2s hold at top</td><td>10″ → next</td></tr>
+          <tr class="row-main"><td>C2</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=single+leg+rdl+bodyweight+balance+tutorial" target="_blank" rel="noopener" class="ex-link">Single Leg RDL</a> <span class="sub-note">(BW or light DB)</span></td><td><span class="rir-tag">RIR 2–3</span></td><td>3</td><td>10 ea</td><td>Controlled / slow</td><td>10″ → next</td></tr>
+          <tr class="row-supp"><td>C3</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=dead+bug+exercise+tutorial" target="_blank" rel="noopener" class="ex-link">Dead Bug</a> <span class="sub-note">(Contralateral limb extension)</span></td><td>Controlled</td><td>3</td><td>8 ea</td><td>Slow lower / no arch</td><td>90–120″ then repeat C</td></tr>
+        </tbody>
+      </table></div>
+      <div class="triset-connector"><div class="triset-line"></div>C1 → C2 → C3 · Rest · Repeat × 3<div class="triset-line" style="background:linear-gradient(90deg,transparent,var(--gold))"></div></div>
+
+      <div class="cue-box"><strong>Day 1 Tri-Set Loading Guidelines</strong>Back Squat: 55–65% 1RM approx., concentric must feel powerful. RDL: feel the hamstring load at the bottom — no lumbar rounding. Bulgarian: 3-second eccentric — don't rush the descent. Reverse Nordic: 30–45° lowering range is fine at Level 1. Hip Thrust: full glute contraction at lockout every rep.</div>
+    </div>
+  </div>
+
+  <!-- ── D1 SPECIAL CIRCUITS ── -->
+  <div class="section-gap"></div>
+  <div class="section">
+    <button class="accordion-btn special-btn" onclick="toggleAcc('d1-special', this)">
+      <div class="acc-left">
+        <div class="acc-icon acc-icon-spec">🩺</div>
+        <div>
+          <div class="acc-title">Special Exercise Circuits</div>
+          <div class="acc-meta">Athlete Choice · Select the block most relevant to your current issue · ~8–10 min</div>
+        </div>
+      </div>
+      <i class="acc-chevron" id="chev-d1-special">▾</i>
+    </button>
+    <div class="accordion-body" id="d1-special">
+      <div class="section-intro" style="border-left:3px solid var(--spec-acc);margin:12px 16px;border-radius:0 6px 6px 0;background:rgba(155,127,232,0.05);"><strong style="color:var(--spec-acc);">Instructions:</strong> Each athlete selects <em>one</em> circuit at the end of each session. If no active issue, choose <strong>Hip Mobility</strong> or <strong>Ankle Mobility</strong>. Perform 2–3 rounds with minimal rest.</div>
+      <div class="special-grid">
+        <div class="spec-card" onclick="toggleSpec(this)"><div class="spec-card-hdr"><div class="spec-name"><div class="spec-dot"></div>Hamstring Issues</div><i class="spec-chevron">▾</i></div><div class="spec-choose">Tap to expand</div><div class="spec-body">
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=isometric+nordic+hamstring+hold+exercise" target="_blank" rel="noopener" class="ex-link">Isometric Nordic Hold (30°)</a></div><div class="spec-ex-detail">3 × 30s</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=floor+hamstring+curl+slider+exercise" target="_blank" rel="noopener" class="ex-link">Floor Hamstring Curl (Slider)</a></div><div class="spec-ex-detail">3 × 10 / slow ecc.</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=single+leg+rdl+cable+hamstring+exercise" target="_blank" rel="noopener" class="ex-link">Seated Single Leg RDL (Cable)</a></div><div class="spec-ex-detail">2 × 12 ea / RIR 2</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=standing+hip+flexion+band+exercise" target="_blank" rel="noopener" class="ex-link">Standing Hip Flexion (Band)</a></div><div class="spec-ex-detail">2 × 15 ea / controlled</div></div>
+          <div class="spec-note">Begin with isometrics; progress to eccentrics only when pain-free. Consult physio if symptoms persist beyond 2 weeks.</div>
+        </div></div>
+        <div class="spec-card" onclick="toggleSpec(this)"><div class="spec-card-hdr"><div class="spec-name"><div class="spec-dot"></div>Lower Back Compression</div><i class="spec-chevron">▾</i></div><div class="spec-choose">Tap to expand</div><div class="spec-body">
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=cat+camel+spinal+decompression+exercise" target="_blank" rel="noopener" class="ex-link">Cat-Camel (Decompression)</a></div><div class="spec-ex-detail">2 × 15 cycles</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=bird+dog+exercise+extended+hold+tutorial" target="_blank" rel="noopener" class="ex-link">Bird Dog (Extended Hold)</a></div><div class="spec-ex-detail">3 × 8 ea / 10s hold</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=pallof+press+anti+rotation+core+exercise" target="_blank" rel="noopener" class="ex-link">Pallof Press (Anti-Rotation)</a></div><div class="spec-ex-detail">3 × 12 ea</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=childs+pose+lower+back+stretch" target="_blank" rel="noopener" class="ex-link">Child's Pose (Hold)</a></div><div class="spec-ex-detail">2 × 60s</div></div>
+          <div class="spec-note">This circuit is decompressive. Avoid loaded flexion. Compression often correlates with poor hip mobility — pair with Hip Mobility circuit when available.</div>
+        </div></div>
+        <div class="spec-card" onclick="toggleSpec(this)"><div class="spec-card-hdr"><div class="spec-name"><div class="spec-dot"></div>Groin / Adductor Pain</div><i class="spec-chevron">▾</i></div><div class="spec-choose">Tap to expand</div><div class="spec-body">
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=copenhagen+plank+short+lever+adductor+exercise" target="_blank" rel="noopener" class="ex-link">Copenhagen Adductor Plank (Short Lever)</a></div><div class="spec-ex-detail">3 × 20–30s ea</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=side+lying+adductor+raise+exercise" target="_blank" rel="noopener" class="ex-link">Side-Lying Adductor Raise</a></div><div class="spec-ex-detail">3 × 12 ea / slow</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=adductor+squeeze+ball+exercise+groin" target="_blank" rel="noopener" class="ex-link">Standing Squeeze (Ball / Fist)</a></div><div class="spec-ex-detail">3 × 10s hold × 5</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=long+adductor+stretch+floor+groin" target="_blank" rel="noopener" class="ex-link">Long Adductor Stretch (Floor)</a></div><div class="spec-ex-detail">2 × 45s</div></div>
+          <div class="spec-note">Copenhagen plank is the primary evidence-based intervention for adductor tendinopathy. Start short lever. Progress to long lever over 4 weeks.</div>
+        </div></div>
+        <div class="spec-card" onclick="toggleSpec(this)"><div class="spec-card-hdr"><div class="spec-name"><div class="spec-dot"></div>Knee Tendinitis (Patellar)</div><i class="spec-chevron">▾</i></div><div class="spec-choose">Tap to expand</div><div class="spec-body">
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=spanish+squat+isometric+hold+patellar+tendon" target="_blank" rel="noopener" class="ex-link">Spanish Squat Isometric Hold</a></div><div class="spec-ex-detail">5 × 45s / heavy load</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=terminal+knee+extension+band+exercise+TKE" target="_blank" rel="noopener" class="ex-link">Terminal Knee Extension (Band)</a></div><div class="spec-ex-detail">3 × 20 ea</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=single+leg+eccentric+step+down+knee+rehab" target="_blank" rel="noopener" class="ex-link">Single Leg Eccentric Step Down</a></div><div class="spec-ex-detail">3 × 8 ea / 4s lower</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=VMO+wall+sit+quad+exercise" target="_blank" rel="noopener" class="ex-link">VMO Wall Sit</a></div><div class="spec-ex-detail">3 × 30–45s</div></div>
+          <div class="spec-note">Spanish squat ISO provides immediate pain relief. Perform before main session if acute pain present. Add eccentric step down only when pain VAS &lt;3.</div>
+        </div></div>
+        <div class="spec-card" onclick="toggleSpec(this)"><div class="spec-card-hdr"><div class="spec-name"><div class="spec-dot"></div>Hip Mobility</div><i class="spec-chevron">▾</i></div><div class="spec-choose">Tap to expand</div><div class="spec-body">
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=hip+cars+controlled+articular+rotations+tutorial" target="_blank" rel="noopener" class="ex-link">Hip CARs (Controlled Articular Rotations)</a></div><div class="spec-ex-detail">2 × 5 ea / slow full ROM</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=90+90+hip+internal+rotation+mobility+exercise" target="_blank" rel="noopener" class="ex-link">90/90 Hip Internal Rotation Bias</a></div><div class="spec-ex-detail">3 × 45s ea</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=deep+squat+hold+band+distraction+mobility" target="_blank" rel="noopener" class="ex-link">Deep Squat Hold (Band distraction)</a></div><div class="spec-ex-detail">3 × 45s</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=pigeon+stretch+hip+mobility+tutorial" target="_blank" rel="noopener" class="ex-link">Pigeon Stretch (Floor or Elevated)</a></div><div class="spec-ex-detail">2 × 60s ea</div></div>
+          <div class="spec-note">Recommended as default circuit when no active issue is present. Hip mobility is a maintenance priority for all field sport athletes.</div>
+        </div></div>
+        <div class="spec-card" onclick="toggleSpec(this)"><div class="spec-card-hdr"><div class="spec-name"><div class="spec-dot"></div>Ankle Mobility</div><i class="spec-chevron">▾</i></div><div class="spec-choose">Tap to expand</div><div class="spec-body">
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=ankle+cars+circles+mobility+exercise" target="_blank" rel="noopener" class="ex-link">Ankle CARs (Circles)</a></div><div class="spec-ex-detail">2 × 10 ea direction</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=wall+ankle+dorsiflexion+stretch+tutorial" target="_blank" rel="noopener" class="ex-link">Wall Ankle Dorsiflexion Stretch</a></div><div class="spec-ex-detail">3 × 45s ea</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=single+leg+eccentric+calf+raise+tutorial" target="_blank" rel="noopener" class="ex-link">Eccentric Calf Raise (Single Leg)</a></div><div class="spec-ex-detail">3 × 12 ea / 4s lower</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=banded+ankle+talocrural+joint+mobilisation+dorsiflexion" target="_blank" rel="noopener" class="ex-link">Banded Talocrural Joint Mobilisation</a></div><div class="spec-ex-detail">2 × 15 ea / controlled</div></div>
+          <div class="spec-note">Ankle dorsiflexion restriction directly impacts landing mechanics and change of direction. Also recommended as a default maintenance choice.</div>
+        </div></div>
+        <div class="spec-card" onclick="toggleSpec(this)"><div class="spec-card-hdr"><div class="spec-name"><div class="spec-dot"></div>Osgood-Schlatter's</div><i class="spec-chevron">▾</i></div><div class="spec-choose">Tap to expand</div><div class="spec-body">
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=isometric+quad+hold+leg+press+wall+sit+osgood" target="_blank" rel="noopener" class="ex-link">Isometric Quad Hold (Leg Press / Wall Sit)</a></div><div class="spec-ex-detail">4 × 30–45s</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=foam+roll+quadriceps+technique" target="_blank" rel="noopener" class="ex-link">Foam Roll Quad (Soft Tissue)</a></div><div class="spec-ex-detail">2 × 60s ea</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=standing+quad+stretch+technique" target="_blank" rel="noopener" class="ex-link">Standing Quad Stretch</a></div><div class="spec-ex-detail">2 × 45s ea</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=leg+press+full+range+of+motion+technique" target="_blank" rel="noopener" class="ex-link">Low Load Leg Press (Full ROM)</a></div><div class="spec-ex-detail">3 × 15 / very light</div></div>
+          <div class="spec-note">Manage volume during growth spurts. Isometrics for pain relief. Avoid heavy knee flexion under load during acute flare. Work closely with team physio.</div>
+        </div></div>
+        <div class="spec-card" onclick="toggleSpec(this)"><div class="spec-card-hdr"><div class="spec-name"><div class="spec-dot"></div>Shoulder Immobility / Pain</div><i class="spec-chevron">▾</i></div><div class="spec-choose">Tap to expand</div><div class="spec-body">
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=shoulder+cars+controlled+articular+rotation+tutorial" target="_blank" rel="noopener" class="ex-link">Shoulder CARs</a></div><div class="spec-ex-detail">2 × 5 ea / slow full ROM</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=band+pull+apart+scapular+retraction+exercise" target="_blank" rel="noopener" class="ex-link">Band Pull-Apart (Scapular Retraction)</a></div><div class="spec-ex-detail">3 × 15 / 2s hold</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=face+pull+cable+band+exercise+tutorial" target="_blank" rel="noopener" class="ex-link">Face Pull (Cable or Band)</a></div><div class="spec-ex-detail">3 × 15 ea / slow</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=wall+slide+shoulder+exercise+90+90" target="_blank" rel="noopener" class="ex-link">Wall Slide (90/90)</a></div><div class="spec-ex-detail">2 × 10 / full elevation</div></div>
+          <div class="spec-note">Prioritise scapular positioning before any overhead work. Replace pressing with horizontal rows if pain present during main session.</div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /day1 -->
+
+
+<!-- ══════════════════════════════════════════════════
+     DAY 2 – UPPER BODY + FULL CHAIN
+══════════════════════════════════════════════════ -->
+<div class="day-panel" id="day2">
+
+  <div class="day-stripe day-stripe-d2 d2">
+    <div>
+      <div class="day-stripe-title">Day 2 — Upper Body + Full Chain</div>
+      <div class="day-stripe-meta">Abbreviated RAMP · Med Ball Plyos · Upper Power · 3 × Upper / Mixed Tri-Sets · ~65–75 min</div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span class="legend-label">Key:</span>
+    <div class="legend-item"><div class="swatch" style="background:var(--warm)"></div>Warm-Up</div>
+    <div class="legend-item"><div class="swatch" style="background:var(--mcgill)"></div>Spinal Stability</div>
+    <div class="legend-item"><div class="swatch" style="background:var(--plyo)"></div>Plyometric</div>
+    <div class="legend-item"><div class="swatch" style="background:var(--power)"></div>Power / Ballistic</div>
+    <div class="legend-item"><div class="swatch" style="background:var(--main)"></div>Main Compound</div>
+    <div class="legend-item"><div class="swatch" style="background:var(--supp)"></div>Supplementary</div>
+  </div>
+
+  <!-- ── D2 WARM-UP ── -->
+  <div class="section-gap"></div>
+  <div class="section">
+    <button class="accordion-btn active" onclick="toggleAcc('d2-warmup', this)">
+      <div class="acc-left">
+        <div class="acc-icon acc-icon-warm">🌡️</div>
+        <div>
+          <div class="acc-title">Abbreviated RAMP Warm-Up — Upper Bias</div>
+          <div class="acc-meta">Raise → Stability → Thoracic + Shoulder Mobilise → Potentiate · ~10–12 min</div>
+        </div>
+      </div>
+      <i class="acc-chevron open" id="chev-d2-warmup">▾</i>
+    </button>
+    <div class="accordion-body open" id="d2-warmup">
+      <div class="section-intro"><strong>Protocol:</strong> Day 2 warm-up is abbreviated vs Day 1 — lower body has been worked the previous session. Priority shifts to thoracic mobility, scapular activation, and shoulder prep. Stability sequence is shortened to Bird Dog and Dead Bug only.</div>
+
+      <div class="block-header"><span class="block-badge badge-warm">Raise</span><span class="block-title">General Elevation</span></div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th style="width:52px">Block</th><th>Exercise</th><th>Intensity</th><th>Sets</th><th>Duration</th><th>Tempo</th><th>Rest</th></tr></thead>
+        <tbody>
+          <tr class="row-warm"><td>R1</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=assault+bike+warm+up+technique" target="_blank" rel="noopener" class="ex-link">Assault Bike / Rower</a></td><td>50–60% MHR</td><td>1</td><td>5 min</td><td>Easy</td><td>AMAN</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="block-header"><span class="block-badge badge-mcgill">Activate · Stability</span><span class="block-title">Abbreviated Stability Sequence</span></div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th style="width:52px">Block</th><th>Exercise</th><th>Intensity</th><th>Sets</th><th>Reps / Hold</th><th>Tempo</th><th>Rest</th></tr></thead>
+        <tbody>
+          <tr class="row-mcgill"><td>M1</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=bird+dog+exercise+tutorial" target="_blank" rel="noopener" class="ex-link">Bird Dog</a> <span class="sub-note">(Contralateral arm/leg)</span></td><td>Controlled</td><td>1</td><td>8 ea / 10s hold</td><td>Slow extend → pause</td><td>None</td></tr>
+          <tr class="row-mcgill"><td>M2</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=dead+bug+exercise+tutorial" target="_blank" rel="noopener" class="ex-link">Dead Bug</a> <span class="sub-note">(Lower limb extension)</span></td><td>Controlled</td><td>1</td><td>8 ea</td><td>Slow lower</td><td>None</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="block-header"><span class="block-badge badge-mcgill">Mobilise</span><span class="block-title">Thoracic &amp; Shoulder Opening</span></div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th style="width:52px">Block</th><th>Exercise</th><th>Intensity</th><th>Sets</th><th>Reps</th><th>Tempo</th><th>Rest</th></tr></thead>
+        <tbody>
+          <tr class="row-mcgill"><td>Mob1</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=cat+camel+spinal+mobility+exercise" target="_blank" rel="noopener" class="ex-link">Cat-Camel</a> <span class="sub-note">(Thoracic focus)</span></td><td>Rhythmic / Easy</td><td>1</td><td>10 cycles</td><td>Slow / Fluent</td><td>None</td></tr>
+          <tr class="row-warm"><td>Mob2</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=thread+the+needle+thoracic+rotation+exercise" target="_blank" rel="noopener" class="ex-link">Thread the Needle</a> <span class="sub-note">(Thoracic rotation)</span></td><td>Easy</td><td>1</td><td>8 ea</td><td>Controlled rotate</td><td>None</td></tr>
+          <tr class="row-warm"><td>Mob3</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=wall+slide+shoulder+exercise+90+90" target="_blank" rel="noopener" class="ex-link">Wall Slide (90/90)</a> <span class="sub-note">(Scapular activation)</span></td><td>Controlled</td><td>1</td><td>10</td><td>Slow full elevation</td><td>None</td></tr>
+          <tr class="row-warm"><td>Mob4</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=shoulder+cars+controlled+articular+rotation+tutorial" target="_blank" rel="noopener" class="ex-link">Shoulder CARs</a> <span class="sub-note">(Full ROM)</span></td><td>Easy</td><td>1</td><td>5 ea</td><td>Slow full arc</td><td>None</td></tr>
+          <tr class="row-warm"><td>Mob5</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=90+90+hip+rotation+floor+exercise" target="_blank" rel="noopener" class="ex-link">90/90 Hip Rotation (Floor)</a></td><td>Easy</td><td>1</td><td>8 ea</td><td>Controlled</td><td>None</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="block-header"><span class="block-badge badge-plyo">Potentiate</span><span class="block-title">CNS Priming</span></div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th style="width:52px">Block</th><th>Exercise</th><th>Intensity</th><th>Sets</th><th>Reps / Distance</th><th>Tempo</th><th>Rest</th></tr></thead>
+        <tbody>
+          <tr class="row-plyo"><td>Pot1</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=rudimentary+skipping+series+plyometric+drills" target="_blank" rel="noopener" class="ex-link">Rudimentary Skipping Series</a></td><td>Rhythm</td><td>2</td><td>15 m each</td><td>Fluid / Soft</td><td>Walk back</td></tr>
+          <tr class="row-plyo"><td>Pot2</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=ankle+hops+bilateral+plyometric+exercise" target="_blank" rel="noopener" class="ex-link">Two-Foot Ankle Hops (in-place)</a></td><td><span class="max-tag">MAX HEIGHT</span></td><td>2</td><td>8</td><td>Elastic / Fast ground</td><td>30″</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- ── D2 PLYOMETRICS ── -->
+  <div class="section-gap"></div>
+  <div class="section">
+    <button class="accordion-btn" onclick="toggleAcc('d2-plyo', this)">
+      <div class="acc-left">
+        <div class="acc-icon acc-icon-plyo">⚡</div>
+        <div>
+          <div class="acc-title">Extensive Plyometrics — Upper &amp; Full Body</div>
+          <div class="acc-meta">Med Ball Circuit · Reactive Upper · Box Jump Maintenance</div>
+        </div>
+      </div>
+      <i class="acc-chevron" id="chev-d2-plyo">▾</i>
+    </button>
+    <div class="accordion-body" id="d2-plyo">
+      <div class="section-intro"><strong>Day 2 focus:</strong> Upper body reactive work and full-chain med ball plyometrics. Box Jump is included at reduced volume for lower body maintenance. Shock Push-Ups introduce upper body reactive loading. Med Ball work is the primary plyo stimulus for this session.</div>
+      <div class="block-header"><span class="block-badge badge-plyo">P1–P5</span><span class="block-title">Upper / Full Body Plyometric Circuit</span></div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th style="width:52px">Block</th><th>Exercise</th><th>Intensity</th><th>Sets</th><th>Reps</th><th>Tempo</th><th>Rest</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr class="row-plyo"><td>P1</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=med+ball+scoop+toss+anterior+throw+tutorial" target="_blank" rel="noopener" class="ex-link">Med Ball Scoop Throw (Anterior)</a></td><td><span class="max-tag">MAX EFFORT</span></td><td>3</td><td>5</td><td>Hip drive → explosive release</td><td>45″</td><td class="note-cell">3–4 kg; full hip extension</td></tr>
+          <tr class="row-plyo"><td>P2</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=med+ball+overhead+slam+tutorial" target="_blank" rel="noopener" class="ex-link">Med Ball Overhead Slam</a></td><td><span class="max-tag">MAX EFFORT</span></td><td>3</td><td>5</td><td>Full extension → aggressive slam</td><td>45″</td><td class="note-cell">4–6 kg; full trunk extension at top</td></tr>
+          <tr class="row-plyo"><td>P3</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=med+ball+rotational+throw+wall+tutorial" target="_blank" rel="noopener" class="ex-link">Med Ball Rotational Throw (Wall)</a></td><td><span class="max-tag">MAX EFFORT</span></td><td>3</td><td>5 ea</td><td>Hip rotate → explosive throw</td><td>45″</td><td class="note-cell">3–4 kg; stand ~1.5 m from wall</td></tr>
+          <tr class="row-plyo"><td>P4</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=shock+push+up+reactive+upper+body+plyometric" target="_blank" rel="noopener" class="ex-link">Shock Push-Up</a> <span class="sub-note">(Drop to floor → explosive push)</span></td><td><span class="max-tag">MAX INTENT</span></td><td>3</td><td>5</td><td>Elastic upper / fast contact</td><td>60″</td><td class="note-cell">From knees if standard too demanding</td></tr>
+          <tr class="row-plyo"><td>P5</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=box+jump+step+down+technique+landing+mechanics" target="_blank" rel="noopener" class="ex-link">Box Jump – Step Down</a> <span class="sub-note">(Maintenance)</span></td><td><span class="max-tag">MAX HEIGHT</span></td><td>3</td><td>4</td><td>Explosive / Stick landing</td><td>60″</td><td class="note-cell">Lower volume — maintenance of Day 1 adaptation</td></tr>
+        </tbody>
+      </table></div>
+      <div class="cue-box"><strong>Day 2 Plyo Intent</strong>Med Ball work is the priority plyo stimulus today. Quality of throw matters — explosive hip rotation and extension drives the ball, not arm strength. Shock Push-Up: land on hands with some give, immediately push back up — the transition from landing to push is the stimulus.</div>
+    </div>
+  </div>
+
+  <!-- ── D2 POWER ── -->
+  <div class="section-gap"></div>
+  <div class="section">
+    <button class="accordion-btn" onclick="toggleAcc('d2-power', this)">
+      <div class="acc-left">
+        <div class="acc-icon acc-icon-power">💥</div>
+        <div>
+          <div class="acc-title">Power Block — Upper &amp; Full Chain</div>
+          <div class="acc-meta">Med Ball Chest Pass · Hang Power Clean · Single Arm Slam · Full Recovery</div>
+        </div>
+      </div>
+      <i class="acc-chevron" id="chev-d2-power">▾</i>
+    </button>
+    <div class="accordion-body" id="d2-power">
+      <div class="section-intro"><strong>Coaching intent:</strong> Day 2 power block focuses on upper body rate of force development and full-chain linkage. Med Ball Chest Pass is the primary upper body ballistic. Hang Power Clean remains an optional progression for coached athletes. SA Med Ball Slam adds rotational and anti-lateral flexion demand.</div>
+      <div class="block-header"><span class="block-badge badge-power">O1–O3</span><span class="block-title">Ballistic Upper &amp; Full Chain</span></div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th style="width:52px">Block</th><th>Exercise</th><th>Intensity / Load</th><th>Sets</th><th>Reps</th><th>Tempo</th><th>Rest</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr class="row-power"><td>O1</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=med+ball+chest+pass+wall+tutorial" target="_blank" rel="noopener" class="ex-link">Med Ball Chest Pass (Wall)</a></td><td><span class="max-tag">MAX EFFORT</span></td><td>4</td><td>5</td><td>Explosive push</td><td>90″</td><td class="note-cell">4–5 kg ball; full arm extension</td></tr>
+          <tr class="row-power"><td>O2</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=med+ball+single+arm+slam+exercise" target="_blank" rel="noopener" class="ex-link">Med Ball SA Slam</a></td><td><span class="max-tag">MAX EFFORT</span></td><td>3</td><td>5 ea</td><td>Full extension → slam</td><td>60″</td><td class="note-cell">3–4 kg; brace core throughout</td></tr>
+          <tr class="row-power"><td>O3*</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=hang+power+clean+tutorial+technique" target="_blank" rel="noopener" class="ex-link">Hang Power Clean</a> <span class="sub-note">(Optional – coached athletes only)</span></td><td><span class="max-tag">MAX INTENT</span></td><td>3</td><td>3</td><td>Explosive / Catch</td><td>2–3 min</td><td class="note-cell">Add after O1; replace SA Slam if selecting this</td></tr>
+        </tbody>
+      </table></div>
+      <div class="cue-box"><strong>Power Block – Day 2 Loading</strong>Chest Pass: stand 1–1.5 m from wall, explosive push from chest — do not lob. SA Slam: reach full overhead extension before slamming, tighten core on the way down. HPC (optional): prioritise catch height and full hip extension — never sacrifice these for load.</div>
+    </div>
+  </div>
+
+  <!-- ── D2 TRI-SETS ── -->
+  <div class="section-gap"></div>
+  <div class="section">
+    <button class="accordion-btn" onclick="toggleAcc('d2-trisets', this)">
+      <div class="acc-left">
+        <div class="acc-icon acc-icon-tri">🏋️</div>
+        <div>
+          <div class="acc-title">3 × Tri-Sets — Upper &amp; Mixed Strength</div>
+          <div class="acc-meta">Push / Pull · Vertical Pull · Single Limb Lower · Anti-Rotation Core</div>
+        </div>
+      </div>
+      <i class="acc-chevron" id="chev-d2-trisets">▾</i>
+    </button>
+    <div class="accordion-body" id="d2-trisets">
+      <div class="section-intro"><strong>Structure:</strong> 3 upper-dominant tri-sets. Tri-A is a push + pull superset with scapular prehab. Tri-B is a vertical pull paired with overhead pressing and posterior shoulder work. Tri-C reintroduces a single limb lower (step-up) plus anti-rotation core and muscular endurance plank. <strong>Load by feel — RIR throughout.</strong></div>
+
+      <!-- TRI-A -->
+      <div class="block-header"><span class="block-badge badge-triset">Tri-Set A</span><span class="block-title">Horizontal Push · Horizontal Pull · Scapular Prehab</span></div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th style="width:52px">Block</th><th>Exercise</th><th>Load / Effort</th><th>Sets</th><th>Reps</th><th>Tempo</th><th>Rest</th></tr></thead>
+        <tbody>
+          <tr class="row-main"><td>A1</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=bench+press+technique+dumbbell+barbell+tutorial" target="_blank" rel="noopener" class="ex-link">DB / BB Bench Press</a></td><td><span class="rir-tag">RIR 2–3</span></td><td>4</td><td>8</td><td>Controlled ecc. / Exp.</td><td>10″ → next</td></tr>
+          <tr class="row-main"><td>A2</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=barbell+dumbbell+row+chest+supported+technique" target="_blank" rel="noopener" class="ex-link">Barbell / DB Row</a> <span class="sub-note">(Chest supported preferred)</span></td><td><span class="rir-tag">RIR 2</span></td><td>4</td><td>10</td><td>Controlled / 2s squeeze</td><td>10″ → next</td></tr>
+          <tr class="row-supp"><td>A3</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=band+pull+apart+scapular+retraction+exercise" target="_blank" rel="noopener" class="ex-link">Band Pull-Apart (Scapular Retraction)</a></td><td>Light / Controlled</td><td>3</td><td>15</td><td>2s hold at end range</td><td>90–120″ then repeat A</td></tr>
+        </tbody>
+      </table></div>
+      <div class="triset-connector"><div class="triset-line"></div>A1 → A2 → A3 · Rest · Repeat × 4 / 4 / 3<div class="triset-line" style="background:linear-gradient(90deg,transparent,var(--gold))"></div></div>
+
+      <!-- TRI-B -->
+      <div class="block-header"><span class="block-badge badge-triset">Tri-Set B</span><span class="block-title">Vertical Pull · Overhead Press · Posterior Shoulder</span></div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th style="width:52px">Block</th><th>Exercise</th><th>Load / Effort</th><th>Sets</th><th>Reps</th><th>Tempo</th><th>Rest</th></tr></thead>
+        <tbody>
+          <tr class="row-main"><td>B1</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=chin+up+lat+pulldown+technique+tutorial" target="_blank" rel="noopener" class="ex-link">Chin-Up / Lat Pulldown</a></td><td><span class="rir-tag">RIR 2</span></td><td>4</td><td>8</td><td>Full ROM / 2s top hold</td><td>10″ → next</td></tr>
+          <tr class="row-main"><td>B2</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=dumbbell+overhead+press+technique+tutorial" target="_blank" rel="noopener" class="ex-link">DB Overhead Press</a></td><td><span class="rir-tag">RIR 2–3</span></td><td>3</td><td>10</td><td>Controlled / full lockout</td><td>10″ → next</td></tr>
+          <tr class="row-supp"><td>B3</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=face+pull+cable+band+exercise+tutorial" target="_blank" rel="noopener" class="ex-link">Face Pull (Cable or Band)</a></td><td>Light / Controlled</td><td>3</td><td>15</td><td>Slow / 2s squeeze</td><td>90–120″ then repeat B</td></tr>
+        </tbody>
+      </table></div>
+      <div class="triset-connector"><div class="triset-line"></div>B1 → B2 → B3 · Rest · Repeat × 4 / 3 / 3<div class="triset-line" style="background:linear-gradient(90deg,transparent,var(--gold))"></div></div>
+
+      <!-- TRI-C -->
+      <div class="block-header"><span class="block-badge badge-triset">Tri-Set C</span><span class="block-title">Single Limb Lower · Anti-Rotation Core · ME Plank</span></div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th style="width:52px">Block</th><th>Exercise</th><th>Load / Effort</th><th>Sets</th><th>Reps</th><th>Tempo</th><th>Rest</th></tr></thead>
+        <tbody>
+          <tr class="row-main"><td>C1</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=step+up+exercise+dumbbell+technique+tutorial" target="_blank" rel="noopener" class="ex-link">Step-Up</a> <span class="sub-note">(DB or BW · 30–40 cm box)</span></td><td><span class="rir-tag">RIR 2–3</span></td><td>3</td><td>10 ea</td><td>Controlled / drive through heel</td><td>10″ → next</td></tr>
+          <tr class="row-supp"><td>C2</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=pallof+press+anti+rotation+core+exercise" target="_blank" rel="noopener" class="ex-link">Pallof Press (Anti-Rotation)</a></td><td>Controlled</td><td>3</td><td>12 ea</td><td>Press out → 2s hold → return</td><td>10″ → next</td></tr>
+          <tr class="row-supp"><td>C3</td><td class="ex-name"><a href="https://www.youtube.com/results?search_query=RKC+plank+technique+tutorial" target="_blank" rel="noopener" class="ex-link">RKC Plank</a> <span class="sub-note">(Posterior pelvic tilt, squeeze everything)</span></td><td><span class="iso-tag">ISOMETRIC</span></td><td>3</td><td>20–30s</td><td>Max tension throughout</td><td>90–120″ then repeat C</td></tr>
+        </tbody>
+      </table></div>
+      <div class="triset-connector"><div class="triset-line"></div>C1 → C2 → C3 · Rest · Repeat × 3<div class="triset-line" style="background:linear-gradient(90deg,transparent,var(--gold))"></div></div>
+
+      <div class="cue-box"><strong>Day 2 Tri-Set Loading Guidelines</strong>Bench: controlled 3-second eccentric, explosive push — no bouncing off the chest. Row: lead with elbow, squeeze scapulae at the top. Chin-Up: full hang at the bottom, chin clears bar at top. Overhead Press: no lumbar extension — brace core before pressing. RKC Plank: posterior pelvic tilt, squeeze glutes and quads, pull elbows toward feet — this is not a rest position.</div>
+    </div>
+  </div>
+
+  <!-- ── D2 SPECIAL CIRCUITS ── -->
+  <div class="section-gap"></div>
+  <div class="section">
+    <button class="accordion-btn special-btn" onclick="toggleAcc('d2-special', this)">
+      <div class="acc-left">
+        <div class="acc-icon acc-icon-spec">🩺</div>
+        <div>
+          <div class="acc-title">Special Exercise Circuits</div>
+          <div class="acc-meta">Athlete Choice · Select the block most relevant to your current issue · ~8–10 min</div>
+        </div>
+      </div>
+      <i class="acc-chevron" id="chev-d2-special">▾</i>
+    </button>
+    <div class="accordion-body" id="d2-special">
+      <div class="section-intro" style="border-left:3px solid var(--spec-acc);margin:12px 16px;border-radius:0 6px 6px 0;background:rgba(155,127,232,0.05);"><strong style="color:var(--spec-acc);">Instructions:</strong> Each athlete selects <em>one</em> circuit. If no active issue, choose <strong>Shoulder Immobility</strong> as a maintenance priority on Day 2, or <strong>Hip Mobility</strong>. Perform 2–3 rounds with minimal rest.</div>
+      <div class="special-grid">
+        <div class="spec-card" onclick="toggleSpec(this)"><div class="spec-card-hdr"><div class="spec-name"><div class="spec-dot"></div>Hamstring Issues</div><i class="spec-chevron">▾</i></div><div class="spec-choose">Tap to expand</div><div class="spec-body">
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=isometric+nordic+hamstring+hold+exercise" target="_blank" rel="noopener" class="ex-link">Isometric Nordic Hold (30°)</a></div><div class="spec-ex-detail">3 × 30s</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=floor+hamstring+curl+slider+exercise" target="_blank" rel="noopener" class="ex-link">Floor Hamstring Curl (Slider)</a></div><div class="spec-ex-detail">3 × 10 / slow ecc.</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=single+leg+rdl+cable+hamstring+exercise" target="_blank" rel="noopener" class="ex-link">Seated Single Leg RDL (Cable)</a></div><div class="spec-ex-detail">2 × 12 ea / RIR 2</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=standing+hip+flexion+band+exercise" target="_blank" rel="noopener" class="ex-link">Standing Hip Flexion (Band)</a></div><div class="spec-ex-detail">2 × 15 ea / controlled</div></div>
+          <div class="spec-note">Begin with isometrics; progress to eccentrics only when pain-free.</div>
+        </div></div>
+        <div class="spec-card" onclick="toggleSpec(this)"><div class="spec-card-hdr"><div class="spec-name"><div class="spec-dot"></div>Lower Back Compression</div><i class="spec-chevron">▾</i></div><div class="spec-choose">Tap to expand</div><div class="spec-body">
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=cat+camel+spinal+decompression+exercise" target="_blank" rel="noopener" class="ex-link">Cat-Camel (Decompression)</a></div><div class="spec-ex-detail">2 × 15 cycles</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=bird+dog+exercise+extended+hold+tutorial" target="_blank" rel="noopener" class="ex-link">Bird Dog (Extended Hold)</a></div><div class="spec-ex-detail">3 × 8 ea / 10s hold</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=pallof+press+anti+rotation+core+exercise" target="_blank" rel="noopener" class="ex-link">Pallof Press (Anti-Rotation)</a></div><div class="spec-ex-detail">3 × 12 ea</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=childs+pose+lower+back+stretch" target="_blank" rel="noopener" class="ex-link">Child's Pose (Hold)</a></div><div class="spec-ex-detail">2 × 60s</div></div>
+          <div class="spec-note">Decompressive circuit. Avoid loaded flexion. Pair with Hip Mobility if available.</div>
+        </div></div>
+        <div class="spec-card" onclick="toggleSpec(this)"><div class="spec-card-hdr"><div class="spec-name"><div class="spec-dot"></div>Groin / Adductor Pain</div><i class="spec-chevron">▾</i></div><div class="spec-choose">Tap to expand</div><div class="spec-body">
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=copenhagen+plank+short+lever+adductor+exercise" target="_blank" rel="noopener" class="ex-link">Copenhagen Adductor Plank (Short Lever)</a></div><div class="spec-ex-detail">3 × 20–30s ea</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=side+lying+adductor+raise+exercise" target="_blank" rel="noopener" class="ex-link">Side-Lying Adductor Raise</a></div><div class="spec-ex-detail">3 × 12 ea / slow</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=adductor+squeeze+ball+exercise+groin" target="_blank" rel="noopener" class="ex-link">Standing Squeeze (Ball / Fist)</a></div><div class="spec-ex-detail">3 × 10s hold × 5</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=long+adductor+stretch+floor+groin" target="_blank" rel="noopener" class="ex-link">Long Adductor Stretch (Floor)</a></div><div class="spec-ex-detail">2 × 45s</div></div>
+          <div class="spec-note">Copenhagen plank: start short lever, progress to long lever over 4 weeks.</div>
+        </div></div>
+        <div class="spec-card" onclick="toggleSpec(this)"><div class="spec-card-hdr"><div class="spec-name"><div class="spec-dot"></div>Knee Tendinitis (Patellar)</div><i class="spec-chevron">▾</i></div><div class="spec-choose">Tap to expand</div><div class="spec-body">
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=spanish+squat+isometric+hold+patellar+tendon" target="_blank" rel="noopener" class="ex-link">Spanish Squat Isometric Hold</a></div><div class="spec-ex-detail">5 × 45s / heavy load</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=terminal+knee+extension+band+exercise+TKE" target="_blank" rel="noopener" class="ex-link">Terminal Knee Extension (Band)</a></div><div class="spec-ex-detail">3 × 20 ea</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=single+leg+eccentric+step+down+knee+rehab" target="_blank" rel="noopener" class="ex-link">Single Leg Eccentric Step Down</a></div><div class="spec-ex-detail">3 × 8 ea / 4s lower</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=VMO+wall+sit+quad+exercise" target="_blank" rel="noopener" class="ex-link">VMO Wall Sit</a></div><div class="spec-ex-detail">3 × 30–45s</div></div>
+          <div class="spec-note">Spanish squat ISO before session if acute pain. Add eccentric step down only when pain VAS &lt;3.</div>
+        </div></div>
+        <div class="spec-card" onclick="toggleSpec(this)"><div class="spec-card-hdr"><div class="spec-name"><div class="spec-dot"></div>Hip Mobility</div><i class="spec-chevron">▾</i></div><div class="spec-choose">Tap to expand</div><div class="spec-body">
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=hip+cars+controlled+articular+rotations+tutorial" target="_blank" rel="noopener" class="ex-link">Hip CARs (Controlled Articular Rotations)</a></div><div class="spec-ex-detail">2 × 5 ea / slow full ROM</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=90+90+hip+internal+rotation+mobility+exercise" target="_blank" rel="noopener" class="ex-link">90/90 Hip Internal Rotation Bias</a></div><div class="spec-ex-detail">3 × 45s ea</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=deep+squat+hold+band+distraction+mobility" target="_blank" rel="noopener" class="ex-link">Deep Squat Hold (Band distraction)</a></div><div class="spec-ex-detail">3 × 45s</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=pigeon+stretch+hip+mobility+tutorial" target="_blank" rel="noopener" class="ex-link">Pigeon Stretch (Floor or Elevated)</a></div><div class="spec-ex-detail">2 × 60s ea</div></div>
+          <div class="spec-note">Default maintenance circuit when no active issue. Recommended for Day 2 if shoulder circuit not needed.</div>
+        </div></div>
+        <div class="spec-card" onclick="toggleSpec(this)"><div class="spec-card-hdr"><div class="spec-name"><div class="spec-dot"></div>Ankle Mobility</div><i class="spec-chevron">▾</i></div><div class="spec-choose">Tap to expand</div><div class="spec-body">
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=ankle+cars+circles+mobility+exercise" target="_blank" rel="noopener" class="ex-link">Ankle CARs (Circles)</a></div><div class="spec-ex-detail">2 × 10 ea direction</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=wall+ankle+dorsiflexion+stretch+tutorial" target="_blank" rel="noopener" class="ex-link">Wall Ankle Dorsiflexion Stretch</a></div><div class="spec-ex-detail">3 × 45s ea</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=single+leg+eccentric+calf+raise+tutorial" target="_blank" rel="noopener" class="ex-link">Eccentric Calf Raise (Single Leg)</a></div><div class="spec-ex-detail">3 × 12 ea / 4s lower</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=banded+ankle+talocrural+joint+mobilisation+dorsiflexion" target="_blank" rel="noopener" class="ex-link">Banded Talocrural Joint Mobilisation</a></div><div class="spec-ex-detail">2 × 15 ea / controlled</div></div>
+          <div class="spec-note">Ankle dorsiflexion restriction directly impacts landing mechanics and change of direction.</div>
+        </div></div>
+        <div class="spec-card" onclick="toggleSpec(this)"><div class="spec-card-hdr"><div class="spec-name"><div class="spec-dot"></div>Osgood-Schlatter's</div><i class="spec-chevron">▾</i></div><div class="spec-choose">Tap to expand</div><div class="spec-body">
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=isometric+quad+hold+leg+press+wall+sit+osgood" target="_blank" rel="noopener" class="ex-link">Isometric Quad Hold (Leg Press / Wall Sit)</a></div><div class="spec-ex-detail">4 × 30–45s</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=foam+roll+quadriceps+technique" target="_blank" rel="noopener" class="ex-link">Foam Roll Quad (Soft Tissue)</a></div><div class="spec-ex-detail">2 × 60s ea</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=standing+quad+stretch+technique" target="_blank" rel="noopener" class="ex-link">Standing Quad Stretch</a></div><div class="spec-ex-detail">2 × 45s ea</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=leg+press+full+range+of+motion+technique" target="_blank" rel="noopener" class="ex-link">Low Load Leg Press (Full ROM)</a></div><div class="spec-ex-detail">3 × 15 / very light</div></div>
+          <div class="spec-note">Manage volume during growth spurts. Avoid heavy knee flexion under load during acute flare.</div>
+        </div></div>
+        <div class="spec-card" onclick="toggleSpec(this)"><div class="spec-card-hdr"><div class="spec-name"><div class="spec-dot"></div>Shoulder Immobility / Pain</div><i class="spec-chevron">▾</i></div><div class="spec-choose">Tap to expand</div><div class="spec-body">
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=shoulder+cars+controlled+articular+rotation+tutorial" target="_blank" rel="noopener" class="ex-link">Shoulder CARs</a></div><div class="spec-ex-detail">2 × 5 ea / slow full ROM</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=band+pull+apart+scapular+retraction+exercise" target="_blank" rel="noopener" class="ex-link">Band Pull-Apart (Scapular Retraction)</a></div><div class="spec-ex-detail">3 × 15 / 2s hold</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=face+pull+cable+band+exercise+tutorial" target="_blank" rel="noopener" class="ex-link">Face Pull (Cable or Band)</a></div><div class="spec-ex-detail">3 × 15 ea / slow</div></div>
+          <div class="spec-ex"><div class="spec-ex-name"><a href="https://www.youtube.com/results?search_query=wall+slide+shoulder+exercise+90+90" target="_blank" rel="noopener" class="ex-link">Wall Slide (90/90)</a></div><div class="spec-ex-detail">2 × 10 / full elevation</div></div>
+          <div class="spec-note">Recommended as a default Day 2 maintenance circuit. Prioritise scapular position before any overhead work. Replace pressing with horizontal rows if pain is present.</div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /day2 -->
+
+<!-- ══ FOOTER ══ -->
+<div class="section-gap" style="height:16px"></div>
+<div class="prog-footer">
+  <div class="footer-brand">TMC Performance</div>
+  <p>Full Body S&amp;P · <strong>Level 1 · 2-Day Split</strong> · Senior Gaelic Football</p>
+  <p style="margin-top:6px;"><span style="color:var(--day1);">■</span> Day 1 — Lower Dominant &nbsp;·&nbsp; <span style="color:var(--day2);">■</span> Day 2 — Upper / Full Chain</p>
+  <p style="margin-top:6px;">Colour: <span style="color:#c9a000;">■</span> Plyo &nbsp;·&nbsp; <span style="color:#e05a4a;">■</span> Power &nbsp;·&nbsp; <span style="color:#e84a36;">■</span> Main &nbsp;·&nbsp; <span style="color:#4a88c4;">■</span> Supplementary &nbsp;·&nbsp; <span style="color:#5a9e4a;">■</span> Warm-Up</p>
+  <p style="margin-top:8px;font-size:10px;color:#555;">athletespecialised.lovable.app · Cork &amp; Tipperary · Douglas GAA Gym</p>
+</div>
+
+<script>
+  function switchDay(day) {
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.day-panel').forEach(p => p.classList.remove('active'));
+    document.querySelector(`.day-btn[data-day="${day}"]`).classList.add('active');
+    document.getElementById('day' + day).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function toggleAcc(id, btn) {
+    const body = document.getElementById(id);
+    const chev = document.getElementById('chev-' + id);
+    const isOpen = body.classList.contains('open');
+    if (isOpen) { body.classList.remove('open'); chev.classList.remove('open'); btn.classList.remove('active'); }
+    else         { body.classList.add('open');    chev.classList.add('open');    btn.classList.add('active'); }
+  }
+
+  function toggleSpec(card) {
+    const body  = card.querySelector('.spec-body');
+    const chev  = card.querySelector('.spec-chevron');
+    const label = card.querySelector('.spec-choose');
+    const isOpen = body.classList.contains('open');
+    if (isOpen) { body.classList.remove('open'); chev.classList.remove('open'); card.classList.remove('open'); label.textContent = 'Tap to expand'; }
+    else         { body.classList.add('open');    chev.classList.add('open');    card.classList.add('open');   label.textContent = 'Tap to collapse'; }
+  }
+</script>
+</body>
+</html>
