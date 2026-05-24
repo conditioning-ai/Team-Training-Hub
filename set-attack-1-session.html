@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Set Attack #1 · GAA 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #0f0f0f;
+    --surface:   #181818;
+    --border:    #2a2a2a;
+    --text:      #f0ede8;
+    --muted:     #7a7570;
+    --wu:        #4be8d8;
+    --principle: #c9a84c;
+    --halfpitch: #e84b8a;
+    --fullgame:  #4baee8;
+    --ajax:      #4be8a0;
+    --rugby:     #e8724b;
+    --repeat:    #b44be8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; min-height: 100vh; }
+
+  /* HEADER */
+  header {
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 22px 28px 18px;
+    display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px;
+  }
+  .session-label { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+  h1 { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(22px, 4.5vw, 40px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.01em; line-height: 1; }
+  h1 span { color: var(--halfpitch); }
+  .meta-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 5px 12px; border: 1px solid var(--border); border-radius: 2px; color: var(--muted); }
+  .chip.hi { border-color: var(--halfpitch); color: var(--halfpitch); background: rgba(232,75,138,0.07); }
+
+  /* PRINCIPLE BANNER */
+  .principle-banner {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    border-left: 4px solid var(--principle);
+    padding: 16px 28px;
+    display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+  }
+  .pb-label { font-family: 'Barlow Condensed', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; color: var(--principle); white-space: nowrap; }
+  .pb-text { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text); }
+  .pb-note { font-size: 12px; color: var(--muted); line-height: 1.45; flex: 1; min-width: 200px; }
+
+  /* OVERVIEW */
+  .overview { display: flex; border-bottom: 1px solid var(--border); background: var(--surface); overflow-x: auto; scrollbar-width: none; }
+  .overview::-webkit-scrollbar { display: none; }
+  .ov-card { flex: 1; min-width: 140px; padding: 11px 18px; border-right: 1px solid var(--border); }
+  .ov-card:last-child { border-right: none; }
+  .ov-label { font-family: 'Barlow Condensed', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+  .ov-text { font-size: 12px; font-weight: 500; color: var(--text); line-height: 1.4; }
+
+  /* TIMELINE */
+  .tl-wrap { padding: 13px 24px 11px; background: var(--bg); }
+  .tl-bar { display: flex; border: 1px solid var(--border); border-radius: 2px; overflow: hidden; height: 32px; }
+  .tl-seg { display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(0,0,0,0.8); border-right: 1px solid rgba(0,0,0,0.2); text-align: center; line-height: 1.2; cursor: pointer; user-select: none; transition: opacity 0.15s, filter 0.15s; }
+  .tl-seg:last-child { border-right: none; }
+  .tl-seg:hover { opacity: 0.8; }
+  .tl-seg.tl-active { box-shadow: inset 0 -3px 0 rgba(0,0,0,0.4); }
+  .tl-seg.tl-inactive { opacity: 0.28; filter: saturate(0.15); }
+  .s-wu    { background: var(--wu);        flex: 10; }
+  .s-prin  { background: var(--principle); flex: 8;  }
+  .s-half1 { background: var(--halfpitch); flex: 16; color: rgba(255,255,255,0.9); }
+  .s-main  { background: var(--fullgame);  flex: 28; }
+  .s-half2 { background: var(--repeat);    flex: 12; color: rgba(255,255,255,0.9); }
+
+  /* TAB NAV */
+  .phase-nav { position: sticky; top: 0; z-index: 100; background: var(--bg); border-bottom: 1px solid var(--border); display: flex; overflow-x: auto; scrollbar-width: none; }
+  .phase-nav::-webkit-scrollbar { display: none; }
+  .phase-tab { display: flex; flex-direction: column; gap: 1px; padding: 10px 16px 8px; border-bottom: 3px solid transparent; cursor: pointer; user-select: none; white-space: nowrap; flex-shrink: 0; transition: border-color 0.15s; }
+  .phase-tab + .phase-tab { border-left: 1px solid var(--border); }
+  .phase-tab:hover .tab-name { color: var(--text); }
+  .tab-num { font-family: 'Barlow Condensed', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); }
+  .tab-name { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); transition: color 0.15s; }
+  .tab-dur { font-family: 'Barlow Condensed', sans-serif; font-size: 9.5px; font-weight: 600; color: var(--muted); opacity: 0.4; }
+
+  .phase-tab[data-phase="1"].active { border-color: var(--wu); }
+  .phase-tab[data-phase="1"].active .tab-num, .phase-tab[data-phase="1"].active .tab-name { color: var(--wu); }
+  .phase-tab[data-phase="2"].active { border-color: var(--principle); }
+  .phase-tab[data-phase="2"].active .tab-num, .phase-tab[data-phase="2"].active .tab-name { color: var(--principle); }
+  .phase-tab[data-phase="3"].active { border-color: var(--halfpitch); }
+  .phase-tab[data-phase="3"].active .tab-num, .phase-tab[data-phase="3"].active .tab-name { color: var(--halfpitch); }
+  .phase-tab[data-phase="4"].active { border-color: var(--fullgame); }
+  .phase-tab[data-phase="4"].active .tab-num, .phase-tab[data-phase="4"].active .tab-name { color: var(--fullgame); }
+  .phase-tab[data-phase="5"].active { border-color: var(--repeat); }
+  .phase-tab[data-phase="5"].active .tab-num, .phase-tab[data-phase="5"].active .tab-name { color: var(--repeat); }
+
+  /* PANELS */
+  .panel-wrap { max-width: 820px; margin: 0 auto; padding: 26px 22px 60px; }
+  .phase-panel { display: none; animation: fadeIn 0.17s ease; }
+  .phase-panel.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+  .panel-header { padding: 20px 24px 16px; background: var(--surface); border: 1px solid var(--border); border-bottom: none; position: relative; }
+  .panel-phase-label { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 4px; }
+  .panel-title { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(22px, 4vw, 34px); font-weight: 900; text-transform: uppercase; letter-spacing: 0.01em; line-height: 1; color: var(--text); }
+  .panel-duration { position: absolute; top: 20px; right: 24px; font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.1em; color: var(--muted); }
+  .panel-accent { height: 3px; }
+
+  .phase-panel[data-phase="1"] .panel-phase-label { color: var(--wu); }
+  .phase-panel[data-phase="1"] .panel-accent      { background: var(--wu); }
+  .phase-panel[data-phase="2"] .panel-phase-label { color: var(--principle); }
+  .phase-panel[data-phase="2"] .panel-accent      { background: var(--principle); }
+  .phase-panel[data-phase="3"] .panel-phase-label { color: var(--halfpitch); }
+  .phase-panel[data-phase="3"] .panel-accent      { background: var(--halfpitch); }
+  .phase-panel[data-phase="4"] .panel-phase-label { color: var(--fullgame); }
+  .phase-panel[data-phase="4"] .panel-accent      { background: linear-gradient(90deg, var(--fullgame) 40%, var(--ajax) 70%, var(--rugby)); }
+  .phase-panel[data-phase="5"] .panel-phase-label { color: var(--repeat); }
+  .phase-panel[data-phase="5"] .panel-accent      { background: var(--repeat); }
+
+  .panel-body { background: var(--surface); border: 1px solid var(--border); border-top: none; }
+  .block { border-bottom: 1px solid var(--border); }
+  .block:last-child { border-bottom: none; }
+  .block-label { padding: 13px 24px 0; font-family: 'Barlow Condensed', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); }
+  .exercises { list-style: none; padding: 7px 0 13px; }
+  .exercises li { display: grid; grid-template-columns: 1fr auto; align-items: baseline; padding: 6px 24px; gap: 16px; font-size: 14px; line-height: 1.35; }
+  .ex-name { font-weight: 500; color: var(--text); }
+  .ex-scheme { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; white-space: nowrap; letter-spacing: 0.04em; }
+
+  .phase-panel[data-phase="1"] .ex-scheme { color: var(--wu); }
+  .phase-panel[data-phase="2"] .ex-scheme { color: var(--principle); }
+  .phase-panel[data-phase="3"] .ex-scheme { color: var(--halfpitch); }
+  .phase-panel[data-phase="4"] .ex-scheme { color: var(--fullgame); }
+  .phase-panel[data-phase="5"] .ex-scheme { color: var(--repeat); }
+
+  .sub-list { list-style: none; padding: 2px 24px 10px 40px; }
+  .sub-list li { padding: 4px 0; font-size: 13px; font-weight: 500; color: #c0bdb8; display: flex; align-items: flex-start; gap: 8px; line-height: 1.4; }
+  .sub-dot { width: 3px; height: 3px; border-radius: 50%; flex-shrink: 0; margin-top: 7px; background: var(--muted); }
+
+  .note-tag { display: flex; align-items: flex-start; gap: 8px; margin: 0 24px 13px; padding: 8px 12px; border-radius: 2px; font-size: 12.5px; font-weight: 500; line-height: 1.5; }
+  .note-tag.rest     { background: rgba(255,255,255,0.04); border-left: 2px solid var(--border);      color: var(--muted); }
+  .note-tag.key      { background: rgba(255,255,255,0.04); border-left: 2px solid var(--muted);       color: #b0ada8; }
+  .note-tag.att      { background: rgba(232,75,138,0.05);  border-left: 2px solid var(--halfpitch);   color: #d898b8; }
+  .note-tag.game     { background: rgba(75,174,232,0.05);  border-left: 2px solid var(--fullgame);    color: #a8cce0; }
+  .note-tag.ajax-tag { background: rgba(75,232,160,0.05);  border-left: 2px solid var(--ajax);        color: #90c8a8; }
+  .note-tag.rugby-tag{ background: rgba(232,114,75,0.06);  border-left: 2px solid var(--rugby);       color: #d8a898; }
+  .note-tag.gold     { background: rgba(201,168,76,0.05);  border-left: 2px solid var(--principle);   color: #d8c080; }
+
+  .cues { padding: 10px 24px 16px; }
+  .cue-item { display: flex; gap: 10px; padding: 4px 0; font-size: 13px; color: #9a9590; line-height: 1.45; }
+  .cue-dot { width: 4px; height: 4px; border-radius: 50%; margin-top: 7px; flex-shrink: 0; background: var(--muted); }
+
+  /* WHITEBOARD INPUT */
+  .whiteboard {
+    margin: 14px 24px;
+    background: rgba(201,168,76,0.04);
+    border: 1px dashed rgba(201,168,76,0.25);
+    border-radius: 2px;
+    padding: 16px 18px;
+  }
+
+  .wb-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.26em; text-transform: uppercase;
+    color: var(--principle); margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .wb-icon { font-size: 14px; }
+
+  .wb-principle {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px; font-weight: 900;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    color: var(--text); margin-bottom: 14px;
+  }
+
+  .wb-sub-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 8px;
+  }
+
+  .wb-inputs { display: flex; flex-direction: column; gap: 6px; }
+
+  .wb-row {
+    display: grid; grid-template-columns: 28px 1fr;
+    align-items: center; gap: 10px;
+  }
+
+  .wb-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px; font-weight: 800;
+    letter-spacing: 0.1em; color: var(--principle);
+    text-align: right;
+  }
+
+  .wb-input {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 8px 12px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 13px; color: var(--text);
+    outline: none; width: 100%;
+    transition: border-color 0.15s;
+  }
+
+  .wb-input::placeholder { color: var(--muted); opacity: 0.5; }
+  .wb-input:focus { border-color: rgba(201,168,76,0.4); background: rgba(201,168,76,0.04); }
+
+  /* SEQUENCE (for main session interweave) */
+  .sequence { padding: 8px 24px 16px; display: flex; flex-direction: column; }
+
+  .seq-item { display: flex; gap: 0; position: relative; }
+
+  .seq-item:not(:last-child) .seq-line {
+    position: absolute; left: 15px; top: 32px; bottom: 0;
+    width: 1px; background: var(--border);
+  }
+
+  .seq-marker { width: 32px; flex-shrink: 0; display: flex; align-items: flex-start; padding-top: 10px; }
+
+  .seq-dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid; flex-shrink: 0; }
+  .seq-dot.full  { border-color: var(--fullgame); background: rgba(75,174,232,0.2); }
+  .seq-dot.ajax  { border-color: var(--ajax);     background: rgba(75,232,160,0.2); }
+  .seq-dot.rugby { border-color: var(--rugby);    background: rgba(232,114,75,0.2); }
+  .seq-dot.note  { border-color: var(--muted);    background: rgba(255,255,255,0.05); }
+
+  .seq-content { flex: 1; padding: 9px 0 14px 10px; }
+
+  .seq-type { font-family: 'Barlow Condensed', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 3px; }
+  .seq-type.full  { color: var(--fullgame); }
+  .seq-type.ajax  { color: var(--ajax); }
+  .seq-type.rugby { color: var(--rugby); }
+  .seq-type.note  { color: var(--muted); }
+
+  .seq-title { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.35; }
+  .seq-detail { font-size: 12px; color: var(--muted); margin-top: 3px; line-height: 1.45; }
+
+  .seq-pills { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
+  .seq-pill { font-family: 'Barlow Condensed', sans-serif; font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 7px; border-radius: 2px; }
+  .sp-full  { background: rgba(75,174,232,0.1);  color: var(--fullgame); }
+  .sp-ajax  { background: rgba(75,232,160,0.1);  color: var(--ajax); }
+  .sp-rugby { background: rgba(232,114,75,0.1);  color: var(--rugby); }
+
+  /* SCORE TRACKER */
+  .score-bar {
+    margin: 14px 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--halfpitch);
+    border-radius: 2px;
+    padding: 14px 18px;
+  }
+
+  .score-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.26em; text-transform: uppercase;
+    color: var(--halfpitch); margin-bottom: 12px;
+  }
+
+  .score-teams {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 8px;
+  }
+
+  .score-team {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 10px 12px;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+  }
+
+  .score-team-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .score-display {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 28px; font-weight: 900;
+    color: var(--text); line-height: 1;
+    min-width: 40px; text-align: center;
+    cursor: default;
+    user-select: none;
+  }
+
+  .score-btns { display: flex; gap: 4px; }
+
+  .score-btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px; font-weight: 800;
+    width: 26px; height: 26px;
+    border: 1px solid var(--border); border-radius: 2px;
+    background: rgba(255,255,255,0.04);
+    color: var(--muted); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: color 0.12s, border-color 0.12s, background 0.12s;
+  }
+
+  .score-btn:hover { color: var(--text); border-color: var(--muted); background: rgba(255,255,255,0.08); }
+  .score-btn.plus:hover { color: var(--halfpitch); border-color: rgba(232,75,138,0.4); }
+
+  /* MEDIA SLOT */
+  .media-slot { margin: 14px 24px 6px; }
+  .media-drop { border: 1px dashed var(--border); border-radius: 2px; background: rgba(255,255,255,0.02); min-height: 180px; position: relative; overflow: hidden; cursor: pointer; transition: border-color 0.15s, background 0.15s; display: flex; align-items: center; justify-content: center; }
+  .media-drop:hover { border-color: var(--muted); background: rgba(255,255,255,0.04); }
+  .media-drop.drag-over { border-color: var(--halfpitch); background: rgba(232,75,138,0.04); }
+  .media-empty { display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none; padding: 24px; text-align: center; }
+  .media-empty-icon { font-size: 24px; opacity: 0.15; }
+  .media-empty-title { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+  .media-empty-sub { font-size: 11px; color: var(--muted); opacity: 0.55; line-height: 1.5; }
+  .media-empty-types { display: flex; gap: 5px; margin-top: 2px; }
+  .media-type-pill { font-family: 'Barlow Condensed', sans-serif; font-size: 8px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 2px 7px; border: 1px solid var(--border); border-radius: 2px; color: var(--muted); }
+  .media-drop img, .media-drop video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: none; }
+  .media-drop img.loaded, .media-drop video.loaded { display: block; }
+  .media-drop.has-media .media-empty { display: none; }
+  .media-badge { position: absolute; top: 8px; right: 10px; z-index: 2; font-family: 'Barlow Condensed', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; padding: 3px 7px; background: rgba(0,0,0,0.75); border-radius: 2px; color: var(--muted); }
+  .media-clear { display: none; position: absolute; top: 8px; left: 10px; z-index: 2; font-family: 'Barlow Condensed', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 3px 8px; background: rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 2px; color: var(--muted); cursor: pointer; }
+  .media-clear:hover { color: var(--text); }
+  .media-drop.has-media .media-clear { display: block; }
+  .url-row { display: flex; gap: 0; margin-top: 6px; border: 1px solid var(--border); border-radius: 2px; overflow: hidden; background: var(--surface); }
+  .url-label { font-family: 'Barlow Condensed', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); padding: 0 12px; display: flex; align-items: center; border-right: 1px solid var(--border); white-space: nowrap; background: rgba(255,255,255,0.02); flex-shrink: 0; }
+  .url-input { flex: 1; background: transparent; border: none; outline: none; color: var(--text); font-family: 'Barlow', sans-serif; font-size: 12.5px; padding: 9px 12px; }
+  .url-input::placeholder { color: var(--muted); opacity: 0.45; }
+  .url-btn { font-family: 'Barlow Condensed', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 0 14px; border: none; border-left: 1px solid var(--border); background: rgba(255,255,255,0.04); color: var(--muted); cursor: pointer; white-space: nowrap; transition: color 0.15s, background 0.15s; }
+  .url-btn:hover { color: var(--text); background: rgba(255,255,255,0.08); }
+  .media-hint { font-size: 11px; color: var(--muted); opacity: 0.45; padding: 4px 2px 0; line-height: 1.4; }
+  .file-input { display: none; }
+
+  /* PREV/NEXT */
+  .phase-nav-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; gap: 10px; }
+  .nav-btn { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; padding: 10px 20px; border: 1px solid var(--border); border-radius: 2px; background: var(--surface); color: var(--muted); cursor: pointer; transition: color 0.15s, border-color 0.15s; }
+  .nav-btn:hover:not(:disabled) { color: var(--text); border-color: var(--muted); }
+  .nav-btn:disabled { opacity: 0.18; cursor: default; }
+  .nav-progress { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+
+  @media (max-width: 600px) {
+    header { padding: 16px 14px 14px; }
+    .tl-wrap, .panel-wrap { padding-left: 12px; padding-right: 12px; }
+    .score-teams { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="session-label">Gaelic Football 2026 &middot; What Is Important &middot; Theme: Set Attack</div>
+    <h1>Set Attack <span>#1</span></h1>
+  </div>
+  <div class="meta-chips">
+    <div class="chip hi">Attacking Theme</div>
+    <div class="chip">Full Squad</div>
+    <div class="chip">Half &amp; Full Pitch</div>
+    <div class="chip">5 Phases</div>
+  </div>
+</header>
+
+<!-- PRIMARY PRINCIPLE BANNER -->
+<div class="principle-banner">
+  <div class="pb-label">&#x1F4CB; Primary Principle</div>
+  <div class="pb-text">Work High Value Shots</div>
+  <div class="pb-note">All attacking decisions should funnel toward creating and converting high-value scoring opportunities. Every attack matters &mdash; every ball is treated as if the scoreline depends on it.</div>
+</div>
+
+<div class="overview">
+  <div class="ov-card"><div class="ov-label">Theme</div><div class="ov-text">Set Attack &mdash; attacking structure &amp; shot quality</div></div>
+  <div class="ov-card"><div class="ov-label">Format</div><div class="ov-text">Half pitch 11v11, full game, Ajax &amp; Rugby SSGs</div></div>
+  <div class="ov-card"><div class="ov-label">Structure</div><div class="ov-text">Gamified &mdash; keep score across all 4 teams throughout</div></div>
+  <div class="ov-card"><div class="ov-label">Kit</div><div class="ov-text">&#x1F4CB; Bring whiteboard to pitch</div></div>
+</div>
+
+<div class="tl-wrap">
+  <div class="tl-bar">
+    <div class="tl-seg s-wu    tl-active" data-target="1">WU</div>
+    <div class="tl-seg s-prin"            data-target="2">PRIN&shy;CIPLE</div>
+    <div class="tl-seg s-half1"           data-target="3">EVERY<br>ATT</div>
+    <div class="tl-seg s-main"            data-target="4">FULL + SSG&rsquo;S</div>
+    <div class="tl-seg s-half2"           data-target="5">REPEAT<br>1/2 PITCH</div>
+  </div>
+</div>
+
+<nav class="phase-nav" id="phaseNav">
+  <div class="phase-tab active" data-phase="1"><div class="tab-num">Phase 01</div><div class="tab-name">Warm-Up</div><div class="tab-dur">~12 min</div></div>
+  <div class="phase-tab" data-phase="2"><div class="tab-num">Phase 02</div><div class="tab-name">Principle Setting</div><div class="tab-dur">~8 min</div></div>
+  <div class="phase-tab" data-phase="3"><div class="tab-num">Phase 03</div><div class="tab-name">Every Attack Matters</div><div class="tab-dur">~20 min</div></div>
+  <div class="phase-tab" data-phase="4"><div class="tab-num">Phase 04</div><div class="tab-name">Full Game + SSGs</div><div class="tab-dur">~35 min</div></div>
+  <div class="phase-tab" data-phase="5"><div class="tab-num">Phase 05</div><div class="tab-name">Repeat Half Pitch</div><div class="tab-dur">~15 min</div></div>
+</nav>
+
+<div class="panel-wrap">
+
+  <!-- ── P1: WARM UP ────────────────────────────────────── -->
+  <div class="phase-panel active" data-phase="1">
+    <div class="panel-header">
+      <div class="panel-phase-label">Phase 01 &middot; Warm Up &middot; Pitch</div>
+      <div class="panel-title">Warm-Up</div>
+      <div class="panel-duration">~12 min</div>
+    </div>
+    <div class="panel-accent"></div>
+    <div class="panel-body">
+
+      <div class="block">
+        <div class="block-label">Athletic Warm-Up &mdash; Led by S&amp;C Coach</div>
+        <ul class="exercises">
+          <li><span class="ex-name">Athletic WU</span><span class="ex-scheme">10&ndash;12 min</span></li>
+        </ul>
+        <div class="note-tag rest">&#x23F1; S&amp;C Coach leads this phase. Players are physically prepared for high-intensity attacking work before any ball is introduced.</div>
+      </div>
+
+      <div class="block">
+        <div class="block-label">Tackle Lanes</div>
+        <ul class="exercises">
+          <li><span class="ex-name">Tackle Lanes</span><span class="ex-scheme">With ball</span></li>
+        </ul>
+
+        <div class="media-slot" data-slot="m1">
+          <div class="media-drop" id="drop-m1">
+            <img id="img-m1" src="" alt=""><video id="vid-m1" controls preload="metadata"></video>
+            <div class="media-badge">Tackle Lanes</div>
+            <button class="media-clear" onclick="clearSlot('m1')">&#x2715; Remove</button>
+            <div class="media-empty">
+              <div class="media-empty-icon">&#x25A3;</div>
+              <div class="media-empty-title">Add Image or Video</div>
+              <div class="media-empty-sub">Tap to upload, drag &amp; drop, or paste URL</div>
+              <div class="media-empty-types"><span class="media-type-pill">JPG / PNG</span><span class="media-type-pill">MP4</span><span class="media-type-pill">URL</span></div>
+            </div>
+          </div>
+          <div class="url-row">
+            <span class="url-label">URL</span>
+            <input class="url-input" id="url-m1" type="text" placeholder="Paste image or video URL&hellip;">
+            <button class="url-btn" onclick="loadUrl('m1')">Load</button>
+          </div>
+          <input class="file-input" id="file-m1" type="file" accept="image/*,video/mp4,video/webm,video/ogg">
+          <div class="media-hint">Supported: JPG, PNG, MP4, WebM &mdash; or paste a direct URL</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-label">3 B&rsquo;s of Support Running</div>
+        <ul class="exercises">
+          <li><span class="ex-name">Support Running Drill</span><span class="ex-scheme">With ball</span></li>
+        </ul>
+        <ul class="sub-list">
+          <li><span class="sub-dot"></span><strong>Behind</strong> &mdash; runs in behind the last line of defence, creating depth and scoring opportunities</li>
+          <li><span class="sub-dot"></span><strong>Beside</strong> &mdash; support on the shoulder of the ball carrier, maintaining width and providing an immediate option</li>
+          <li><span class="sub-dot"></span><strong>Before</strong> &mdash; support in front of the ball carrier, offering the short option and keeping possession moving forward</li>
+        </ul>
+        <div class="note-tag key">&#x1F4CC; The 3 B&rsquo;s of support play directly feed the &ldquo;Work High Value Shots&rdquo; principle &mdash; players arriving Behind, Beside, and Before the ball carrier create the range of options that lead to high-percentage scoring opportunities.</div>
+
+        <div class="media-slot" data-slot="m2">
+          <div class="media-drop" id="drop-m2">
+            <img id="img-m2" src="" alt=""><video id="vid-m2" controls preload="metadata"></video>
+            <div class="media-badge">Behind · Beside · Before</div>
+            <button class="media-clear" onclick="clearSlot('m2')">&#x2715; Remove</button>
+            <div class="media-empty">
+              <div class="media-empty-icon">&#x25A3;</div>
+              <div class="media-empty-title">Add Image or Video</div>
+              <div class="media-empty-sub">Tap to upload, drag &amp; drop, or paste URL</div>
+              <div class="media-empty-types"><span class="media-type-pill">JPG / PNG</span><span class="media-type-pill">MP4</span><span class="media-type-pill">URL</span></div>
+            </div>
+          </div>
+          <div class="url-row">
+            <span class="url-label">URL</span>
+            <input class="url-input" id="url-m2" type="text" placeholder="Paste image or video URL&hellip;">
+            <button class="url-btn" onclick="loadUrl('m2')">Load</button>
+          </div>
+          <input class="file-input" id="file-m2" type="file" accept="image/*,video/mp4,video/webm,video/ogg">
+          <div class="media-hint">Supported: JPG, PNG, MP4, WebM &mdash; or paste a direct URL</div>
+        </div>
+      </div>
+
+      <div class="cues">
+        <div class="cue-item"><div class="cue-dot"></div>S&amp;C Coach owns this phase &mdash; coaching staff stay clear and let the warm-up land properly</div>
+        <div class="cue-item"><div class="cue-dot"></div>Tackle lanes set the physical and competitive tone early &mdash; intensity in contact from the first rep</div>
+        <div class="cue-item"><div class="cue-dot"></div>3 B&rsquo;s: name each run as it happens &mdash; Behind, Beside, Before. Language reinforces the pattern.</div>
+      </div>
+
+    </div>
+    <div class="phase-nav-footer">
+      <button class="nav-btn" disabled>&larr; Previous</button>
+      <span class="nav-progress">1 / 5</span>
+      <button class="nav-btn" data-next="2">Next &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ── P2: PRINCIPLE SETTING ──────────────────────────── -->
+  <div class="phase-panel" data-phase="2">
+    <div class="panel-header">
+      <div class="panel-phase-label">Phase 02 &middot; Whiteboard &middot; Player-Led</div>
+      <div class="panel-title">Principle Setting</div>
+      <div class="panel-duration">~8 min</div>
+    </div>
+    <div class="panel-accent"></div>
+    <div class="panel-body">
+
+      <div class="block">
+        <div class="block-label">Primary Principle</div>
+        <ul class="exercises">
+          <li><span class="ex-name">Theme</span><span class="ex-scheme">Work High Value Shots</span></li>
+          <li><span class="ex-name">Source</span><span class="ex-scheme">Whiteboard on pitch</span></li>
+        </ul>
+        <div class="note-tag gold">&#x1F4CB; The coach puts the question to the players: <em>&ldquo;What makes a shot high value?&rdquo;</em> Players describe what they see and feel on the pitch from their own experience. The coach&rsquo;s job is to listen carefully and find the simplest, clearest language to capture what each player means &mdash; not to impose the answer, but to reflect it back in a form the whole group can hold onto and use.</div>
+      </div>
+
+      <div class="block">
+        <div class="block-label">Sub-Principles &mdash; Player-Led, Coach-Distilled</div>
+
+        <div class="whiteboard">
+          <div class="wb-title"><span class="wb-icon">&#x1F4CB;</span> Whiteboard &mdash; Record Here During Discussion</div>
+          <div class="wb-principle">Work High Value Shots</div>
+          <div class="wb-sub-label">Players describe what matters &mdash; coach finds the language</div>
+          <div class="wb-inputs">
+            <div class="wb-row">
+              <div class="wb-num">1.</div>
+              <input class="wb-input" type="text" placeholder="Player idea &rarr; coach distils into clear language&hellip;">
+            </div>
+            <div class="wb-row">
+              <div class="wb-num">2.</div>
+              <input class="wb-input" type="text" placeholder="Player idea &rarr; coach distils into clear language&hellip;">
+            </div>
+            <div class="wb-row">
+              <div class="wb-num">3.</div>
+              <input class="wb-input" type="text" placeholder="Player idea &rarr; coach distils into clear language&hellip;">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-label">Gamify &mdash; Score All Session</div>
+        <ul class="exercises">
+          <li><span class="ex-name">Scoreboard</span><span class="ex-scheme">Keep score &mdash; all 4 teams</span></li>
+          <li><span class="ex-name">Format</span><span class="ex-scheme">AvB and CvD run separately</span></li>
+        </ul>
+        <div class="note-tag att">&#x1F3AF; Score is kept across the entire session &mdash; not just individual games. Every attack in every phase contributes to the running total. This makes every ball matter.</div>
+
+        <!-- LIVE SCOREBOARD -->
+        <div class="score-bar">
+          <div class="score-title">&#x1F3C6; Live Score &mdash; All 4 Teams</div>
+          <div class="score-teams">
+            <div class="score-team">
+              <div class="score-team-label">Team A</div>
+              <div class="score-display" id="score-a">0</div>
+              <div class="score-btns">
+                <button class="score-btn" onclick="adjustScore('a',-1)">&minus;</button>
+                <button class="score-btn plus" onclick="adjustScore('a',1)">&#xFF0B;</button>
+              </div>
+            </div>
+            <div class="score-team">
+              <div class="score-team-label">Team B</div>
+              <div class="score-display" id="score-b">0</div>
+              <div class="score-btns">
+                <button class="score-btn" onclick="adjustScore('b',-1)">&minus;</button>
+                <button class="score-btn plus" onclick="adjustScore('b',1)">&#xFF0B;</button>
+              </div>
+            </div>
+            <div class="score-team">
+              <div class="score-team-label">Team C</div>
+              <div class="score-display" id="score-c">0</div>
+              <div class="score-btns">
+                <button class="score-btn" onclick="adjustScore('c',-1)">&minus;</button>
+                <button class="score-btn plus" onclick="adjustScore('c',1)">&#xFF0B;</button>
+              </div>
+            </div>
+            <div class="score-team">
+              <div class="score-team-label">Team D</div>
+              <div class="score-display" id="score-d">0</div>
+              <div class="score-btns">
+                <button class="score-btn" onclick="adjustScore('d',-1)">&minus;</button>
+                <button class="score-btn plus" onclick="adjustScore('d',1)">&#xFF0B;</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cues">
+        <div class="cue-item"><div class="cue-dot"></div>Ask the question and then listen &mdash; players know what a high-value shot feels like from the pitch. Your job is to hear it, not teach it.</div>
+        <div class="cue-item"><div class="cue-dot"></div>When a player explains their idea, find the shortest, plainest way to say it back &mdash; one line they&rsquo;ll remember under pressure in Phase 05.</div>
+        <div class="cue-item"><div class="cue-dot"></div>Write the distilled language on the whiteboard, not your version of it. If it came from them, it sticks.</div>
+        <div class="cue-item"><div class="cue-dot"></div>Remind them the score runs all session &mdash; set the expectation now so every attack feels meaningful.</div>
+      </div>
+
+    </div>
+    <div class="phase-nav-footer">
+      <button class="nav-btn" data-prev="1">&larr; Previous</button>
+      <span class="nav-progress">2 / 5</span>
+      <button class="nav-btn" data-next="3">Next &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ── P3: EVERY ATTACK MATTERS ───────────────────────── -->
+  <div class="phase-panel" data-phase="3">
+    <div class="panel-header">
+      <div class="panel-phase-label">Phase 03 &middot; Half Pitch &middot; 11v11</div>
+      <div class="panel-title">&ldquo;Every Attack Matters&rdquo;</div>
+      <div class="panel-duration">~20 min</div>
+    </div>
+    <div class="panel-accent"></div>
+    <div class="panel-body">
+
+      <div class="block">
+        <div class="block-label">Format</div>
+        <ul class="exercises">
+          <li><span class="ex-name">Pitch</span><span class="ex-scheme">Half pitch</span></li>
+          <li><span class="ex-name">Games</span><span class="ex-scheme">A v B &amp; C v D (simultaneous)</span></li>
+          <li><span class="ex-name">Balls</span><span class="ex-scheme">5 balls each game</span></li>
+        </ul>
+      </div>
+
+      <div class="block">
+        <div class="block-label">Progression Structure &mdash; 5 Balls</div>
+        <ul class="sub-list">
+          <li><span class="sub-dot"></span><strong>Balls 1&ndash;3: No constraints.</strong> Attackers play freely. Defenders play normally. Read what the attack does naturally.</li>
+          <li><span class="sub-dot"></span><strong>Balls 4&ndash;5: Defender constraint.</strong> Coach of the defending team sets up a specific defensive shape (man or zone) to challenge the attackers. This is about testing the attack &mdash; not developing the defence.</li>
+        </ul>
+        <div class="note-tag att">&#x1F3AF; The constraint is a challenge to the attackers, not a defensive drill. Coach of the defending team directs the set-up. Man and zone are the easiest constraints to apply.</div>
+      </div>
+
+      <div class="block">
+        <div class="block-label">Defensive Constraint Options</div>
+        <ul class="exercises">
+          <li><span class="ex-name">Man marking</span><span class="ex-scheme">Easiest to set</span></li>
+          <li><span class="ex-name">Zonal defence</span><span class="ex-scheme">Easiest to set</span></li>
+        </ul>
+        <div class="note-tag key">&#x1F4CC; The defending coach calls the shape for the last 2 balls. Attackers don&rsquo;t know what&rsquo;s coming until they receive the ball &mdash; keeps the read-and-react quality high.</div>
+      </div>
+
+      <div class="media-slot" data-slot="m3">
+        <div class="media-drop" id="drop-m3">
+          <img id="img-m3" src="" alt=""><video id="vid-m3" controls preload="metadata"></video>
+          <div class="media-badge">Half Pitch Setup</div>
+          <button class="media-clear" onclick="clearSlot('m3')">&#x2715; Remove</button>
+          <div class="media-empty">
+            <div class="media-empty-icon">&#x25A3;</div>
+            <div class="media-empty-title">Add Pitch Diagram or Video</div>
+            <div class="media-empty-sub">Tap to upload, drag &amp; drop, or paste URL</div>
+            <div class="media-empty-types"><span class="media-type-pill">JPG / PNG</span><span class="media-type-pill">MP4</span><span class="media-type-pill">URL</span></div>
+          </div>
+        </div>
+        <div class="url-row">
+          <span class="url-label">URL</span>
+          <input class="url-input" id="url-m3" type="text" placeholder="Paste image or video URL&hellip;">
+          <button class="url-btn" onclick="loadUrl('m3')">Load</button>
+        </div>
+        <input class="file-input" id="file-m3" type="file" accept="image/*,video/mp4,video/webm,video/ogg">
+        <div class="media-hint">Supported: JPG, PNG, MP4, WebM &mdash; or paste a direct URL</div>
+      </div>
+
+      <div class="cues">
+        <div class="cue-item"><div class="cue-dot"></div>Name every score out loud &mdash; reinforce the sub-principles when a high-value shot lands</div>
+        <div class="cue-item"><div class="cue-dot"></div>When attackers struggle with the constraint, let them figure it out for at least one ball before intervening</div>
+        <div class="cue-item"><div class="cue-dot"></div>Reset quickly between balls &mdash; the tempo of attack is part of the stimulus</div>
+        <div class="cue-item"><div class="cue-dot"></div>Update the scoreboard after every 5-ball set</div>
+      </div>
+
+    </div>
+    <div class="phase-nav-footer">
+      <button class="nav-btn" data-prev="2">&larr; Previous</button>
+      <span class="nav-progress">3 / 5</span>
+      <button class="nav-btn" data-next="4">Next &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ── P4: FULL GAME + SSGs ────────────────────────────── -->
+  <div class="phase-panel" data-phase="4">
+    <div class="panel-header">
+      <div class="panel-phase-label">Phase 04 &middot; Full Pitch + SSG Areas &middot; Rotating</div>
+      <div class="panel-title">Full Game + SSGs &mdash; Paired &amp; Rotating</div>
+      <div class="panel-duration">~35 min</div>
+    </div>
+    <div class="panel-accent"></div>
+    <div class="panel-body">
+
+      <div class="block">
+        <div class="block-label">Structure</div>
+        <ul class="exercises">
+          <li><span class="ex-name">Full Game</span><span class="ex-scheme">A v C &middot; &times;15 min</span></li>
+          <li><span class="ex-name">SSG Game A + B</span><span class="ex-scheme">B &amp; D &middot; &times;2 &times;6 min, 2 min rest</span></li>
+          <li><span class="ex-name">Rotation</span><span class="ex-scheme">Full game &harr; SSGs &mdash; rotate after each block</span></li>
+        </ul>
+        <div class="note-tag game">&#x1F4CC; Full game and SSGs run simultaneously. A v C on the full pitch. B and D rotate through Game A (Ajax) and Game B (Rugby) with 2 mins rest between each SSG. Then groups rotate.</div>
+      </div>
+
+      <div class="block">
+        <div class="block-label">Session Sequence</div>
+        <div class="sequence">
+
+          <div class="seq-item">
+            <div class="seq-line"></div>
+            <div class="seq-marker"><div class="seq-dot full"></div></div>
+            <div class="seq-content">
+              <div class="seq-type full">Full Game</div>
+              <div class="seq-title">A v C &mdash; Full Pitch &middot; 15 mins</div>
+              <div class="seq-detail">Full pitch game. Score continues from Phase 03. High-value shot principle applies &mdash; coaches reference the whiteboard sub-principles during the game.</div>
+            </div>
+          </div>
+
+          <div class="seq-item">
+            <div class="seq-line"></div>
+            <div class="seq-marker"><div class="seq-dot ajax"></div></div>
+            <div class="seq-content">
+              <div class="seq-type ajax">SSG &mdash; Game A</div>
+              <div class="seq-title">Ajax Game &middot; B &amp; D &middot; 6 mins</div>
+              <div class="seq-detail">Ajax-style SSG. Affords: pivot play, overlaps, wide play, 1v1s, 2v1 defending principles.</div>
+              <div class="seq-pills">
+                <span class="seq-pill sp-ajax">Pivot Play</span>
+                <span class="seq-pill sp-ajax">Overlaps</span>
+                <span class="seq-pill sp-ajax">Wide Play</span>
+                <span class="seq-pill sp-ajax">1v1s</span>
+                <span class="seq-pill sp-ajax">2v1 Def</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="seq-item">
+            <div class="seq-line"></div>
+            <div class="seq-marker"><div class="seq-dot note"></div></div>
+            <div class="seq-content">
+              <div class="seq-type note">Rest</div>
+              <div class="seq-title">2 mins rest between SSGs</div>
+            </div>
+          </div>
+
+          <div class="seq-item">
+            <div class="seq-line"></div>
+            <div class="seq-marker"><div class="seq-dot rugby"></div></div>
+            <div class="seq-content">
+              <div class="seq-type rugby">SSG &mdash; Game B</div>
+              <div class="seq-title">Rugby Game &middot; B &amp; D &middot; 6 mins</div>
+              <div class="seq-detail">Rugby-style SSG. Affords: pressing, counter-pressing, off-the-shoulder runs, tackling, ball-handling skills.</div>
+              <div class="seq-pills">
+                <span class="seq-pill sp-rugby">Pressing</span>
+                <span class="seq-pill sp-rugby">Counter Press</span>
+                <span class="seq-pill sp-rugby">Off Shoulder</span>
+                <span class="seq-pill sp-rugby">Tackling</span>
+                <span class="seq-pill sp-rugby">Ball Skills</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="seq-item">
+            <div class="seq-line"></div>
+            <div class="seq-marker"><div class="seq-dot note"></div></div>
+            <div class="seq-content">
+              <div class="seq-type note">Rotate</div>
+              <div class="seq-title">Groups Rotate &mdash; Full Game &harr; SSGs</div>
+              <div class="seq-detail">A &amp; C move to SSGs. B &amp; D move to full game. Repeat the full sequence.</div>
+            </div>
+          </div>
+
+          <div class="seq-item">
+            <div class="seq-marker"><div class="seq-dot full"></div></div>
+            <div class="seq-content">
+              <div class="seq-type full">Full Game</div>
+              <div class="seq-title">B v D &mdash; Full Pitch &middot; 15 mins</div>
+              <div class="seq-detail">Same format. Score continues. A &amp; C now work through Ajax and Rugby SSGs.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="media-slot" data-slot="m4">
+        <div class="media-drop" id="drop-m4">
+          <img id="img-m4" src="" alt=""><video id="vid-m4" controls preload="metadata"></video>
+          <div class="media-badge">Pitch Layout</div>
+          <button class="media-clear" onclick="clearSlot('m4')">&#x2715; Remove</button>
+          <div class="media-empty">
+            <div class="media-empty-icon">&#x25A3;</div>
+            <div class="media-empty-title">Add Pitch Layout or Video</div>
+            <div class="media-empty-sub">Tap to upload, drag &amp; drop, or paste URL</div>
+            <div class="media-empty-types"><span class="media-type-pill">JPG / PNG</span><span class="media-type-pill">MP4</span><span class="media-type-pill">URL</span></div>
+          </div>
+        </div>
+        <div class="url-row">
+          <span class="url-label">URL</span>
+          <input class="url-input" id="url-m4" type="text" placeholder="Paste image or video URL&hellip;">
+          <button class="url-btn" onclick="loadUrl('m4')">Load</button>
+        </div>
+        <input class="file-input" id="file-m4" type="file" accept="image/*,video/mp4,video/webm,video/ogg">
+        <div class="media-hint">Supported: JPG, PNG, MP4, WebM &mdash; or paste a direct URL</div>
+      </div>
+
+      <div class="cues">
+        <div class="cue-item"><div class="cue-dot"></div>Full game: reference the primary principle and sub-principles when a shot opportunity arises &mdash; name it in real time</div>
+        <div class="cue-item"><div class="cue-dot"></div>Ajax SSG: watch for the pivot to create the overlap. If it&rsquo;s not happening, freeze and reset once.</div>
+        <div class="cue-item"><div class="cue-dot"></div>Rugby SSG: pressing lines and off-the-shoulder timing are the key reads. If pressing is passive, challenge it immediately.</div>
+        <div class="cue-item"><div class="cue-dot"></div>Keep the scoreboard live across both games &mdash; announce scores at every rotation</div>
+      </div>
+
+    </div>
+    <div class="phase-nav-footer">
+      <button class="nav-btn" data-prev="3">&larr; Previous</button>
+      <span class="nav-progress">4 / 5</span>
+      <button class="nav-btn" data-next="5">Next &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ── P5: REPEAT HALF PITCH ──────────────────────────── -->
+  <div class="phase-panel" data-phase="5">
+    <div class="panel-header">
+      <div class="panel-phase-label">Phase 05 &middot; Half Pitch &middot; Repeat</div>
+      <div class="panel-title">Repeat &mdash; Every Attack Matters</div>
+      <div class="panel-duration">~15 min</div>
+    </div>
+    <div class="panel-accent"></div>
+    <div class="panel-body">
+
+      <div class="block">
+        <div class="block-label">Same Format &mdash; Higher Fatigue Context</div>
+        <ul class="exercises">
+          <li><span class="ex-name">Format</span><span class="ex-scheme">Half pitch 11v11 &mdash; same structure</span></li>
+          <li><span class="ex-name">Context</span><span class="ex-scheme">Post full-game fatigue</span></li>
+          <li><span class="ex-name">Score</span><span class="ex-scheme">Continues from earlier</span></li>
+        </ul>
+        <div class="note-tag att">&#x1F3AF; Return to the half-pitch 11v11 format after the full game and SSG block. Bodies are tired &mdash; decision-making under fatigue is the stimulus. The session principle is tested for real here.</div>
+      </div>
+
+      <div class="block">
+        <div class="block-label">Coaching Focus</div>
+        <ul class="sub-list">
+          <li><span class="sub-dot"></span>Are the sub-principles from Phase 02 showing up under fatigue?</li>
+          <li><span class="sub-dot"></span>Are attackers still working high-value shots or taking low-percentage options when tired?</li>
+          <li><span class="sub-dot"></span>What decision-making breakdown appears first as fatigue sets in?</li>
+          <li><span class="sub-dot"></span>This is the best read of the session &mdash; observe before you intervene.</li>
+        </ul>
+        <div class="note-tag gold">&#x1F4CB; End of session: go back to the whiteboard. Ask the players whether what they described in Phase 02 actually showed up in the game. Let them evaluate first &mdash; the coach&rsquo;s role here is to confirm, clarify, or gently challenge what they see, not to deliver a verdict.</div>
+      </div>
+
+      <div class="cues">
+        <div class="cue-item"><div class="cue-dot"></div>Minimum coaching intervention here &mdash; this is the test, not another teaching moment</div>
+        <div class="cue-item"><div class="cue-dot"></div>Announce the final score at the end. Name what mattered &mdash; high value or not.</div>
+        <div class="cue-item"><div class="cue-dot"></div>If one team is running away with it, ask why publicly &mdash; let players reflect on shot selection together</div>
+      </div>
+
+    </div>
+    <div class="phase-nav-footer">
+      <button class="nav-btn" data-prev="4">&larr; Previous</button>
+      <span class="nav-progress">5 / 5</span>
+      <button class="nav-btn" disabled>Next &rarr;</button>
+    </div>
+  </div>
+
+</div><!-- end panel-wrap -->
+
+<script>
+/* ── TAB / TIMELINE NAV ──────────────────────────────── */
+function goToPhase(n) {
+  document.querySelectorAll('.phase-panel').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelector('.phase-panel[data-phase="' + n + '"]').classList.add('active');
+  document.querySelectorAll('.phase-tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelector('.phase-tab[data-phase="' + n + '"]').classList.add('active');
+  document.querySelectorAll('.tl-seg').forEach(function(s) {
+    s.classList.remove('tl-active', 'tl-inactive');
+    parseInt(s.dataset.target) === n ? s.classList.add('tl-active') : s.classList.add('tl-inactive');
+  });
+  document.querySelector('.phase-tab[data-phase="' + n + '"]').scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  var nav = document.getElementById('phaseNav');
+  var navTop = nav.getBoundingClientRect().top + window.scrollY;
+  if (window.scrollY > navTop) { window.scrollTo({ top: navTop - 2, behavior: 'smooth' }); }
+}
+
+document.querySelectorAll('.phase-tab').forEach(function(t) { t.addEventListener('click', function() { goToPhase(parseInt(this.dataset.phase)); }); });
+document.querySelectorAll('.tl-seg').forEach(function(s) { s.addEventListener('click', function() { goToPhase(parseInt(this.dataset.target)); }); });
+document.querySelectorAll('.nav-btn[data-next]').forEach(function(b) { b.addEventListener('click', function() { goToPhase(parseInt(this.dataset.next)); }); });
+document.querySelectorAll('.nav-btn[data-prev]').forEach(function(b) { b.addEventListener('click', function() { goToPhase(parseInt(this.dataset.prev)); }); });
+
+/* ── SCOREBOARD ──────────────────────────────────────── */
+var scores = { a: 0, b: 0, c: 0, d: 0 };
+
+function adjustScore(team, delta) {
+  scores[team] = Math.max(0, scores[team] + delta);
+  document.getElementById('score-' + team).textContent = scores[team];
+}
+
+/* ── MEDIA SLOTS ─────────────────────────────────────── */
+var VIDEO_EXTS = ['mp4','webm','ogg','mov'];
+
+function isVideoUrl(u) {
+  var l = u.toLowerCase().split('?')[0];
+  return VIDEO_EXTS.some(function(e) { return l.endsWith('.' + e); });
+}
+
+function activateMedia(slot, type, src) {
+  var drop = document.getElementById('drop-' + slot);
+  var img  = document.getElementById('img-' + slot);
+  var vid  = document.getElementById('vid-' + slot);
+  img.classList.remove('loaded'); vid.classList.remove('loaded');
+  img.src = ''; vid.src = '';
+  if (type === 'image') { img.src = src; img.classList.add('loaded'); }
+  else { vid.src = src; vid.classList.add('loaded'); vid.load(); }
+  drop.classList.add('has-media');
+}
+
+function clearSlot(slot) {
+  var drop = document.getElementById('drop-' + slot);
+  var img  = document.getElementById('img-' + slot);
+  var vid  = document.getElementById('vid-' + slot);
+  img.classList.remove('loaded'); img.src = '';
+  vid.classList.remove('loaded'); vid.src = ''; vid.load();
+  drop.classList.remove('has-media');
+  var ui = document.getElementById('url-' + slot);
+  var fi = document.getElementById('file-' + slot);
+  if (ui) ui.value = '';
+  if (fi) fi.value = '';
+  event.stopPropagation();
+}
+
+function loadUrl(slot) {
+  var val = document.getElementById('url-' + slot).value.trim();
+  if (!val) return;
+  activateMedia(slot, isVideoUrl(val) ? 'video' : 'image', val);
+}
+
+document.querySelectorAll('.url-input').forEach(function(inp) {
+  inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') loadUrl(this.id.replace('url-','')); });
+});
+
+document.querySelectorAll('.media-drop').forEach(function(drop) {
+  drop.addEventListener('click', function(e) {
+    if (e.target.classList.contains('media-clear')) return;
+    if (this.classList.contains('has-media')) return;
+    var fi = document.getElementById('file-' + this.id.replace('drop-',''));
+    if (fi) fi.click();
+  });
+  drop.addEventListener('dragover', function(e) { e.preventDefault(); this.classList.add('drag-over'); });
+  drop.addEventListener('dragleave', function() { this.classList.remove('drag-over'); });
+  drop.addEventListener('drop', function(e) {
+    e.preventDefault(); this.classList.remove('drag-over');
+    var slot = this.id.replace('drop-','');
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      var file = e.dataTransfer.files[0];
+      var isVid = file.type.startsWith('video/');
+      var reader = new FileReader();
+      reader.onload = function(ev) { activateMedia(slot, isVid ? 'video' : 'image', ev.target.result); };
+      reader.readAsDataURL(file);
+      return;
+    }
+    var url = e.dataTransfer.getData('text/plain') || e.dataTransfer.getData('text/uri-list');
+    if (url) { document.getElementById('url-' + slot).value = url; loadUrl(slot); }
+  });
+});
+
+document.querySelectorAll('.file-input').forEach(function(inp) {
+  inp.addEventListener('change', function() {
+    var file = this.files[0]; if (!file) return;
+    var slot = this.id.replace('file-','');
+    var isVid = file.type.startsWith('video/');
+    var reader = new FileReader();
+    reader.onload = function(e) { activateMedia(slot, isVid ? 'video' : 'image', e.target.result); };
+    reader.readAsDataURL(file);
+  });
+});
+</script>
+</body>
+</html>
