@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team Training Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #0a0a0a;
+    --surface:   #141414;
+    --border:    #242424;
+    --border2:   #2e2e2e;
+    --text:      #f0ede8;
+    --muted:     #6a6560;
+    --muted2:    #3a3630;
+    --gold:      #c9a84c;
+    --warmup:    #4be8d8;
+    --diamond:   #4be8a0;
+    --game-blue: #4baee8;
+    --vo2:       #b44be8;
+    --sprint:    #e8724b;
+    --att:       #e84b8a;
+    --tech:      #e8b84b;
+    --hurling:   #5be84b;
+    --soccer:    #4b8ae8;
+    --sc:        #c9a84c;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; min-height: 100vh; overflow-x: hidden; }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.011) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.011) 1px, transparent 1px);
+    background-size: 56px 56px;
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ── HEADER ─────────────────────────────────────────── */
+  header {
+    position: relative; z-index: 20;
+    background: rgba(10,10,10,0.98);
+    border-bottom: 1px solid var(--border);
+    padding: 0 36px;
+    height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .logo { display: flex; align-items: center; gap: 11px; }
+
+  .logo-diamond {
+    width: 26px; height: 26px;
+    background: var(--gold);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    flex-shrink: 0;
+  }
+
+  .logo-text {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px; font-weight: 900;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text); line-height: 1;
+  }
+
+  .logo-text span { color: var(--gold); }
+
+  .header-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--muted);
+    padding: 3px 9px;
+    border: 1px solid var(--border2); border-radius: 2px;
+  }
+
+  /* ── HERO ────────────────────────────────────────────── */
+  .hero {
+    position: relative; z-index: 1;
+    padding: 44px 36px 36px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-eyebrow {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .eyebrow-line { width: 26px; height: 2px; background: var(--gold); }
+
+  .eyebrow-text {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .hero-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(36px, 5.5vw, 68px); font-weight: 900;
+    text-transform: uppercase; letter-spacing: -0.02em;
+    line-height: 0.92; color: var(--text);
+    margin-bottom: 16px; max-width: 520px;
+  }
+
+  .hero-title em { font-style: normal; color: var(--gold); }
+
+  .hero-desc {
+    font-size: 13px; color: var(--muted);
+    line-height: 1.65; max-width: 440px;
+  }
+
+  /* ── PRIMARY NAV ─────────────────────────────────────── */
+  .primary-nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(10,10,10,0.98);
+    border-bottom: 1px solid var(--border);
+    display: flex; overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .primary-nav::-webkit-scrollbar { display: none; }
+
+  .pnav-btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px; font-weight: 800;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 0 22px; height: 46px;
+    border: none; border-right: 1px solid var(--border);
+    background: transparent; color: var(--muted);
+    cursor: pointer; white-space: nowrap; flex-shrink: 0;
+    position: relative; transition: color 0.15s;
+  }
+
+  .pnav-btn::after {
+    content: ''; position: absolute;
+    bottom: 0; left: 0; right: 0; height: 3px;
+    transform: scaleX(0); transition: transform 0.15s;
+  }
+
+  .pnav-btn:hover { color: var(--text); }
+
+  /* active states per sport */
+  .pnav-btn[data-sport="gaa"].active     { color: var(--diamond); }
+  .pnav-btn[data-sport="gaa"].active::after { background: var(--diamond); transform: scaleX(1); }
+
+  .pnav-btn[data-sport="hurling"].active { color: var(--hurling); }
+  .pnav-btn[data-sport="hurling"].active::after { background: var(--hurling); transform: scaleX(1); }
+
+  .pnav-btn[data-sport="soccer"].active  { color: var(--soccer); }
+  .pnav-btn[data-sport="soccer"].active::after { background: var(--soccer); transform: scaleX(1); }
+
+  .pnav-btn[data-sport="sc"].active      { color: var(--gold); }
+  .pnav-btn[data-sport="sc"].active::after { background: var(--gold); transform: scaleX(1); }
+
+  /* session count right-aligned */
+  .pnav-count {
+    margin-left: auto; flex-shrink: 0;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--muted2); padding: 0 20px;
+    display: flex; align-items: center;
+  }
+
+  /* ── SECONDARY NAV ───────────────────────────────────── */
+  .secondary-nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: none;
+    overflow-x: auto; scrollbar-width: none;
+    position: sticky; top: 46px; z-index: 49;
+  }
+
+  .secondary-nav::-webkit-scrollbar { display: none; }
+  .secondary-nav.visible { display: flex; }
+
+  .snav-inner {
+    display: flex; padding: 0 36px;
+    border-left: 3px solid transparent;
+  }
+
+  .snav-inner.gaa     { border-color: var(--diamond); }
+  .snav-inner.hurling { border-color: var(--hurling); }
+  .snav-inner.soccer  { border-color: var(--soccer); }
+
+  .snav-btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10.5px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0 16px; height: 38px;
+    border: none; border-right: 1px solid var(--border);
+    background: transparent; color: var(--muted);
+    cursor: pointer; white-space: nowrap; flex-shrink: 0;
+    position: relative; transition: color 0.15s;
+  }
+
+  .snav-btn:first-child { padding-left: 0; }
+
+  .snav-btn::after {
+    content: ''; position: absolute;
+    bottom: 0; left: 0; right: 0; height: 2px;
+    transform: scaleX(0); transition: transform 0.15s;
+  }
+
+  .snav-btn:hover { color: var(--text); }
+
+  /* active sub-nav coloured per sport */
+  .snav-inner.gaa     .snav-btn.active { color: var(--diamond); }
+  .snav-inner.gaa     .snav-btn.active::after { background: var(--diamond); transform: scaleX(1); }
+
+  .snav-inner.hurling .snav-btn.active { color: var(--hurling); }
+  .snav-inner.hurling .snav-btn.active::after { background: var(--hurling); transform: scaleX(1); }
+
+  .snav-inner.soccer  .snav-btn.active { color: var(--soccer); }
+  .snav-inner.soccer  .snav-btn.active::after { background: var(--soccer); transform: scaleX(1); }
+
+  /* ── CONTENT PANES ───────────────────────────────────── */
+  .pane { display: none; }
+  .pane.active { display: block; }
+
+  /* ── GRID ────────────────────────────────────────────── */
+  .grid-wrap { position: relative; z-index: 1; padding: 26px 36px 72px; }
+
+  .subpane { display: none; }
+  .subpane.active { display: block; }
+
+  .empty-state {
+    padding: 48px 0;
+    text-align: center;
+  }
+
+  .empty-icon { font-size: 28px; opacity: 0.1; margin-bottom: 12px; }
+
+  .empty-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px; font-weight: 800;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 6px;
+  }
+
+  .empty-sub { font-size: 12px; color: var(--muted2); }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(288px, 1fr));
+    gap: 2px;
+  }
+
+  /* ── CARD ────────────────────────────────────────────── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    position: relative; overflow: hidden;
+    text-decoration: none; color: inherit;
+    transition: border-color 0.18s, transform 0.18s;
+    cursor: pointer;
+  }
+
+  .card:hover { transform: translateY(-1px); z-index: 2; }
+  .card:hover .card-arrow { opacity: 1; transform: translateX(0); }
+
+  .card-bar { height: 3px; flex-shrink: 0; }
+  .card-inner { padding: 18px 20px 14px; flex: 1; display: flex; flex-direction: column; gap: 11px; }
+
+  .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+
+  .card-type {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .card-badge {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 2px 7px; border-radius: 2px;
+    border: 1px solid; flex-shrink: 0;
+  }
+
+  .card-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 19px; font-weight: 900;
+    text-transform: uppercase; letter-spacing: 0.01em;
+    line-height: 1.05; color: var(--text);
+  }
+
+  .card-desc { font-size: 12px; color: var(--muted); line-height: 1.55; flex: 1; }
+
+  .card-pills { display: flex; gap: 4px; flex-wrap: wrap; }
+
+  .pill {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 8px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 2px 7px; border-radius: 2px;
+  }
+
+  .card-footer {
+    padding: 10px 20px;
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  .card-stats { display: flex; gap: 14px; }
+
+  .stat { display: flex; flex-direction: column; gap: 1px; }
+
+  .stat-val {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px; font-weight: 800;
+    color: var(--text); letter-spacing: 0.02em;
+  }
+
+  .stat-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 8px; font-weight: 700;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--muted2);
+  }
+
+  .card-arrow {
+    color: var(--muted); opacity: 0;
+    transform: translateX(-4px);
+    transition: opacity 0.18s, transform 0.18s;
+    font-size: 15px;
+  }
+
+  /* ── CARD COLOUR TOKENS ──────────────────────────────── */
+  /* GAA */
+  .c-gaa-att  .card-bar { background: linear-gradient(90deg, var(--sprint), var(--att)); }
+  .c-gaa-att:hover      { border-color: rgba(232,75,138,0.25); }
+  .c-gaa-att  .card-badge { color: var(--att); border-color: rgba(232,75,138,0.3); background: rgba(232,75,138,0.06); }
+
+  .c-gaa-def  .card-bar { background: linear-gradient(90deg, var(--game-blue), #3a80c0); }
+  .c-gaa-def:hover      { border-color: rgba(75,174,232,0.25); }
+  .c-gaa-def  .card-badge { color: var(--game-blue); border-color: rgba(75,174,232,0.3); background: rgba(75,174,232,0.06); }
+
+  .c-gaa-gen  .card-bar { background: linear-gradient(90deg, var(--warmup), var(--diamond), var(--game-blue)); }
+  .c-gaa-gen:hover      { border-color: rgba(75,232,160,0.25); }
+  .c-gaa-gen  .card-badge { color: var(--diamond); border-color: rgba(75,232,160,0.3); background: rgba(75,232,160,0.06); }
+
+  .c-gaa-cond .card-bar { background: linear-gradient(90deg, var(--game-blue), var(--vo2)); }
+  .c-gaa-cond:hover     { border-color: rgba(180,75,232,0.25); }
+  .c-gaa-cond .card-badge { color: var(--vo2); border-color: rgba(180,75,232,0.3); background: rgba(180,75,232,0.06); }
+
+  /* S&C */
+  .c-sc-gym   .card-bar { background: linear-gradient(90deg, var(--gold), #e8a84b); }
+  .c-sc-gym:hover       { border-color: rgba(201,168,76,0.25); }
+  .c-sc-gym   .card-badge { color: var(--gold); border-color: rgba(201,168,76,0.3); background: rgba(201,168,76,0.06); }
+
+  .c-sc-gym2  .card-bar { background: linear-gradient(90deg, #e8724b, var(--gold)); }
+  .c-sc-gym2:hover      { border-color: rgba(232,114,75,0.25); }
+  .c-sc-gym2  .card-badge { color: var(--sprint); border-color: rgba(232,114,75,0.3); background: rgba(232,114,75,0.06); }
+
+  .c-sc-inseason .card-bar { background: linear-gradient(90deg, var(--diamond), var(--game-blue)); }
+  .c-sc-inseason:hover   { border-color: rgba(75,232,160,0.25); }
+  .c-sc-inseason .card-badge { color: var(--diamond); border-color: rgba(75,232,160,0.3); background: rgba(75,232,160,0.06); }
+
+  /* ── PILL COLOURS ────────────────────────────────────── */
+  .pp-wu    { background: rgba(75,232,216,0.1);  color: var(--warmup); }
+  .pp-dia   { background: rgba(75,232,160,0.1);  color: var(--diamond); }
+  .pp-game  { background: rgba(75,174,232,0.1);  color: var(--game-blue); }
+  .pp-vo2   { background: rgba(180,75,232,0.1);  color: var(--vo2); }
+  .pp-gym   { background: rgba(201,168,76,0.1);  color: var(--gold); }
+  .pp-sprint{ background: rgba(232,114,75,0.1);  color: var(--sprint); }
+  .pp-att   { background: rgba(232,75,138,0.1);  color: var(--att); }
+  .pp-tech  { background: rgba(232,184,75,0.1);  color: var(--tech); }
+  .pp-cond  { background: rgba(75,174,232,0.08); color: var(--game-blue); }
+
+  /* ── FOOTER ──────────────────────────────────────────── */
+  footer {
+    position: relative; z-index: 1;
+    border-top: 1px solid var(--border);
+    padding: 16px 36px;
+    background: var(--surface);
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 10px;
+  }
+
+  .footer-brand {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .footer-brand span { color: var(--gold); }
+
+  .footer-right {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted2);
+  }
+
+  @media (max-width: 640px) {
+    header { padding: 0 14px; }
+    .hero  { padding: 32px 14px 24px; }
+    .snav-inner { padding: 0 14px; }
+    .grid-wrap  { padding: 18px 14px 56px; }
+    footer { padding: 14px 14px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <div class="logo-diamond"></div>
+    <div class="logo-text">Team <span>Training</span> Hub</div>
+  </div>
+  <div class="header-tag">Session Library</div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">
+    <div class="eyebrow-line"></div>
+    <div class="eyebrow-text">Programs &amp; Sessions</div>
+  </div>
+  <h1 class="hero-title">Programs<br>for <em>Teams</em><br>&amp; Individuals</h1>
+  <p class="hero-desc">Bespoke sessions for teams and individual players. Select a sport or category to filter, then choose a session to open the full plan.</p>
+</section>
+
+<!-- PRIMARY NAV -->
+<nav class="primary-nav" id="primaryNav">
+  <button class="pnav-btn active" data-sport="gaa">Team Gaelic Football</button>
+  <button class="pnav-btn"        data-sport="hurling">Team Hurling</button>
+  <button class="pnav-btn"        data-sport="soccer">Team Soccer</button>
+  <button class="pnav-btn"        data-sport="sc">S&amp;C</button>
+  <div class="pnav-count" id="pnavCount">4 sessions</div>
+</nav>
+
+<!-- SECONDARY NAV (sport sub-categories) -->
+<div class="secondary-nav visible" id="secondaryNav">
+  <div class="snav-inner gaa" id="snavInner">
+    <button class="snav-btn active" data-sub="all">All Sessions</button>
+    <button class="snav-btn" data-sub="attacking">Attacking Themed</button>
+    <button class="snav-btn" data-sub="defensive">Defensive Themed</button>
+    <button class="snav-btn" data-sub="restart">Re-Start Themed</button>
+    <button class="snav-btn" data-sub="general">General Sessions</button>
+    <button class="snav-btn" data-sub="conditioning">Mixed Conditioning</button>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div id="mainContent">
+
+  <!-- ══ GAA PANE ══════════════════════════════════════════ -->
+  <div class="pane active" data-pane="gaa">
+    <div class="grid-wrap">
+
+      <!-- ALL / ATTACKING -->
+      <div class="subpane active" data-sub="all attacking">
+        <div class="cards-grid">
+          <a class="card c-gaa-att" href="session-16-attacking-scenarios.html">
+            <div class="card-bar"></div>
+            <div class="card-inner">
+              <div class="card-top">
+                <div class="card-type">Team &middot; Field &middot; Session 16 &middot; 23 May</div>
+                <div class="card-badge">Attacking</div>
+              </div>
+              <div class="card-title">Attacking Scenarios</div>
+              <p class="card-desc">Sprint exposures, &ldquo;Up, Back, Through&rdquo; differential learning, then Ajax game interweaved with 4 progressive attacking scenarios across 3 lanes.</p>
+              <div class="card-pills">
+                <span class="pill pp-sprint">Sprints</span>
+                <span class="pill pp-tech">Diff Learning</span>
+                <span class="pill pp-att">Ajax</span>
+                <span class="pill pp-att">Att Scenarios</span>
+              </div>
+            </div>
+            <div class="card-footer">
+              <div class="card-stats">
+                <div class="stat"><div class="stat-val">4</div><div class="stat-label">Phases</div></div>
+                <div class="stat"><div class="stat-val">~80</div><div class="stat-label">Mins</div></div>
+                <div class="stat"><div class="stat-val">Full</div><div class="stat-label">Squad</div></div>
+              </div>
+              <div class="card-arrow">&#x2192;</div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- DEFENSIVE -->
+      <div class="subpane" data-sub="defensive">
+        <div class="cards-grid">
+          <a class="card c-gaa-def" href="gaa-early-season-team-session.html">
+            <div class="card-bar"></div>
+            <div class="card-inner">
+              <div class="card-top">
+                <div class="card-type">Team &middot; Field &middot; Early Season</div>
+                <div class="card-badge">Defensive</div>
+              </div>
+              <div class="card-title">General Early Season Prep</div>
+              <p class="card-desc">Athletic WU, 2v1 defending principles (highest attacker), Diamond games, full game with live constraints, VO&#x2082; runs.</p>
+              <div class="card-pills">
+                <span class="pill pp-wu">Ath WU</span>
+                <span class="pill pp-dia">Diamond</span>
+                <span class="pill pp-game">Full Game</span>
+                <span class="pill pp-vo2">VO&#x2082;</span>
+              </div>
+            </div>
+            <div class="card-footer">
+              <div class="card-stats">
+                <div class="stat"><div class="stat-val">7</div><div class="stat-label">Phases</div></div>
+                <div class="stat"><div class="stat-val">~85</div><div class="stat-label">Mins</div></div>
+                <div class="stat"><div class="stat-val">Full</div><div class="stat-label">Squad</div></div>
+              </div>
+              <div class="card-arrow">&#x2192;</div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- RE-START -->
+      <div class="subpane" data-sub="restart">
+        <div class="empty-state">
+          <div class="empty-icon">&#x25A1;</div>
+          <div class="empty-title">No Re-Start Sessions Yet</div>
+          <div class="empty-sub">Sessions will appear here as they are added.</div>
+        </div>
+      </div>
+
+      <!-- GENERAL -->
+      <div class="subpane" data-sub="general">
+        <div class="cards-grid">
+          <a class="card c-gaa-gen" href="gaa-early-season-team-session.html">
+            <div class="card-bar"></div>
+            <div class="card-inner">
+              <div class="card-top">
+                <div class="card-type">Team &middot; Field &middot; Early Season</div>
+                <div class="card-badge">General</div>
+              </div>
+              <div class="card-title">General Early Season Prep</div>
+              <p class="card-desc">Athletic WU, 2v1 defending principles, Diamond games + tempo runs, full game with live constraints, VO&#x2082; runs. Ball-based throughout.</p>
+              <div class="card-pills">
+                <span class="pill pp-wu">Ath WU</span>
+                <span class="pill pp-dia">Diamond</span>
+                <span class="pill pp-game">Full Game</span>
+                <span class="pill pp-vo2">VO&#x2082;</span>
+              </div>
+            </div>
+            <div class="card-footer">
+              <div class="card-stats">
+                <div class="stat"><div class="stat-val">7</div><div class="stat-label">Phases</div></div>
+                <div class="stat"><div class="stat-val">~85</div><div class="stat-label">Mins</div></div>
+                <div class="stat"><div class="stat-val">Full</div><div class="stat-label">Squad</div></div>
+              </div>
+              <div class="card-arrow">&#x2192;</div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- CONDITIONING -->
+      <div class="subpane" data-sub="conditioning">
+        <div class="cards-grid">
+          <a class="card c-gaa-cond" href="gaa-conditioning-small-numbers.html">
+            <div class="card-bar"></div>
+            <div class="card-inner">
+              <div class="card-top">
+                <div class="card-type">Team &middot; Field &middot; Small Numbers</div>
+                <div class="card-badge">Conditioning</div>
+              </div>
+              <div class="card-title">GAA Conditioning &mdash; Small Numbers</div>
+              <p class="card-desc">Conditioning-focused session designed for small group numbers. High-intensity field-based work with structured recovery.</p>
+              <div class="card-pills">
+                <span class="pill pp-cond">Conditioning</span>
+                <span class="pill pp-game">Small Groups</span>
+                <span class="pill pp-sprint">High Intensity</span>
+              </div>
+            </div>
+            <div class="card-footer">
+              <div class="card-stats">
+                <div class="stat"><div class="stat-val">Field</div><div class="stat-label">Format</div></div>
+                <div class="stat"><div class="stat-val">Small</div><div class="stat-label">Numbers</div></div>
+              </div>
+              <div class="card-arrow">&#x2192;</div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ HURLING PANE ══════════════════════════════════════ -->
+  <div class="pane" data-pane="hurling">
+    <div class="grid-wrap">
+      <div class="subpane active" data-sub="all attacking defensive restart general conditioning">
+        <div class="empty-state">
+          <div class="empty-icon">&#x25A1;</div>
+          <div class="empty-title">Hurling Sessions Coming Soon</div>
+          <div class="empty-sub">Sessions will appear here as they are added.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SOCCER PANE ═══════════════════════════════════════ -->
+  <div class="pane" data-pane="soccer">
+    <div class="grid-wrap">
+      <div class="subpane active" data-sub="all attacking defensive restart general conditioning">
+        <div class="empty-state">
+          <div class="empty-icon">&#x25A1;</div>
+          <div class="empty-title">Soccer Sessions Coming Soon</div>
+          <div class="empty-sub">Sessions will appear here as they are added.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ S&C PANE ══════════════════════════════════════════ -->
+  <div class="pane" data-pane="sc">
+    <div class="grid-wrap">
+      <div class="subpane active" data-sub="all">
+        <div class="cards-grid">
+
+          <a class="card c-sc-gym" href="Gaelic Football 1 Day Full Body Session Level 1.html">
+            <div class="card-bar"></div>
+            <div class="card-inner">
+              <div class="card-top">
+                <div class="card-type">Individual &middot; Gym &middot; Full Body</div>
+                <div class="card-badge">Gym</div>
+              </div>
+              <div class="card-title">1-Day Full Body &mdash; Level 1</div>
+              <p class="card-desc">Single-day full body gym session. Covers all major movement patterns for players with one gym day per week.</p>
+              <div class="card-pills">
+                <span class="pill pp-gym">Full Body</span>
+                <span class="pill pp-gym">Level 1</span>
+                <span class="pill pp-gym">1 Day / Week</span>
+              </div>
+            </div>
+            <div class="card-footer">
+              <div class="card-stats">
+                <div class="stat"><div class="stat-val">1</div><div class="stat-label">Day/Wk</div></div>
+                <div class="stat"><div class="stat-val">Gym</div><div class="stat-label">Format</div></div>
+                <div class="stat"><div class="stat-val">Lvl 1</div><div class="stat-label">Level</div></div>
+              </div>
+              <div class="card-arrow">&#x2192;</div>
+            </div>
+          </a>
+
+          <a class="card c-sc-gym2" href="Gaelic Football 2 Day Split Session Level 1.html">
+            <div class="card-bar"></div>
+            <div class="card-inner">
+              <div class="card-top">
+                <div class="card-type">Individual &middot; Gym &middot; Split</div>
+                <div class="card-badge">Gym</div>
+              </div>
+              <div class="card-title">2-Day Split &mdash; Level 1</div>
+              <p class="card-desc">Two-session split programme for players with two gym days per week. Upper/lower split at Level 1.</p>
+              <div class="card-pills">
+                <span class="pill pp-sprint">2-Day Split</span>
+                <span class="pill pp-gym">Level 1</span>
+                <span class="pill pp-gym">Gym</span>
+              </div>
+            </div>
+            <div class="card-footer">
+              <div class="card-stats">
+                <div class="stat"><div class="stat-val">2</div><div class="stat-label">Days/Wk</div></div>
+                <div class="stat"><div class="stat-val">Gym</div><div class="stat-label">Format</div></div>
+                <div class="stat"><div class="stat-val">Lvl 1</div><div class="stat-label">Level</div></div>
+              </div>
+              <div class="card-arrow">&#x2192;</div>
+            </div>
+          </a>
+
+          <a class="card c-sc-inseason" href="in_season_self_led_1.html">
+            <div class="card-bar"></div>
+            <div class="card-inner">
+              <div class="card-top">
+                <div class="card-type">Individual &middot; Field &middot; In-Season</div>
+                <div class="card-badge">In-Season</div>
+              </div>
+              <div class="card-title">In-Season Self-Led Session</div>
+              <p class="card-desc">Self-directed in-season field session. Structured for players to complete independently during the competitive period.</p>
+              <div class="card-pills">
+                <span class="pill pp-dia">In-Season</span>
+                <span class="pill pp-game">Self-Led</span>
+                <span class="pill pp-wu">Field</span>
+              </div>
+            </div>
+            <div class="card-footer">
+              <div class="card-stats">
+                <div class="stat"><div class="stat-val">Self</div><div class="stat-label">Led</div></div>
+                <div class="stat"><div class="stat-val">Field</div><div class="stat-label">Format</div></div>
+              </div>
+              <div class="card-arrow">&#x2192;</div>
+            </div>
+          </a>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end mainContent -->
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">Team <span>Training</span> Hub</div>
+  <div class="footer-right">S&amp;C &middot; Skill Acquisition &middot; Team Performance</div>
+</footer>
+
+<script>
+  /* ── DATA: which sub-categories each card belongs to ────
+     Cards are placed in subpane elements whose data-sub
+     attribute lists all matching categories (space-separated).
+     The "all" sub always shows everything in the active pane. */
+
+  var sportColours = {
+    gaa:     'gaa',
+    hurling: 'hurling',
+    soccer:  'soccer',
+    sc:      null   // S&C has no sub-nav
+  };
+
+  var subNavLabels = {
+    all:          'All Sessions',
+    attacking:    'Attacking Themed',
+    defensive:    'Defensive Themed',
+    restart:      'Re-Start Themed',
+    general:      'General Sessions',
+    conditioning: 'Mixed Conditioning'
+  };
+
+  var activeSport  = 'gaa';
+  var activeSub    = 'all';
+
+  /* primary nav */
+  document.querySelectorAll('.pnav-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      activeSport = this.dataset.sport;
+      activeSub   = 'all';
+
+      // update primary nav active
+      document.querySelectorAll('.pnav-btn').forEach(function(b) { b.classList.remove('active'); });
+      this.classList.add('active');
+
+      // show/hide panes
+      document.querySelectorAll('.pane').forEach(function(p) { p.classList.remove('active'); });
+      document.querySelector('.pane[data-pane="' + activeSport + '"]').classList.add('active');
+
+      // show/hide secondary nav & update colour
+      var secNav    = document.getElementById('secondaryNav');
+      var snavInner = document.getElementById('snavInner');
+
+      if (activeSport === 'sc') {
+        secNav.classList.remove('visible');
+      } else {
+        secNav.classList.add('visible');
+        snavInner.className = 'snav-inner ' + activeSport;
+        // reset sub-nav active to All
+        document.querySelectorAll('.snav-btn').forEach(function(b) { b.classList.remove('active'); });
+        document.querySelector('.snav-btn[data-sub="all"]').classList.add('active');
+        showSubpane(activeSport, 'all');
+      }
+
+      // update count
+      updateCount();
+    });
+  });
+
+  /* secondary nav */
+  document.querySelectorAll('.snav-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      activeSub = this.dataset.sub;
+      document.querySelectorAll('.snav-btn').forEach(function(b) { b.classList.remove('active'); });
+      this.classList.add('active');
+      showSubpane(activeSport, activeSub);
+      updateCount();
+    });
+  });
+
+  function showSubpane(sport, sub) {
+    var pane = document.querySelector('.pane[data-pane="' + sport + '"]');
+    if (!pane) return;
+    pane.querySelectorAll('.subpane').forEach(function(sp) {
+      var tags = sp.dataset.sub ? sp.dataset.sub.split(' ') : [];
+      var show = sub === 'all'
+        ? tags.indexOf('all') !== -1
+        : tags.indexOf(sub) !== -1;
+      sp.classList.toggle('active', show);
+    });
+  }
+
+  function updateCount() {
+    var pane = document.querySelector('.pane[data-pane="' + activeSport + '"]');
+    var count = 0;
+    if (pane) {
+      pane.querySelectorAll('.subpane.active .card').forEach(function() { count++; });
+    }
+    var badge = document.getElementById('pnavCount');
+    badge.textContent = count + ' session' + (count !== 1 ? 's' : '');
+  }
+
+  // init count
+  updateCount();
+</script>
+
+</body>
+</html>
