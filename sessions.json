@@ -1,0 +1,287 @@
+[
+  {
+    "title": "General Early Season Prep",
+    "file": "gaa-early-season-team-session.html",
+    "sport": "gaa",
+    "themes": [
+      "general",
+      "defensive"
+    ],
+    "color": "gaa-gen",
+    "type": "Team · Field · Early Season",
+    "badge": "Live",
+    "desc": "Athletic WU, 2v1 defending principles (highest attacker), Diamond games + tempo runs, full game with live constraints, VO₂ runs. Ball-based throughout.",
+    "stats": [
+      {
+        "val": "7",
+        "label": "Phases"
+      },
+      {
+        "val": "~85",
+        "label": "Mins"
+      },
+      {
+        "val": "Full",
+        "label": "Squad"
+      }
+    ],
+    "pills": [
+      {
+        "label": "Ath WU",
+        "cls": "pp-wu"
+      },
+      {
+        "label": "Diamond",
+        "cls": "pp-dia"
+      },
+      {
+        "label": "Full Game",
+        "cls": "pp-game"
+      },
+      {
+        "label": "VO₂",
+        "cls": "pp-vo2"
+      }
+    ]
+  },
+  {
+    "title": "Attacking Scenarios",
+    "file": "session-16-attacking-scenarios.html",
+    "sport": "gaa",
+    "themes": [
+      "attacking"
+    ],
+    "color": "gaa-att",
+    "type": "Team · Field · Session 16 · 23 May",
+    "badge": "Live",
+    "desc": "Sprint exposures, “Up, Back, Through” differential learning, then Ajax game interweaved with 4 progressive attacking scenarios across 3 lanes.",
+    "stats": [
+      {
+        "val": "4",
+        "label": "Phases"
+      },
+      {
+        "val": "~80",
+        "label": "Mins"
+      },
+      {
+        "val": "Full",
+        "label": "Squad"
+      }
+    ],
+    "pills": [
+      {
+        "label": "Sprints",
+        "cls": "pp-sprint"
+      },
+      {
+        "label": "Diff Learning",
+        "cls": "pp-tech"
+      },
+      {
+        "label": "Ajax",
+        "cls": "pp-att"
+      },
+      {
+        "label": "Att Scenarios",
+        "cls": "pp-att"
+      }
+    ]
+  },
+  {
+    "title": "Set Attack #1",
+    "file": "set-attack-1-session.html",
+    "sport": "gaa",
+    "themes": [
+      "attacking"
+    ],
+    "color": "gaa-att",
+    "type": "Team · Field · GAA 2026",
+    "badge": "Live",
+    "desc": "Player-led principle setting — Work High Value Shots. Every Attack Matters 11v11, full game paired with Ajax and Rugby SSGs, repeat half-pitch finish.",
+    "stats": [
+      {
+        "val": "5",
+        "label": "Phases"
+      },
+      {
+        "val": "~90",
+        "label": "Mins"
+      },
+      {
+        "val": "Full",
+        "label": "Squad"
+      }
+    ],
+    "pills": [
+      {
+        "label": "Set Attack",
+        "cls": "pp-att"
+      },
+      {
+        "label": "Principle",
+        "cls": "pp-tech"
+      },
+      {
+        "label": "Ajax SSG",
+        "cls": "pp-dia"
+      },
+      {
+        "label": "Rugby SSG",
+        "cls": "pp-sprint"
+      }
+    ]
+  },
+  {
+    "title": "GAA Conditioning — Small Numbers",
+    "file": "gaa-conditioning-small-numbers.html",
+    "sport": "gaa",
+    "themes": [
+      "conditioning"
+    ],
+    "color": "gaa-cond",
+    "type": "Team · Field · Small Numbers",
+    "badge": "Live",
+    "desc": "Conditioning-focused session for small group numbers. High-intensity field-based work with structured recovery.",
+    "stats": [
+      {
+        "val": "Field",
+        "label": "Format"
+      },
+      {
+        "val": "Small",
+        "label": "Numbers"
+      }
+    ],
+    "pills": [
+      {
+        "label": "Conditioning",
+        "cls": "pp-cond"
+      },
+      {
+        "label": "Small Groups",
+        "cls": "pp-game"
+      },
+      {
+        "label": "High Intensity",
+        "cls": "pp-sprint"
+      }
+    ]
+  },
+  {
+    "title": "1-Day Full Body — Level 1",
+    "file": "Gaelic Football 1 Day Full Body Session Level 1.html",
+    "sport": "sc",
+    "themes": [
+      "gym"
+    ],
+    "color": "sc-gym",
+    "type": "Individual · Gym · Full Body",
+    "badge": "Live",
+    "desc": "Single-day full body gym session. Covers all major movement patterns for players with one gym day per week.",
+    "stats": [
+      {
+        "val": "1",
+        "label": "Day/Wk"
+      },
+      {
+        "val": "Gym",
+        "label": "Format"
+      },
+      {
+        "val": "Lvl 1",
+        "label": "Level"
+      }
+    ],
+    "pills": [
+      {
+        "label": "Full Body",
+        "cls": "pp-gym"
+      },
+      {
+        "label": "Level 1",
+        "cls": "pp-gym"
+      },
+      {
+        "label": "1 Day/Wk",
+        "cls": "pp-gym"
+      }
+    ]
+  },
+  {
+    "title": "2-Day Split — Level 1",
+    "file": "Gaelic Football 2 Day Split Session Level 1.html",
+    "sport": "sc",
+    "themes": [
+      "gym"
+    ],
+    "color": "sc-gym2",
+    "type": "Individual · Gym · Split",
+    "badge": "Live",
+    "desc": "Two-session split programme for players with two gym days per week. Upper/lower split at Level 1.",
+    "stats": [
+      {
+        "val": "2",
+        "label": "Days/Wk"
+      },
+      {
+        "val": "Gym",
+        "label": "Format"
+      },
+      {
+        "val": "Lvl 1",
+        "label": "Level"
+      }
+    ],
+    "pills": [
+      {
+        "label": "2-Day Split",
+        "cls": "pp-sprint"
+      },
+      {
+        "label": "Level 1",
+        "cls": "pp-gym"
+      },
+      {
+        "label": "Gym",
+        "cls": "pp-gym"
+      }
+    ]
+  },
+  {
+    "title": "In-Season Self-Led Session",
+    "file": "in_season_self_led_1.html",
+    "sport": "sc",
+    "themes": [
+      "inseason"
+    ],
+    "color": "sc-inseason",
+    "type": "Individual · Field · In-Season",
+    "badge": "Live",
+    "desc": "Self-directed in-season field session. Structured for players to complete independently during the competitive period.",
+    "stats": [
+      {
+        "val": "Self",
+        "label": "Led"
+      },
+      {
+        "val": "Field",
+        "label": "Format"
+      }
+    ],
+    "pills": [
+      {
+        "label": "In-Season",
+        "cls": "pp-dia"
+      },
+      {
+        "label": "Self-Led",
+        "cls": "pp-game"
+      },
+      {
+        "label": "Field",
+        "cls": "pp-wu"
+      }
+    ]
+  }
+]
