@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attacking Scenarios · Session 16</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #0f0f0f;
+    --surface:   #181818;
+    --border:    #2a2a2a;
+    --text:      #f0ede8;
+    --muted:     #7a7570;
+    --warmup:    #4be8d8;
+    --sprint:    #e8724b;
+    --tech:      #e8b84b;
+    --ajax:      #4baee8;
+    --att:       #e84b8a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; min-height: 100vh; }
+
+  /* HEADER */
+  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 22px 28px 18px; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px; }
+  .session-label { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+  h1 { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(22px, 4.5vw, 40px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.01em; line-height: 1; }
+  h1 span { color: var(--att); }
+  .meta-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 5px 12px; border: 1px solid var(--border); border-radius: 2px; color: var(--muted); }
+  .chip.hi { border-color: var(--att); color: var(--att); background: rgba(232,75,138,0.07); }
+
+  /* OVERVIEW */
+  .overview { display: flex; border-bottom: 1px solid var(--border); background: var(--surface); overflow-x: auto; scrollbar-width: none; }
+  .overview::-webkit-scrollbar { display: none; }
+  .ov-card { flex: 1; min-width: 140px; padding: 11px 18px; border-right: 1px solid var(--border); }
+  .ov-card:last-child { border-right: none; }
+  .ov-label { font-family: 'Barlow Condensed', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+  .ov-text { font-size: 12px; font-weight: 500; color: var(--text); line-height: 1.4; }
+
+  /* TIMELINE */
+  .tl-wrap { padding: 13px 24px 11px; background: var(--bg); }
+  .tl-bar { display: flex; border: 1px solid var(--border); border-radius: 2px; overflow: hidden; height: 32px; }
+  .tl-seg { display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(0,0,0,0.8); border-right: 1px solid rgba(0,0,0,0.2); text-align: center; line-height: 1.2; cursor: pointer; user-select: none; transition: opacity 0.15s, filter 0.15s; }
+  .tl-seg:last-child { border-right: none; }
+  .tl-seg:hover { opacity: 0.8; }
+  .tl-seg.tl-active { box-shadow: inset 0 -3px 0 rgba(0,0,0,0.4); }
+  .tl-seg.tl-inactive { opacity: 0.28; filter: saturate(0.15); }
+  .s-wu     { background: var(--warmup);  flex: 14; }
+  .s-sprint { background: var(--sprint);  flex: 12; color: rgba(255,255,255,0.9); }
+  .s-tech   { background: var(--tech);    flex: 14; }
+  .s-main   { background: var(--ajax);    flex: 28; }
+
+  /* TAB NAV */
+  .phase-nav { position: sticky; top: 0; z-index: 100; background: var(--bg); border-bottom: 1px solid var(--border); display: flex; overflow-x: auto; scrollbar-width: none; }
+  .phase-nav::-webkit-scrollbar { display: none; }
+  .phase-tab { display: flex; flex-direction: column; gap: 1px; padding: 10px 16px 8px; border-bottom: 3px solid transparent; cursor: pointer; user-select: none; white-space: nowrap; flex-shrink: 0; transition: border-color 0.15s; }
+  .phase-tab + .phase-tab { border-left: 1px solid var(--border); }
+  .phase-tab:hover .tab-name { color: var(--text); }
+  .tab-num { font-family: 'Barlow Condensed', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); }
+  .tab-name { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); transition: color 0.15s; }
+  .tab-dur { font-family: 'Barlow Condensed', sans-serif; font-size: 9.5px; font-weight: 600; color: var(--muted); opacity: 0.4; }
+
+  .phase-tab[data-phase="1"].active { border-color: var(--warmup); }
+  .phase-tab[data-phase="1"].active .tab-num, .phase-tab[data-phase="1"].active .tab-name { color: var(--warmup); }
+  .phase-tab[data-phase="2"].active { border-color: var(--sprint); }
+  .phase-tab[data-phase="2"].active .tab-num, .phase-tab[data-phase="2"].active .tab-name { color: var(--sprint); }
+  .phase-tab[data-phase="3"].active { border-color: var(--tech); }
+  .phase-tab[data-phase="3"].active .tab-num, .phase-tab[data-phase="3"].active .tab-name { color: var(--tech); }
+  .phase-tab[data-phase="4"].active { border-color: var(--ajax); }
+  .phase-tab[data-phase="4"].active .tab-num, .phase-tab[data-phase="4"].active .tab-name { color: var(--ajax); }
+
+  /* PANELS */
+  .panel-wrap { max-width: 820px; margin: 0 auto; padding: 26px 22px 60px; }
+  .phase-panel { display: none; animation: fadeIn 0.17s ease; }
+  .phase-panel.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+  .panel-header { padding: 20px 24px 16px; background: var(--surface); border: 1px solid var(--border); border-bottom: none; position: relative; }
+  .panel-phase-label { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 4px; }
+  .panel-title { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(22px, 4vw, 34px); font-weight: 900; text-transform: uppercase; letter-spacing: 0.01em; line-height: 1; color: var(--text); }
+  .panel-duration { position: absolute; top: 20px; right: 24px; font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.1em; color: var(--muted); }
+  .panel-accent { height: 3px; }
+
+  .phase-panel[data-phase="1"] .panel-phase-label { color: var(--warmup); }
+  .phase-panel[data-phase="1"] .panel-accent      { background: var(--warmup); }
+  .phase-panel[data-phase="2"] .panel-phase-label { color: var(--sprint); }
+  .phase-panel[data-phase="2"] .panel-accent      { background: var(--sprint); }
+  .phase-panel[data-phase="3"] .panel-phase-label { color: var(--tech); }
+  .phase-panel[data-phase="3"] .panel-accent      { background: var(--tech); }
+  .phase-panel[data-phase="4"] .panel-phase-label { color: var(--ajax); }
+  .phase-panel[data-phase="4"] .panel-accent      { background: linear-gradient(90deg, var(--ajax) 60%, var(--att)); }
+
+  .panel-body { background: var(--surface); border: 1px solid var(--border); border-top: none; }
+  .block { border-bottom: 1px solid var(--border); }
+  .block:last-child { border-bottom: none; }
+  .block-label { padding: 13px 24px 0; font-family: 'Barlow Condensed', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); }
+  .exercises { list-style: none; padding: 7px 0 13px; }
+  .exercises li { display: grid; grid-template-columns: 1fr auto; align-items: baseline; padding: 6px 24px; gap: 16px; font-size: 14px; line-height: 1.35; }
+  .ex-name { font-weight: 500; color: var(--text); }
+  .ex-scheme { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; white-space: nowrap; letter-spacing: 0.04em; }
+
+  .phase-panel[data-phase="1"] .ex-scheme { color: var(--warmup); }
+  .phase-panel[data-phase="2"] .ex-scheme { color: var(--sprint); }
+  .phase-panel[data-phase="3"] .ex-scheme { color: var(--tech); }
+  .phase-panel[data-phase="4"] .ex-scheme { color: var(--ajax); }
+
+  .sub-list { list-style: none; padding: 2px 24px 10px 40px; }
+  .sub-list li { padding: 3px 0; font-size: 13px; font-weight: 500; color: #c0bdb8; display: flex; align-items: flex-start; gap: 8px; line-height: 1.4; }
+  .sub-dot { width: 3px; height: 3px; border-radius: 50%; flex-shrink: 0; margin-top: 7px; background: var(--muted); }
+
+  .note-tag { display: flex; align-items: flex-start; gap: 8px; margin: 0 24px 13px; padding: 8px 12px; border-radius: 2px; font-size: 12.5px; font-weight: 500; line-height: 1.5; }
+  .note-tag.rest  { background: rgba(255,255,255,0.04); border-left: 2px solid var(--border); color: var(--muted); }
+  .note-tag.key   { background: rgba(255,255,255,0.04); border-left: 2px solid var(--muted); color: #b0ada8; }
+  .note-tag.tech  { background: rgba(232,184,75,0.05);  border-left: 2px solid var(--tech); color: #d8c090; }
+  .note-tag.att   { background: rgba(232,75,138,0.06);  border-left: 2px solid var(--att); color: #d898b8; }
+  .note-tag.ajax  { background: rgba(75,174,232,0.05);  border-left: 2px solid var(--ajax); color: #a8cce0; }
+  .note-tag.sprint { background: rgba(232,114,75,0.06); border-left: 2px solid var(--sprint); color: #d8a898; }
+
+  .cues { padding: 10px 24px 16px; }
+  .cue-item { display: flex; gap: 10px; padding: 4px 0; font-size: 13px; color: #9a9590; line-height: 1.45; }
+  .cue-dot { width: 4px; height: 4px; border-radius: 50%; margin-top: 7px; flex-shrink: 0; background: var(--muted); }
+
+  /* SCENARIO SEQUENCE */
+  .sequence { padding: 8px 24px 16px; display: flex; flex-direction: column; gap: 0; }
+
+  .seq-item {
+    display: flex;
+    gap: 0;
+    position: relative;
+  }
+
+  .seq-item:not(:last-child) .seq-line {
+    position: absolute;
+    left: 15px;
+    top: 32px;
+    bottom: 0;
+    width: 1px;
+    background: var(--border);
+  }
+
+  .seq-marker {
+    width: 32px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 10px;
+  }
+
+  .seq-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    border: 2px solid;
+    flex-shrink: 0;
+  }
+
+  .seq-dot.ajax  { border-color: var(--ajax);  background: rgba(75,174,232,0.2); }
+  .seq-dot.att   { border-color: var(--att);   background: rgba(232,75,138,0.2); }
+  .seq-dot.setup { border-color: var(--muted); background: rgba(255,255,255,0.05); }
+
+  .seq-content {
+    flex: 1;
+    padding: 10px 0 14px 10px;
+  }
+
+  .seq-type {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+
+  .seq-type.ajax  { color: var(--ajax); }
+  .seq-type.att   { color: var(--att); }
+  .seq-type.setup { color: var(--muted); }
+
+  .seq-title {
+    font-size: 14px; font-weight: 600;
+    color: var(--text);
+    line-height: 1.35;
+  }
+
+  .seq-detail {
+    font-size: 12px; color: var(--muted);
+    margin-top: 3px; line-height: 1.4;
+  }
+
+  /* SPRINT TABLE */
+  .sprint-table {
+    margin: 8px 24px 14px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .sprint-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sprint-row:last-child { border-bottom: none; }
+
+  .sprint-row.head .sprint-cell {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--muted);
+    background: rgba(255,255,255,0.02);
+  }
+
+  .sprint-cell {
+    padding: 9px 14px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 15px; font-weight: 800;
+    color: var(--text);
+    border-right: 1px solid var(--border);
+    letter-spacing: 0.04em;
+  }
+
+  .sprint-cell:last-child { border-right: none; }
+  .sprint-cell.dist { color: var(--sprint); }
+
+  /* MEDIA SLOT */
+  .media-slot { margin: 14px 24px 6px; }
+  .media-drop { border: 1px dashed var(--border); border-radius: 2px; background: rgba(255,255,255,0.02); min-height: 190px; position: relative; overflow: hidden; cursor: pointer; transition: border-color 0.15s, background 0.15s; display: flex; align-items: center; justify-content: center; }
+  .media-drop:hover { border-color: var(--muted); background: rgba(255,255,255,0.04); }
+  .media-drop.drag-over { border-color: var(--tech); background: rgba(232,184,75,0.04); }
+  .media-empty { display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none; padding: 24px; text-align: center; }
+  .media-empty-icon { font-size: 28px; opacity: 0.15; }
+  .media-empty-title { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+  .media-empty-sub { font-size: 11.5px; color: var(--muted); opacity: 0.6; line-height: 1.5; }
+  .media-empty-types { display: flex; gap: 6px; margin-top: 2px; }
+  .media-type-pill { font-family: 'Barlow Condensed', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; padding: 3px 8px; border: 1px solid var(--border); border-radius: 2px; color: var(--muted); }
+  .media-drop img, .media-drop video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: none; }
+  .media-drop img.loaded, .media-drop video.loaded { display: block; }
+  .media-drop.has-media .media-empty { display: none; }
+  .media-badge { position: absolute; top: 8px; right: 10px; z-index: 2; font-family: 'Barlow Condensed', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; padding: 3px 7px; background: rgba(0,0,0,0.75); border-radius: 2px; }
+  .media-clear { display: none; position: absolute; top: 8px; left: 10px; z-index: 2; font-family: 'Barlow Condensed', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; padding: 3px 8px; background: rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.12); border-radius: 2px; color: var(--muted); cursor: pointer; transition: color 0.15s; }
+  .media-clear:hover { color: var(--text); }
+  .media-drop.has-media .media-clear { display: block; }
+  .url-row { display: flex; gap: 0; margin-top: 6px; border: 1px solid var(--border); border-radius: 2px; overflow: hidden; background: var(--surface); }
+  .url-label { font-family: 'Barlow Condensed', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); padding: 0 12px; display: flex; align-items: center; border-right: 1px solid var(--border); white-space: nowrap; background: rgba(255,255,255,0.02); flex-shrink: 0; }
+  .url-input { flex: 1; background: transparent; border: none; outline: none; color: var(--text); font-family: 'Barlow', sans-serif; font-size: 12.5px; padding: 9px 12px; }
+  .url-input::placeholder { color: var(--muted); opacity: 0.5; }
+  .url-btn { font-family: 'Barlow Condensed', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; padding: 0 14px; border: none; border-left: 1px solid var(--border); background: rgba(255,255,255,0.04); color: var(--muted); cursor: pointer; transition: color 0.15s, background 0.15s; white-space: nowrap; }
+  .url-btn:hover { color: var(--text); background: rgba(255,255,255,0.08); }
+  .media-hint { font-size: 11px; color: var(--muted); opacity: 0.5; padding: 5px 2px 0; line-height: 1.4; }
+  .file-input { display: none; }
+
+  /* PREV/NEXT */
+  .phase-nav-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; gap: 10px; }
+  .nav-btn { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; padding: 10px 20px; border: 1px solid var(--border); border-radius: 2px; background: var(--surface); color: var(--muted); cursor: pointer; transition: color 0.15s, border-color 0.15s; }
+  .nav-btn:hover:not(:disabled) { color: var(--text); border-color: var(--muted); }
+  .nav-btn:disabled { opacity: 0.18; cursor: default; }
+  .nav-progress { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+
+  @media (max-width: 600px) {
+    header { padding: 16px 14px 14px; }
+    .tl-wrap, .panel-wrap { padding-left: 12px; padding-right: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="session-label">Gaelic Football &middot; Session 16 &middot; 23 May</div>
+    <h1>Attacking <span>Scenarios</span></h1>
+  </div>
+  <div class="meta-chips">
+    <div class="chip hi">Attacking Focus</div>
+    <div class="chip">Full Squad</div>
+    <div class="chip">Pitch</div>
+    <div class="chip">4 Phases</div>
+  </div>
+</header>
+
+<div class="overview">
+  <div class="ov-card"><div class="ov-label">Session Goal</div><div class="ov-text">Build attacking patterns through progressive overload &mdash; individual to team</div></div>
+  <div class="ov-card"><div class="ov-label">Physical Theme</div><div class="ov-text">Sprint exposures early &mdash; quality movement before fatigue accumulates</div></div>
+  <div class="ov-card"><div class="ov-label">Technical Theme</div><div class="ov-text">&ldquo;Up, back, through&rdquo; &mdash; differential learning approach</div></div>
+  <div class="ov-card"><div class="ov-label">Main Session</div><div class="ov-text">Ajax game interweaved with 4 attacking scenarios across 3 lanes</div></div>
+</div>
+
+<div class="tl-wrap">
+  <div class="tl-bar">
+    <div class="tl-seg s-wu"     data-target="1">WU</div>
+    <div class="tl-seg s-sprint tl-active" data-target="2">SPRINT<br>EXP</div>
+    <div class="tl-seg s-tech"   data-target="3">TECH<br>DIFF</div>
+    <div class="tl-seg s-main"   data-target="4">AJAX + ATT SCENARIOS</div>
+  </div>
+</div>
+
+<nav class="phase-nav" id="phaseNav">
+  <div class="phase-tab active" data-phase="1"><div class="tab-num">Phase 01</div><div class="tab-name">Warm-Up</div><div class="tab-dur">~15 min</div></div>
+  <div class="phase-tab" data-phase="2"><div class="tab-num">Phase 02</div><div class="tab-name">Sprint Exposures</div><div class="tab-dur">~15 min</div></div>
+  <div class="phase-tab" data-phase="3"><div class="tab-num">Phase 03</div><div class="tab-name">Up Back Through</div><div class="tab-dur">~15 min</div></div>
+  <div class="phase-tab" data-phase="4"><div class="tab-num">Phase 04</div><div class="tab-name">Ajax + Att Scenarios</div><div class="tab-dur">~35 min</div></div>
+</nav>
+
+<div class="panel-wrap">
+
+  <!-- P1: WARM UP -->
+  <div class="phase-panel active" data-phase="1">
+    <div class="panel-header">
+      <div class="panel-phase-label">Phase 01 &middot; Warm Up &middot; Pitch</div>
+      <div class="panel-title">Warm-Up</div>
+      <div class="panel-duration">~15 min</div>
+    </div>
+    <div class="panel-accent"></div>
+    <div class="panel-body">
+
+      <div class="block">
+        <div class="block-label">General Raise</div>
+        <ul class="exercises">
+          <li><span class="ex-name">Jog</span><span class="ex-scheme">400m</span></li>
+        </ul>
+      </div>
+
+      <div class="block">
+        <div class="block-label">Movement Circuit</div>
+        <ul class="exercises">
+          <li><span class="ex-name">BW Squats</span><span class="ex-scheme">&times;15</span></li>
+          <li><span class="ex-name">Inchworm to Push Up</span><span class="ex-scheme">&times;6</span></li>
+          <li><span class="ex-name">Forward-Reverse Lunge</span><span class="ex-scheme">&times;6 e/s</span></li>
+          <li><span class="ex-name">Bear Roll</span><span class="ex-scheme">&times;6</span></li>
+        </ul>
+      </div>
+
+      <div class="block">
+        <div class="block-label">In 4&ndash;6s &mdash; Handpass &amp; Kick Pass Game</div>
+        <ul class="exercises">
+          <li><span class="ex-name">Handpass rule</span><span class="ex-scheme">Under 15m</span></li>
+          <li><span class="ex-name">Kick pass rule</span><span class="ex-scheme">More than 30m</span></li>
+        </ul>
+        <div class="note-tag key">&#x1F4CC; Players must be close enough for a handpass OR far enough away for a kick pass &mdash; no middle ground. Forces decisive positioning.</div>
+      </div>
+
+      <div class="block">
+        <div class="block-label">Ball Familiarisation</div>
+        <ul class="exercises">
+          <li><span class="ex-name">Rugby Drill Warm Up</span><span class="ex-scheme">With ball</span></li>
+        </ul>
+      </div>
+
+      <div class="cues">
+        <div class="cue-item"><div class="cue-dot"></div>Movement circuit is deliberate prep for sprinting &mdash; full range on each rep</div>
+        <div class="cue-item"><div class="cue-dot"></div>The 15m / 30m handpass-kick game forces players to solve a positioning problem early &mdash; good mental activation</div>
+        <div class="cue-item"><div class="cue-dot"></div>Don&rsquo;t rush the rugby drill &mdash; it&rsquo;s the last piece before high-intensity sprint work</div>
+      </div>
+
+    </div>
+    <div class="phase-nav-footer">
+      <button class="nav-btn" disabled>&larr; Previous</button>
+      <span class="nav-progress">1 / 4</span>
+      <button class="nav-btn" data-next="2">Next &rarr;</button>
+    </div>
+  </div>
+
+  <!-- P2: SPRINT EXPOSURES -->
+  <div class="phase-panel" data-phase="2">
+    <div class="panel-header">
+      <div class="panel-phase-label">Phase 02 &middot; Physical &middot; Pitch</div>
+      <div class="panel-title">Sprint Exposures</div>
+      <div class="panel-duration">~15 min</div>
+    </div>
+    <div class="panel-accent"></div>
+    <div class="panel-body">
+
+      <div class="block">
+        <div class="block-label">Sprint Programme</div>
+        <div class="sprint-table">
+          <div class="sprint-row head">
+            <div class="sprint-cell">Distance</div>
+            <div class="sprint-cell">Reps</div>
+            <div class="sprint-cell">Intensity</div>
+          </div>
+          <div class="sprint-row">
+            <div class="sprint-cell dist">20m</div>
+            <div class="sprint-cell">&times;3</div>
+            <div class="sprint-cell">Max</div>
+          </div>
+          <div class="sprint-row">
+            <div class="sprint-cell dist">30m</div>
+            <div class="sprint-cell">&times;2</div>
+            <div class="sprint-cell">Max</div>
+          </div>
+          <div class="sprint-row">
+            <div class="sprint-cell dist">40m</div>
+            <div class="sprint-cell">&times;1</div>
+            <div class="sprint-cell">Max</div>
+          </div>
+          <div class="sprint-row">
+            <div class="sprint-cell dist">50m</div>
+            <div class="sprint-cell">&times;1</div>
+            <div class="sprint-cell">Max</div>
+          </div>
+        </div>
+        <div class="note-tag sprint">&#x26A1; Sprint exposures done early while the nervous system is fresh. Full recovery between reps &mdash; these are quality maximal efforts, not conditioning.</div>
+      </div>
+
+      <div class="media-slot" data-slot="sp2">
+        <div class="media-drop" id="drop-sp2">
+          <img id="img-sp2" src="" alt="">
+          <video id="vid-sp2" controls preload="metadata"></video>
+          <div class="media-badge">Sprint Setup</div>
+          <button class="media-clear" onclick="clearSlot('sp2')">&#x2715; Remove</button>
+          <div class="media-empty">
+            <div class="media-empty-icon">&#x25A3;</div>
+            <div class="media-empty-title">Add Image or Video</div>
+            <div class="media-empty-sub">Tap to upload, drag &amp; drop,<br>or paste a URL below</div>
+            <div class="media-empty-types"><span class="media-type-pill">JPG / PNG</span><span class="media-type-pill">MP4</span><span class="media-type-pill">URL</span></div>
+          </div>
+        </div>
+        <div class="url-row">
+          <span class="url-label">URL</span>
+          <input class="url-input" id="url-sp2" type="text" placeholder="Paste image or video URL&hellip;">
+          <button class="url-btn" onclick="loadUrl('sp2')">Load</button>
+        </div>
+        <input class="file-input" id="file-sp2" type="file" accept="image/*,video/mp4,video/webm,video/ogg">
+        <div class="media-hint">Supported: JPG, PNG, GIF, MP4, WebM &mdash; or paste any direct image / video URL</div>
+      </div>
+
+      <div class="cues">
+        <div class="cue-item"><div class="cue-dot"></div>Full recovery between every sprint &mdash; 2&ndash;3 min minimum. Don&rsquo;t rush the rest.</div>
+        <div class="cue-item"><div class="cue-dot"></div>Standing start &mdash; focus on first-step explosion, not lean</div>
+        <div class="cue-item"><div class="cue-dot"></div>Progressive distances build to top speed &mdash; 50m should be peak velocity work</div>
+        <div class="cue-item"><div class="cue-dot"></div>Any player not at full effort gets the rep again &mdash; no coasting on sprints</div>
+      </div>
+
+    </div>
+    <div class="phase-nav-footer">
+      <button class="nav-btn" data-prev="1">&larr; Previous</button>
+      <span class="nav-progress">2 / 4</span>
+      <button class="nav-btn" data-next="3">Next &rarr;</button>
+    </div>
+  </div>
+
+  <!-- P3: TECHNICAL -->
+  <div class="phase-panel" data-phase="3">
+    <div class="panel-header">
+      <div class="panel-phase-label">Phase 03 &middot; Technical &middot; Skill Acquisition</div>
+      <div class="panel-title">&ldquo;Up, Back, Through&rdquo;</div>
+      <div class="panel-duration">~15 min</div>
+    </div>
+    <div class="panel-accent"></div>
+    <div class="panel-body">
+
+      <div class="media-slot" data-slot="sp3">
+        <div class="media-drop" id="drop-sp3">
+          <img id="img-sp3" src="" alt="">
+          <video id="vid-sp3" controls preload="metadata"></video>
+          <div class="media-badge">Drill Setup</div>
+          <button class="media-clear" onclick="clearSlot('sp3')">&#x2715; Remove</button>
+          <div class="media-empty">
+            <div class="media-empty-icon">&#x25A3;</div>
+            <div class="media-empty-title">Add Image or Video</div>
+            <div class="media-empty-sub">Tap to upload, drag &amp; drop,<br>or paste a URL below</div>
+            <div class="media-empty-types"><span class="media-type-pill">JPG / PNG</span><span class="media-type-pill">MP4</span><span class="media-type-pill">URL</span></div>
+          </div>
+        </div>
+        <div class="url-row">
+          <span class="url-label">URL</span>
+          <input class="url-input" id="url-sp3" type="text" placeholder="Paste image or video URL&hellip;">
+          <button class="url-btn" onclick="loadUrl('sp3')">Load</button>
+        </div>
+        <input class="file-input" id="file-sp3" type="file" accept="image/*,video/mp4,video/webm,video/ogg">
+        <div class="media-hint">Supported: JPG, PNG, GIF, MP4, WebM &mdash; or paste any direct image / video URL</div>
+      </div>
+
+      <div class="block">
+        <div class="block-label">Approach &mdash; Differential Learning</div>
+        <ul class="exercises">
+          <li><span class="ex-name">Method</span><span class="ex-scheme">Differential Learning</span></li>
+          <li><span class="ex-name">Pattern</span><span class="ex-scheme">&ldquo;Up, Back, Through&rdquo;</span></li>
+        </ul>
+        <div class="note-tag tech">&#x1F4A1; Differential Learning deliberately varies the movement stimulus rep-to-rep. Players self-organise their technique rather than repeating a fixed pattern &mdash; builds robust, adaptable skill.</div>
+      </div>
+
+      <div class="block">
+        <div class="block-label">Drill Progressions</div>
+        <ul class="sub-list" style="padding: 10px 24px 14px 24px;">
+          <li><span class="sub-dot"></span><strong>Stage 1 &mdash; Basic cone drill:</strong> player runs the up-back-through pattern solo through cones. Establish the movement shape.</li>
+          <li><span class="sub-dot"></span><strong>Stage 2 &mdash; Coach give &amp; go:</strong> coach varies the return ball (hand, kick, height, weight) on every rep. Player must read and adapt.</li>
+          <li><span class="sub-dot"></span><strong>Stage 3 &mdash; 1 skill + 4 steps to shoot:</strong> player receives, takes 1 skill (solo, hop, or catch) and has exactly 4 steps to get a shot away.</li>
+        </ul>
+        <div class="note-tag tech">&#x1F3AF; The 4-step shooting rule forces decisive, clean footwork from the moment of reception &mdash; no dithering, no extra solo.</div>
+      </div>
+
+      <div class="cues">
+        <div class="cue-item"><div class="cue-dot"></div>Coach: vary the return ball deliberately &mdash; different height, weight, and type every single rep</div>
+        <div class="cue-item"><div class="cue-dot"></div>Players should feel slightly uncomfortable &mdash; that&rsquo;s the differential learning working</div>
+        <div class="cue-item"><div class="cue-dot"></div>The 4-step rule is strict &mdash; count it out if needed. Footwork quality under constraint is the whole point.</div>
+        <div class="cue-item"><div class="cue-dot"></div>Don&rsquo;t over-coach technique &mdash; let players self-correct across reps</div>
+      </div>
+
+    </div>
+    <div class="phase-nav-footer">
+      <button class="nav-btn" data-prev="2">&larr; Previous</button>
+      <span class="nav-progress">3 / 4</span>
+      <button class="nav-btn" data-next="4">Next &rarr;</button>
+    </div>
+  </div>
+
+  <!-- P4: MAIN SESSION -->
+  <div class="phase-panel" data-phase="4">
+    <div class="panel-header">
+      <div class="panel-phase-label">Phase 04 &middot; Main Session &middot; 3-Lane Pitch</div>
+      <div class="panel-title">Ajax Game + Attacking Scenarios</div>
+      <div class="panel-duration">~35 min</div>
+    </div>
+    <div class="panel-accent"></div>
+    <div class="panel-body">
+
+      <div class="media-slot" data-slot="sp4">
+        <div class="media-drop" id="drop-sp4">
+          <img id="img-sp4" src="" alt="">
+          <video id="vid-sp4" controls preload="metadata"></video>
+          <div class="media-badge">3-Lane Setup</div>
+          <button class="media-clear" onclick="clearSlot('sp4')">&#x2715; Remove</button>
+          <div class="media-empty">
+            <div class="media-empty-icon">&#x25A3;</div>
+            <div class="media-empty-title">Add Pitch Diagram or Video</div>
+            <div class="media-empty-sub">Tap to upload, drag &amp; drop,<br>or paste a URL below</div>
+            <div class="media-empty-types"><span class="media-type-pill">JPG / PNG</span><span class="media-type-pill">MP4</span><span class="media-type-pill">URL</span></div>
+          </div>
+        </div>
+        <div class="url-row">
+          <span class="url-label">URL</span>
+          <input class="url-input" id="url-sp4" type="text" placeholder="Paste image or video URL&hellip;">
+          <button class="url-btn" onclick="loadUrl('sp4')">Load</button>
+        </div>
+        <input class="file-input" id="file-sp4" type="file" accept="image/*,video/mp4,video/webm,video/ogg">
+        <div class="media-hint">Supported: JPG, PNG, GIF, MP4, WebM &mdash; or paste any direct image / video URL</div>
+      </div>
+
+      <div class="block">
+        <div class="block-label">Session Structure</div>
+        <ul class="exercises">
+          <li><span class="ex-name">Setup</span><span class="ex-scheme">3-lane pitch for Ajax &amp; att scenarios</span></li>
+          <li><span class="ex-name">Ajax constraints</span><span class="ex-scheme">3:1s &times;2, with tempo</span></li>
+          <li><span class="ex-name">Format</span><span class="ex-scheme">Ajax game interweaved with 4 att scenarios</span></li>
+        </ul>
+        <div class="note-tag ajax">&#x1F4CC; The Ajax game runs &ldquo;between the lines&rdquo; as the base game. Each attacking scenario is inserted between Ajax rounds &mdash; same pitch, different problem each time.</div>
+      </div>
+
+      <div class="block">
+        <div class="block-label">Session Sequence</div>
+        <div class="sequence">
+
+          <div class="seq-item">
+            <div class="seq-line"></div>
+            <div class="seq-marker"><div class="seq-dot setup"></div></div>
+            <div class="seq-content">
+              <div class="seq-type setup">Setup</div>
+              <div class="seq-title">Ajax Game &mdash; Constraints 3:1s &times;2</div>
+              <div class="seq-detail">Establish the game. 3:1 overloads, with tempo runs between rounds. Players get the feel of the pitch and lanes.</div>
+            </div>
+          </div>
+
+          <div class="seq-item">
+            <div class="seq-line"></div>
+            <div class="seq-marker"><div class="seq-dot att"></div></div>
+            <div class="seq-content">
+              <div class="seq-type att">Att Scenario #1</div>
+              <div class="seq-title">Score in Middle Lane &mdash; 15 Seconds</div>
+              <div class="seq-detail">Attack must penetrate through the middle lane and score inside 15 seconds from initiation. Forces direct, decisive attacking play.</div>
+            </div>
+          </div>
+
+          <div class="seq-item">
+            <div class="seq-line"></div>
+            <div class="seq-marker"><div class="seq-dot ajax"></div></div>
+            <div class="seq-content">
+              <div class="seq-type ajax">Ajax Game</div>
+              <div class="seq-title">Between the Lines</div>
+              <div class="seq-detail">Return to the Ajax game. Players apply what they found in Scenario #1 back into open play.</div>
+            </div>
+          </div>
+
+          <div class="seq-item">
+            <div class="seq-line"></div>
+            <div class="seq-marker"><div class="seq-dot att"></div></div>
+            <div class="seq-content">
+              <div class="seq-type att">Att Scenario #2</div>
+              <div class="seq-title">Wide Attack &mdash; Random Line to Line</div>
+              <div class="seq-detail">Wide attack initiated from a random lane. Attack must transition through lanes to create the scoring opportunity.</div>
+            </div>
+          </div>
+
+          <div class="seq-item">
+            <div class="seq-line"></div>
+            <div class="seq-marker"><div class="seq-dot ajax"></div></div>
+            <div class="seq-content">
+              <div class="seq-type ajax">Ajax Game</div>
+              <div class="seq-title">Between the Lines</div>
+              <div class="seq-detail">Back to open play. Wide attacking movement from Scenario #2 should now appear naturally in the Ajax game.</div>
+            </div>
+          </div>
+
+          <div class="seq-item">
+            <div class="seq-line"></div>
+            <div class="seq-marker"><div class="seq-dot att"></div></div>
+            <div class="seq-content">
+              <div class="seq-type att">Att Scenario #3</div>
+              <div class="seq-title">Wide Attack &mdash; &ldquo;Up, Back, Through&rdquo;</div>
+              <div class="seq-detail">Connects directly to Phase 03 technical work. Wide attack uses the up-back-through pattern to penetrate. Players now apply the drill pattern under game pressure.</div>
+            </div>
+          </div>
+
+          <div class="seq-item">
+            <div class="seq-line"></div>
+            <div class="seq-marker"><div class="seq-dot ajax"></div></div>
+            <div class="seq-content">
+              <div class="seq-type ajax">Ajax Game</div>
+              <div class="seq-title">Between the Lines</div>
+              <div class="seq-detail">Open play again. The full wide attacking toolkit &mdash; Scenarios #2 and #3 &mdash; now available to players in the game context.</div>
+            </div>
+          </div>
+
+          <div class="seq-item">
+            <div class="seq-marker"><div class="seq-dot att"></div></div>
+            <div class="seq-content">
+              <div class="seq-type att">Att Scenario #4</div>
+              <div class="seq-title">Over, Through or Around &mdash; Exploration</div>
+              <div class="seq-detail">Open-ended attacking problem. No prescribed solution &mdash; attack must decide whether to go over (kick), through (penetrate middle), or around (wide). Player-led decision-making under live conditions.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="cues">
+        <div class="cue-item"><div class="cue-dot"></div>The Ajax game is the vehicle &mdash; the attacking scenarios are the lesson. Let the game breathe between scenarios.</div>
+        <div class="cue-item"><div class="cue-dot"></div>Scenario #4 is deliberately open &mdash; resist the urge to tell them what to do. Observe the decisions they make.</div>
+        <div class="cue-item"><div class="cue-dot"></div>The 15-second rule in Scenario #1 is strict &mdash; reset the clock visibly so everyone knows when time is up</div>
+        <div class="cue-item"><div class="cue-dot"></div>Scenario #3 should echo the technical work from Phase 03 &mdash; if the pattern isn&rsquo;t showing up, prompt it once and let them run it</div>
+      </div>
+
+    </div>
+    <div class="phase-nav-footer">
+      <button class="nav-btn" data-prev="3">&larr; Previous</button>
+      <span class="nav-progress">4 / 4</span>
+      <button class="nav-btn" disabled>Next &rarr;</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function goToPhase(n) {
+  document.querySelectorAll('.phase-panel').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelector('.phase-panel[data-phase="' + n + '"]').classList.add('active');
+  document.querySelectorAll('.phase-tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelector('.phase-tab[data-phase="' + n + '"]').classList.add('active');
+  document.querySelectorAll('.tl-seg').forEach(function(s) {
+    s.classList.remove('tl-active', 'tl-inactive');
+    parseInt(s.dataset.target) === n ? s.classList.add('tl-active') : s.classList.add('tl-inactive');
+  });
+  document.querySelector('.phase-tab[data-phase="' + n + '"]').scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  var nav = document.getElementById('phaseNav');
+  var navTop = nav.getBoundingClientRect().top + window.scrollY;
+  if (window.scrollY > navTop) { window.scrollTo({ top: navTop - 2, behavior: 'smooth' }); }
+}
+
+// Init timeline — highlight phase 1
+(function() {
+  document.querySelectorAll('.tl-seg').forEach(function(s) {
+    s.classList.remove('tl-active','tl-inactive');
+    parseInt(s.dataset.target) === 1 ? s.classList.add('tl-active') : s.classList.add('tl-inactive');
+  });
+})();
+
+document.querySelectorAll('.phase-tab').forEach(function(t) { t.addEventListener('click', function() { goToPhase(parseInt(this.dataset.phase)); }); });
+document.querySelectorAll('.tl-seg').forEach(function(s) { s.addEventListener('click', function() { goToPhase(parseInt(this.dataset.target)); }); });
+document.querySelectorAll('.nav-btn[data-next]').forEach(function(b) { b.addEventListener('click', function() { goToPhase(parseInt(this.dataset.next)); }); });
+document.querySelectorAll('.nav-btn[data-prev]').forEach(function(b) { b.addEventListener('click', function() { goToPhase(parseInt(this.dataset.prev)); }); });
+
+var VIDEO_EXTS = ['mp4','webm','ogg','mov'];
+var IMAGE_EXTS = ['jpg','jpeg','png','gif','webp','svg'];
+
+function isVideoUrl(u) { var l = u.toLowerCase().split('?')[0]; return VIDEO_EXTS.some(function(e){return l.endsWith('.'+e);}); }
+
+function activateMedia(slot, type, src) {
+  var drop = document.getElementById('drop-' + slot);
+  var img  = document.getElementById('img-' + slot);
+  var vid  = document.getElementById('vid-' + slot);
+  img.classList.remove('loaded'); vid.classList.remove('loaded');
+  img.src = ''; vid.src = '';
+  if (type === 'image') { img.src = src; img.classList.add('loaded'); }
+  else { vid.src = src; vid.classList.add('loaded'); vid.load(); }
+  drop.classList.add('has-media');
+}
+
+function clearSlot(slot) {
+  var drop = document.getElementById('drop-' + slot);
+  var img  = document.getElementById('img-' + slot);
+  var vid  = document.getElementById('vid-' + slot);
+  img.classList.remove('loaded'); img.src = '';
+  vid.classList.remove('loaded'); vid.src = ''; vid.load();
+  drop.classList.remove('has-media');
+  document.getElementById('url-' + slot).value = '';
+  document.getElementById('file-' + slot).value = '';
+  event.stopPropagation();
+}
+
+function loadUrl(slot) {
+  var val = document.getElementById('url-' + slot).value.trim();
+  if (!val) return;
+  activateMedia(slot, isVideoUrl(val) ? 'video' : 'image', val);
+}
+
+document.querySelectorAll('.url-input').forEach(function(inp) {
+  inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') loadUrl(this.id.replace('url-','')); });
+});
+
+document.querySelectorAll('.media-drop').forEach(function(drop) {
+  drop.addEventListener('click', function(e) {
+    if (e.target.classList.contains('media-clear')) return;
+    if (this.classList.contains('has-media')) return;
+    document.getElementById('file-' + this.id.replace('drop-','')).click();
+  });
+  drop.addEventListener('dragover', function(e) { e.preventDefault(); this.classList.add('drag-over'); });
+  drop.addEventListener('dragleave', function() { this.classList.remove('drag-over'); });
+  drop.addEventListener('drop', function(e) {
+    e.preventDefault(); this.classList.remove('drag-over');
+    var slot = this.id.replace('drop-','');
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      var file = e.dataTransfer.files[0];
+      var isVid = file.type.startsWith('video/');
+      var reader = new FileReader();
+      reader.onload = function(ev) { activateMedia(slot, isVid ? 'video' : 'image', ev.target.result); };
+      reader.readAsDataURL(file);
+      return;
+    }
+    var url = e.dataTransfer.getData('text/plain') || e.dataTransfer.getData('text/uri-list');
+    if (url) { document.getElementById('url-' + slot).value = url; loadUrl(slot); }
+  });
+});
+
+document.querySelectorAll('.file-input').forEach(function(inp) {
+  inp.addEventListener('change', function() {
+    var file = this.files[0]; if (!file) return;
+    var slot = this.id.replace('file-','');
+    var isVid = file.type.startsWith('video/');
+    var reader = new FileReader();
+    reader.onload = function(e) { activateMedia(slot, isVid ? 'video' : 'image', e.target.result); };
+    reader.readAsDataURL(file);
+  });
+});
+</script>
+</body>
+</html>
