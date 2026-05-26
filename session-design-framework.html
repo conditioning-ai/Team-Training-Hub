@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session Design Framework · Team Training Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0a0a0a; --surface:#141414; --surface2:#1c1c1c;
+    --border:#242424; --border2:#2e2e2e;
+    --text:#f0ede8; --muted:#6a6560; --muted2:#3a3630;
+    --gold:#c9a84c;
+    --c1:#4baee8; /* Arrival / Priming */
+    --c2:#4be8a0; /* Athletic Prep */
+    --c3:#e8b84b; /* Directional */
+    --c4:#e84b8a; /* Tactical Game */
+    --cl:#b44be8; /* Constraints */
+    --dl:#e8724b; /* DL */
+    --ee:#4be8d8; /* Explore Exploit */
+    --rf:#5be84b; /* Reflection */
+    --prob:#e8d84b; /* Problems */
+    --tp:#4baee8; /* Task / Problem Design */
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;}
+  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,0.011) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.011) 1px,transparent 1px);background-size:56px 56px;pointer-events:none;z-index:0;}
+
+  /* HEADER */
+  header{position:relative;z-index:20;background:rgba(10,10,10,0.98);border-bottom:1px solid var(--border);padding:0 36px;height:56px;display:flex;align-items:center;justify-content:space-between;}
+  .logo{display:flex;align-items:center;gap:11px;text-decoration:none;}
+  .logo-diamond{width:26px;height:26px;background:var(--gold);clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);flex-shrink:0;}
+  .logo-text{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;letter-spacing:0.08em;text-transform:uppercase;color:var(--text);line-height:1;}
+  .logo-text span{color:var(--gold);}
+  .back-link{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:5px 12px;border:1px solid var(--border2);border-radius:2px;transition:color 0.15s,border-color 0.15s;}
+  .back-link:hover{color:var(--text);border-color:var(--muted);}
+
+  /* HERO */
+  .hero{position:relative;z-index:1;padding:44px 36px 36px;border-bottom:1px solid var(--border);}
+  .hero-eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .eyebrow-line{width:26px;height:2px;background:var(--gold);}
+  .eyebrow-text{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);}
+  .hero-title{font-family:'Barlow Condensed',sans-serif;font-size:clamp(30px,5vw,60px);font-weight:900;text-transform:uppercase;letter-spacing:-0.02em;line-height:0.92;color:var(--text);margin-bottom:16px;}
+  .hero-title em{font-style:normal;color:var(--gold);}
+  .hero-sub{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+  .hero-desc{font-size:13px;color:var(--muted);line-height:1.65;max-width:560px;}
+
+  /* TAGLINE STRIP */
+  .tagline-strip{background:var(--surface);border-bottom:1px solid var(--border);border-left:4px solid var(--gold);padding:12px 36px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+  .tg-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.24em;text-transform:uppercase;color:var(--gold);white-space:nowrap;}
+  .tg-text{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;text-transform:uppercase;letter-spacing:0.06em;color:var(--text);}
+  .tg-sep{color:var(--muted);font-weight:300;}
+
+  /* TAB NAV */
+  .tab-nav{position:sticky;top:0;z-index:50;background:rgba(10,10,10,0.98);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;scrollbar-width:none;}
+  .tab-nav::-webkit-scrollbar{display:none;}
+  .tab-btn{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;padding:0 20px;height:46px;border:none;border-right:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;white-space:nowrap;flex-shrink:0;position:relative;transition:color 0.15s;}
+  .tab-btn::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;transform:scaleX(0);transition:transform 0.15s;}
+  .tab-btn:hover{color:var(--text);}
+  .tab-btn[data-tab="overview"].active{color:var(--gold);}
+  .tab-btn[data-tab="overview"].active::after{background:var(--gold);transform:scaleX(1);}
+  .tab-btn[data-tab="constraints"].active{color:var(--cl);}
+  .tab-btn[data-tab="constraints"].active::after{background:var(--cl);transform:scaleX(1);}
+  .tab-btn[data-tab="dl"].active{color:var(--dl);}
+  .tab-btn[data-tab="dl"].active::after{background:var(--dl);transform:scaleX(1);}
+  .tab-btn[data-tab="ee"].active{color:var(--ee);}
+  .tab-btn[data-tab="ee"].active::after{background:var(--ee);transform:scaleX(1);}
+  .tab-btn[data-tab="reflection"].active{color:var(--rf);}
+  .tab-btn[data-tab="reflection"].active::after{background:var(--rf);transform:scaleX(1);}
+  .tab-btn[data-tab="problems"].active{color:var(--prob);}
+  .tab-btn[data-tab="problems"].active::after{background:var(--prob);transform:scaleX(1);}
+  .tab-btn[data-tab="reflection"].active::after{background:var(--rf);transform:scaleX(1);}
+  .tab-btn[data-tab="tp"].active{color:var(--tp);}
+  .tab-btn[data-tab="tp"].active::after{background:var(--tp);transform:scaleX(1);}
+
+  /* TASK DESIGN */
+  .credit-strip{background:var(--surface2);border:1px solid var(--border);border-left:4px solid var(--tp);padding:12px 18px;border-radius:2px;margin-bottom:24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .credit-label{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--tp);}
+  .credit-name{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;text-transform:uppercase;color:var(--text);}
+  .credit-role{font-size:12px;color:var(--muted);}
+
+  .bod-model{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin:20px 0;}
+  @media(max-width:560px){.bod-model{grid-template-columns:1fr;}}
+  .bod-card{background:var(--surface);border:1px solid var(--border);padding:18px 20px;position:relative;}
+  .bod-card.center-card{grid-column:1/-1;background:rgba(75,174,232,0.04);border-color:rgba(75,174,232,0.2);}
+  .bod-icon{font-size:22px;margin-bottom:8px;}
+  .bod-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;text-transform:uppercase;color:var(--tp);margin-bottom:6px;line-height:1;}
+  .bod-desc{font-size:12.5px;color:#c0bdb8;line-height:1.6;}
+  .bod-desc strong{color:var(--text);}
+
+  .tao-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;margin:20px 0;}
+  @media(max-width:560px){.tao-grid{grid-template-columns:1fr;}}
+  .tao-card{background:var(--surface);border:1px solid var(--border);padding:18px 20px;}
+  .tao-card.t-through{border-top:3px solid var(--diamond);}
+  .tao-card.t-around{border-top:3px solid var(--gold);}
+  .tao-card.t-over{border-top:3px solid var(--att);}
+  .tao-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;text-transform:uppercase;line-height:1;margin-bottom:6px;}
+  .t-through .tao-title{color:var(--diamond);}
+  .t-around .tao-title{color:var(--gold);}
+  .t-over .tao-title{color:var(--att);}
+  .tao-desc{font-size:12.5px;color:#c0bdb8;line-height:1.6;}
+
+  .design-principles{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin:20px 0;}
+  @media(max-width:560px){.design-principles{grid-template-columns:1fr;}}
+  .dp-card{background:var(--surface);border:1px solid var(--border);padding:18px 20px;}
+  .dp-num{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--tp);margin-bottom:3px;}
+  .dp-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;text-transform:uppercase;color:var(--text);margin-bottom:6px;line-height:1;}
+  .dp-desc{font-size:12.5px;color:#c0bdb8;line-height:1.6;}
+  .dp-desc strong{color:var(--text);}
+
+  .ref-credit{font-size:11px;color:var(--muted2);font-style:italic;margin-top:20px;text-align:center;}
+
+  /* CONTENT */
+  .content-wrap{max-width:900px;margin:0 auto;padding:32px 36px 72px;}
+  .tab-panel{display:none;animation:fadeIn 0.17s ease;}
+  .tab-panel.active{display:block;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}
+
+  /* LOOP DIAGRAM */
+  .loop-wrap{display:flex;justify-content:center;margin:28px 0;}
+  .loop-wrap svg{width:100%;max-width:560px;height:auto;}
+
+  /* PHASE CARDS GRID */
+  .phase-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin:24px 0;}
+  @media(max-width:580px){.phase-grid{grid-template-columns:1fr;}}
+  .phase-card{background:var(--surface);border:1px solid var(--border);padding:20px 22px;position:relative;overflow:hidden;}
+  .phase-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+  .pc-1::before{background:var(--c1);}
+  .pc-2::before{background:var(--c2);}
+  .pc-3::before{background:var(--c3);}
+  .pc-4::before{background:var(--c4);}
+  .pc-num{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;margin-bottom:4px;}
+  .pc-1 .pc-num{color:var(--c1);}
+  .pc-2 .pc-num{color:var(--c2);}
+  .pc-3 .pc-num{color:var(--c3);}
+  .pc-4 .pc-num{color:var(--c4);}
+  .pc-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;text-transform:uppercase;color:var(--text);margin-bottom:10px;line-height:1;}
+  .pc-list{list-style:none;padding:0;}
+  .pc-list li{display:flex;gap:8px;padding:4px 0;font-size:12.5px;color:#c0bdb8;line-height:1.45;border-bottom:1px solid rgba(255,255,255,0.03);}
+  .pc-list li:last-child{border-bottom:none;}
+  .pc-dot{width:3px;height:3px;border-radius:50%;flex-shrink:0;margin-top:7px;background:var(--muted);}
+
+  /* CONCEPT PANELS */
+  .concept-banner{border-radius:2px;padding:20px 24px;margin-bottom:24px;}
+  .cb-cl{background:rgba(180,75,232,0.05);border:1px solid rgba(180,75,232,0.18);border-left:4px solid var(--cl);}
+  .cb-dl{background:rgba(232,114,75,0.05);border:1px solid rgba(232,114,75,0.18);border-left:4px solid var(--dl);}
+  .cb-ee{background:rgba(75,232,216,0.05);border:1px solid rgba(75,232,216,0.18);border-left:4px solid var(--ee);}
+  .cb-rf{background:rgba(91,232,75,0.05);border:1px solid rgba(91,232,75,0.18);border-left:4px solid var(--rf);}
+  .cb-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.26em;text-transform:uppercase;margin-bottom:6px;}
+  .cb-cl .cb-label{color:var(--cl);}
+  .cb-dl .cb-label{color:var(--dl);}
+  .cb-ee .cb-label{color:var(--ee);}
+  .cb-rf .cb-label{color:var(--rf);}
+  .cb-title{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;text-transform:uppercase;color:var(--text);margin-bottom:10px;line-height:1;}
+  .cb-body{font-size:13px;color:#c0bdb8;line-height:1.75;max-width:720px;}
+  .cb-body strong{color:var(--text);}
+  .cb-body em{font-style:italic;color:#a0a0a0;}
+
+  /* PRINCIPLE CARDS */
+  .principles{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:2px;margin-top:20px;}
+  .p-card{background:var(--surface);border:1px solid var(--border);padding:16px 18px;}
+  .p-card-num{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:3px;}
+  .p-card-title{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:900;text-transform:uppercase;line-height:1;margin-bottom:6px;}
+  .p-card-desc{font-size:12px;color:var(--muted);line-height:1.55;}
+  .p-cl .p-card-num{color:var(--cl);} .p-cl .p-card-title{color:var(--cl);}
+  .p-dl .p-card-num{color:var(--dl);} .p-dl .p-card-title{color:var(--dl);}
+  .p-ee .p-card-num{color:var(--ee);} .p-ee .p-card-title{color:var(--ee);}
+  .p-rf .p-card-num{color:var(--rf);} .p-rf .p-card-title{color:var(--rf);}
+
+  /* DIVIDER */
+  .divider{height:1px;background:var(--border);margin:28px 0;}
+
+  /* THREAD STRIP */
+  .thread-strip{background:var(--surface2);border:1px solid var(--border);border-left:4px solid var(--gold);padding:14px 18px;border-radius:2px;margin-top:28px;}
+  .ts-label{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.24em;text-transform:uppercase;color:var(--gold);margin-bottom:5px;}
+  .ts-text{font-size:13px;color:var(--text);line-height:1.6;}
+  .ts-text span{color:var(--gold);font-weight:600;}
+
+  /* FOOTER */
+  footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:16px 36px;background:var(--surface);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+  .footer-brand{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);}
+  .footer-brand span{color:var(--gold);}
+  .footer-right{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted2);}
+
+  @media(max-width:640px){
+    header{padding:0 14px;}
+    .hero{padding:32px 14px 24px;}
+    .tagline-strip{padding:12px 14px;}
+    .tab-nav,.content-wrap{padding-left:14px;padding-right:14px;}
+    .content-wrap{padding-top:20px;}
+    footer{padding:14px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo">
+    <div class="logo-diamond"></div>
+    <div class="logo-text">Team <span>Training</span> Hub</div>
+  </a>
+  <a href="index.html" class="back-link">&larr; Back to Hub</a>
+</header>
+
+<section class="hero">
+  <div class="hero-eyebrow"><div class="eyebrow-line"></div><div class="eyebrow-text">Coach Education</div></div>
+  <h1 class="hero-title">Session <em>Design</em><br>&amp; Structure</h1>
+  <div class="hero-sub">Designing Game-Like Learning Environments That Connect to Match Demands</div>
+  <p class="hero-desc">A framework for building sessions that develop players as decision-makers, not just movement performers. Every session follows a clear learning thread linking decisions, challenge, and game realism.</p>
+</section>
+
+<div class="tagline-strip">
+  <div class="tg-label">Session Principles</div>
+  <div class="tg-text">Attention <span class="tg-sep">&nbsp;|&nbsp;</span> Intent <span class="tg-sep">&nbsp;|&nbsp;</span> Intensity</div>
+</div>
+
+<nav class="tab-nav">
+  <button class="tab-btn active" data-tab="overview">The Framework</button>
+  <button class="tab-btn" data-tab="constraints">Constraints-Led</button>
+  <button class="tab-btn" data-tab="dl">Differential Learning</button>
+  <button class="tab-btn" data-tab="ee">Explore &amp; Exploit</button>
+  <button class="tab-btn" data-tab="reflection">Reflection</button>
+  <button class="tab-btn" data-tab="problems">Designing Problems</button>
+</nav>
+
+<div class="content-wrap">
+
+  <!-- OVERVIEW TAB -->
+  <div class="tab-panel active" data-tab="overview">
+
+    <!-- LOOP DIAGRAM -->
+    <div class="loop-wrap">
+      <svg viewBox="0 0 560 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Background -->
+        <rect width="560" height="420" fill="#0a0a0a"/>
+
+        <!-- Centre text -->
+        <text x="280" y="196" text-anchor="middle" font-family="Barlow Condensed" font-size="13" font-weight="700" fill="#6a6560" letter-spacing="2">A CONTINUOUS</text>
+        <text x="280" y="216" text-anchor="middle" font-family="Barlow Condensed" font-size="18" font-weight="900" fill="#c9a84c" letter-spacing="1">LEARNING LOOP</text>
+        <text x="280" y="234" text-anchor="middle" font-family="Barlow Condensed" font-size="10" font-weight="600" fill="#4a4540" letter-spacing="2">CONNECTING PRACTICE</text>
+        <text x="280" y="248" text-anchor="middle" font-family="Barlow Condensed" font-size="10" font-weight="600" fill="#4a4540" letter-spacing="2">TO MATCH PERFORMANCE</text>
+
+        <!-- Circular arrow path (clockwise) -->
+        <path d="M 280 60 A 180 180 0 0 1 460 210" stroke="#4baee8" stroke-width="1.5" fill="none" stroke-dasharray="4 3" opacity="0.4"/>
+        <path d="M 460 210 A 180 180 0 0 1 280 380" stroke="#e8b84b" stroke-width="1.5" fill="none" stroke-dasharray="4 3" opacity="0.4"/>
+        <path d="M 280 380 A 180 180 0 0 1 100 210" stroke="#e84b8a" stroke-width="1.5" fill="none" stroke-dasharray="4 3" opacity="0.4"/>
+        <path d="M 100 210 A 180 180 0 0 1 280 60" stroke="#4be8a0" stroke-width="1.5" fill="none" stroke-dasharray="4 3" opacity="0.4"/>
+
+        <!-- Arrows at arc ends -->
+        <polygon points="460,210 452,200 468,202" fill="#e8b84b" opacity="0.6"/>
+        <polygon points="280,380 272,370 288,370" fill="#e84b8a" opacity="0.6"/>
+        <polygon points="100,210 108,220 92,218" fill="#4be8a0" opacity="0.6"/>
+        <polygon points="280,60 288,70 272,70" fill="#4baee8" opacity="0.6"/>
+
+        <!-- NODE 1: Arrival / Priming (top) -->
+        <rect x="210" y="18" width="140" height="64" rx="2" fill="#0f1a2a" stroke="#4baee8" stroke-width="1.5"/>
+        <text x="280" y="37" text-anchor="middle" font-family="Barlow Condensed" font-size="9" font-weight="700" fill="#4baee8" letter-spacing="2">PHASE 01</text>
+        <text x="280" y="54" text-anchor="middle" font-family="Barlow Condensed" font-size="15" font-weight="900" fill="#f0ede8" letter-spacing="0">ARRIVAL /</text>
+        <text x="280" y="71" text-anchor="middle" font-family="Barlow Condensed" font-size="15" font-weight="900" fill="#f0ede8" letter-spacing="0">PRIMING</text>
+        <circle cx="280" cy="18" r="10" fill="#4baee8"/>
+        <text x="280" y="22" text-anchor="middle" font-family="Barlow Condensed" font-size="11" font-weight="900" fill="#0a0a0a">1</text>
+
+        <!-- NODE 2: Athletic Prep (right) -->
+        <rect x="382" y="156" width="152" height="64" rx="2" fill="#0a1f16" stroke="#4be8a0" stroke-width="1.5"/>
+        <text x="458" y="175" text-anchor="middle" font-family="Barlow Condensed" font-size="9" font-weight="700" fill="#4be8a0" letter-spacing="2">PHASE 02</text>
+        <text x="458" y="192" text-anchor="middle" font-family="Barlow Condensed" font-size="15" font-weight="900" fill="#f0ede8">ATHLETIC PREP</text>
+        <text x="458" y="209" text-anchor="middle" font-family="Barlow Condensed" font-size="15" font-weight="900" fill="#f0ede8">&amp; DEVELOPMENT</text>
+        <circle cx="534" cy="156" r="10" fill="#4be8a0"/>
+        <text x="534" y="160" text-anchor="middle" font-family="Barlow Condensed" font-size="11" font-weight="900" fill="#0a0a0a">2</text>
+
+        <!-- NODE 3: Directional (bottom) -->
+        <rect x="186" y="340" width="188" height="64" rx="2" fill="#1f1a0a" stroke="#e8b84b" stroke-width="1.5"/>
+        <text x="280" y="359" text-anchor="middle" font-family="Barlow Condensed" font-size="9" font-weight="700" fill="#e8b84b" letter-spacing="2">PHASE 03</text>
+        <text x="280" y="376" text-anchor="middle" font-family="Barlow Condensed" font-size="15" font-weight="900" fill="#f0ede8">DIRECTIONAL</text>
+        <text x="280" y="393" text-anchor="middle" font-family="Barlow Condensed" font-size="15" font-weight="900" fill="#f0ede8">CONDITIONED GAMES</text>
+        <circle cx="280" cy="404" r="10" fill="#e8b84b"/>
+        <text x="280" y="408" text-anchor="middle" font-family="Barlow Condensed" font-size="11" font-weight="900" fill="#0a0a0a">3</text>
+
+        <!-- NODE 4: Tactical Game (left) -->
+        <rect x="26" y="156" width="152" height="64" rx="2" fill="#200a16" stroke="#e84b8a" stroke-width="1.5"/>
+        <text x="102" y="175" text-anchor="middle" font-family="Barlow Condensed" font-size="9" font-weight="700" fill="#e84b8a" letter-spacing="2">PHASE 04</text>
+        <text x="102" y="192" text-anchor="middle" font-family="Barlow Condensed" font-size="15" font-weight="900" fill="#f0ede8">TACTICAL</text>
+        <text x="102" y="209" text-anchor="middle" font-family="Barlow Condensed" font-size="15" font-weight="900" fill="#f0ede8">CONDITIONED GAME</text>
+        <circle cx="26" cy="156" r="10" fill="#e84b8a"/>
+        <text x="26" y="160" text-anchor="middle" font-family="Barlow Condensed" font-size="11" font-weight="900" fill="#f0ede8">4</text>
+      </svg>
+    </div>
+
+    <!-- THREAD STRIP -->
+    <div class="thread-strip">
+      <div class="ts-label">Every Session Follows</div>
+      <div class="ts-text">A clear learning thread linking <span>Decisions</span>, <span>Challenge</span>, and <span>Game Realism</span>. The loop is not linear &mdash; each phase feeds back into the next. Practices connect to match performance.</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- PHASE CARDS -->
+    <div class="phase-grid">
+
+      <div class="phase-card pc-1">
+        <div class="pc-num">Phase 01 &middot; Arrival / Priming</div>
+        <div class="pc-title">Arrival &amp; Priming</div>
+        <ul class="pc-list">
+          <li><span class="pc-dot"></span>Individual or small physical &amp; technical preparation</li>
+          <li><span class="pc-dot"></span>Player-led &mdash; driven by the leadership group</li>
+          <li><span class="pc-dot"></span>Strategic &amp; tactical discussion and walkthroughs</li>
+          <li><span class="pc-dot"></span>Session theme activated from minute one</li>
+        </ul>
+      </div>
+
+      <div class="phase-card pc-2">
+        <div class="pc-num">Phase 02 &middot; Athletic Prep</div>
+        <div class="pc-title">Athletic Prep &amp; Development</div>
+        <ul class="pc-list">
+          <li><span class="pc-dot"></span>Body prepared. Robustness built. Ball included.</li>
+          <li><span class="pc-dot"></span>Plyometrics, bounds, sprints &mdash; weekly staple</li>
+          <li><span class="pc-dot"></span>Physical battles, competitive drills at intensity</li>
+          <li><span class="pc-dot"></span>Linked to session tactical theme where possible</li>
+        </ul>
+      </div>
+
+      <div class="phase-card pc-3">
+        <div class="pc-num">Phase 03 &middot; Directional Games</div>
+        <div class="pc-title">Directional Conditioned Games</div>
+        <ul class="pc-list">
+          <li><span class="pc-dot"></span>Game-based learning with direction and scoring zones</li>
+          <li><span class="pc-dot"></span>Constraints, rules, space &amp; numbers manipulation</li>
+          <li><span class="pc-dot"></span>Tactical + physical demands layered simultaneously</li>
+        </ul>
+      </div>
+
+      <div class="phase-card pc-4">
+        <div class="pc-num">Phase 04 &middot; Tactical Game</div>
+        <div class="pc-title">Tactical Conditioned Game</div>
+        <ul class="pc-list">
+          <li><span class="pc-dot"></span>Full or modified game &mdash; game-realistic conditions</li>
+          <li><span class="pc-dot"></span>Theme expressed through player roles &amp; principles</li>
+          <li><span class="pc-dot"></span>Realistic decision-making environment</li>
+        </ul>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- CONSTRAINTS-LED TAB -->
+  <div class="tab-panel" data-tab="constraints">
+
+    <div class="concept-banner cb-cl">
+      <div class="cb-label">&#x26A1; Approach</div>
+      <div class="cb-title">Constraints-Led Approach</div>
+      <div class="cb-body">
+        The Constraints-Led Approach (CLA) is rooted in Newell&rsquo;s model of constraints, which proposes that movement behaviour emerges from the interaction of three categories of constraints: <strong>the individual</strong> (player abilities, perception, decisions), <strong>the task</strong> (rules, goals, equipment), and <strong>the environment</strong> (space, surface, weather, numbers).
+        <br><br>
+        The coach&rsquo;s role in CLA is <strong>not to prescribe movement</strong>, but to <strong>design the environment and manipulate the task</strong> so that the desired behaviour emerges naturally. Players are not told what to do &mdash; the constraints <em>invite</em> the movement or decision the coach wants to develop.
+        <br><br>
+        In practical terms: reducing the space forces quicker decisions; overloads create attacking opportunities; limiting touches forces off-ball movement; removing the keeper creates goal-scoring urgency. <strong>Change the constraint, change the behaviour.</strong>
+      </div>
+    </div>
+
+    <div class="divider" style="margin:0 0 20px;"></div>
+
+    <div class="principles">
+      <div class="p-card p-cl">
+        <div class="p-card-num">Constraint Type 01</div>
+        <div class="p-card-title">Task Constraints</div>
+        <div class="p-card-desc">Rules, scoring systems, number of touches, time limits, ball restrictions. Most directly controllable by the coach in session design.</div>
+      </div>
+      <div class="p-card p-cl">
+        <div class="p-card-num">Constraint Type 02</div>
+        <div class="p-card-title">Environmental Constraints</div>
+        <div class="p-card-desc">Size and shape of space, number of players, goals, cones, surfaces. Creating overloads, underloads, or zones that invite specific decisions.</div>
+      </div>
+      <div class="p-card p-cl">
+        <div class="p-card-num">Constraint Type 03</div>
+        <div class="p-card-title">Individual Constraints</div>
+        <div class="p-card-desc">Physical capacity, technical ability, decision-making speed, experience. The coach adapts task and environment constraints to meet where the individual is.</div>
+      </div>
+      <div class="p-card p-cl">
+        <div class="p-card-num">Coach Role</div>
+        <div class="p-card-title">Designer, Not Director</div>
+        <div class="p-card-desc">The coach creates the problem. The player solves it. Intervene less, design better. Freeze the game only when the constraint has failed to produce the desired behaviour.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- DIFFERENTIAL LEARNING TAB -->
+  <div class="tab-panel" data-tab="dl">
+
+    <div class="concept-banner cb-dl">
+      <div class="cb-label">&#x1F4A1; Methodology</div>
+      <div class="cb-title">Differential Learning</div>
+      <div class="cb-body">
+        Differential Learning (DL) was developed by sports scientist <strong>Wolfgang Schollhorn</strong> and challenges the traditional assumption that skill is acquired through repetition of an ideal movement pattern. In DL, <strong>variability is the method</strong> &mdash; no two repetitions are the same.
+        <br><br>
+        Where traditional practice tries to eliminate errors and reduce noise, DL <strong>deliberately introduces fluctuations</strong> into every rep. Different heights, weights, angles, speeds, distances, and starting positions on every repetition. The player never gets comfortable &mdash; and that discomfort is the learning.
+        <br><br>
+        The neuroscientific basis is that the brain&rsquo;s motor system develops robustness through <strong>exposure to a wide solution space</strong>, not through grooved repetition. Players who train with DL are better able to adapt in match conditions because they have encountered &mdash; and solved &mdash; a far wider range of movement problems in training.
+        <br><br>
+        <strong>Practical rule:</strong> the coach varies the return ball on every single rep. No two balls the same. Players must read and adapt each time. Over-coaching kills the process &mdash; let the variability do the teaching.
+      </div>
+    </div>
+
+    <div class="divider" style="margin:0 0 20px;"></div>
+
+    <div class="principles">
+      <div class="p-card p-dl">
+        <div class="p-card-num">Principle 01</div>
+        <div class="p-card-title">No Fixed Model</div>
+        <div class="p-card-desc">There is no &lsquo;perfect&rsquo; technique to imitate. The player builds their own optimal movement solution through exploration of varied stimuli.</div>
+      </div>
+      <div class="p-card p-dl">
+        <div class="p-card-num">Principle 02</div>
+        <div class="p-card-title">Variability = Stimulus</div>
+        <div class="p-card-desc">Every rep is different. Height, weight, angle, timing, distance all vary. The difference between reps is where the learning lives.</div>
+      </div>
+      <div class="p-card p-dl">
+        <div class="p-card-num">Principle 03</div>
+        <div class="p-card-title">Self-Organisation</div>
+        <div class="p-card-desc">Players organise their own movement solutions. The coach&rsquo;s job is to vary the problem, not correct the solution. Trust the process.</div>
+      </div>
+      <div class="p-card p-dl">
+        <div class="p-card-num">Principle 04</div>
+        <div class="p-card-title">Robust Skill</div>
+        <div class="p-card-desc">DL-trained players perform better under pressure and in novel conditions because their skill is built on adaptability, not a single practised pattern.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- EXPLORE & EXPLOIT TAB -->
+  <div class="tab-panel" data-tab="ee">
+
+    <div class="concept-banner cb-ee">
+      <div class="cb-label">&#x1F3AF; Practice Design</div>
+      <div class="cb-title">Explore &amp; Exploit</div>
+      <div class="cb-body">
+        Explore &amp; Exploit is a practice design concept drawn from motor learning and ecological dynamics. It describes <strong>two distinct modes of practice</strong> that serve different purposes and should both exist in a well-designed training programme.
+        <br><br>
+        <strong>Exploration</strong> is open-ended discovery. Players are given freedom to find solutions, make mistakes, and develop understanding through experience. There are no wrong answers &mdash; only attempts. The constraint is loose, the space is generous, the rule is minimal. This is where players build their solution space.
+        <br><br>
+        <strong>Exploitation</strong> is applying what has been found under pressure and specificity. The constraint is tight, the numbers are realistic, the condition mirrors the game. Players are now executing a solution they understand &mdash; being tested on it rather than discovering it.
+        <br><br>
+        <strong>The danger of only exploiting:</strong> players who never explore become brittle &mdash; they can execute their rehearsed pattern but fail when the game presents something new. <strong>The danger of only exploring:</strong> players develop understanding but lack sharpness under pressure.
+        <br><br>
+        Good session design moves players <em>from explore to exploit</em> across the learning loop &mdash; or deliberately sits in one mode based on where the team is in the cycle.
+      </div>
+    </div>
+
+    <div class="divider" style="margin:0 0 20px;"></div>
+
+    <div class="principles">
+      <div class="p-card p-ee">
+        <div class="p-card-num">Mode 01</div>
+        <div class="p-card-title">Explore</div>
+        <div class="p-card-desc">Open-ended. Low constraint. Multiple solutions accepted. Players discover through trial. Coach observes more than intervenes. Early-phase or early-season emphasis.</div>
+      </div>
+      <div class="p-card p-ee">
+        <div class="p-card-num">Mode 02</div>
+        <div class="p-card-title">Exploit</div>
+        <div class="p-card-desc">Tight constraint. Game-specific numbers and space. Players execute known solutions under pressure. Coach enforces principles. In-season or pre-match emphasis.</div>
+      </div>
+      <div class="p-card p-ee">
+        <div class="p-card-num">Application</div>
+        <div class="p-card-title">Sequencing</div>
+        <div class="p-card-desc">Explore in Phases 01&ndash;02 of a session, exploit in Phases 03&ndash;04. Or build across a week: explore early in the week, exploit closer to match day.</div>
+      </div>
+      <div class="p-card p-ee">
+        <div class="p-card-num">Red Flag</div>
+        <div class="p-card-title">Always Exploiting</div>
+        <div class="p-card-desc">If players only ever drill the same patterns, they stop learning. When the game presents something new they have no tools. Build the solution space first.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- REFLECTION TAB -->
+  <div class="tab-panel" data-tab="reflection">
+
+    <div class="concept-banner cb-rf">
+      <div class="cb-label">&#x1F4CB; Practice Design</div>
+      <div class="cb-title">The Importance of Reflection</div>
+      <div class="cb-body">
+        Reflection is the mechanism by which <strong>experience becomes learning</strong>. Without structured reflection &mdash; by both players and coaches &mdash; even the best-designed practice produces only physical adaptation. The cognitive and tactical learning loop stays incomplete.
+        <br><br>
+        <strong>Player reflection</strong> develops self-awareness, ownership, and the ability to transfer learning independently. When players evaluate their own performance &mdash; rather than waiting to be told what they did &mdash; they develop as decision-makers, not just skilled movers.
+        <br><br>
+        <strong>Coach reflection</strong> drives session design improvement. The question is not just &ldquo;did they do it?&rdquo; but &ldquo;did the constraint produce the behaviour? Did the design create the problem I intended?&rdquo; Coaches who reflect on their own design get better at designing.
+        <br><br>
+        Reflection doesn&rsquo;t require long team meetings. <strong>One sharp question at the right moment</strong> is more valuable than a ten-minute debrief. The Set Attack session&rsquo;s whiteboard principle is a reflection tool: players generate the principles, evaluate them at the end, and own the outcome.
+        <br><br>
+        The goal is a player who leaves the pitch having <em>understood</em> what happened &mdash; not just one who was told.
+      </div>
+    </div>
+
+    <div class="divider" style="margin:0 0 20px;"></div>
+
+    <div class="principles">
+      <div class="p-card p-rf">
+        <div class="p-card-num">Type 01</div>
+        <div class="p-card-title">In-Session</div>
+        <div class="p-card-desc">Brief freeze during a game, one question, players answer, play resumes. 30 seconds. Connects experience directly to principle while the feeling is live.</div>
+      </div>
+      <div class="p-card p-rf">
+        <div class="p-card-num">Type 02</div>
+        <div class="p-card-title">Post-Session</div>
+        <div class="p-card-desc">One or two questions at the end. Player-led. Coach confirms, challenges, or clarifies &mdash; doesn&rsquo;t lead. The player speaks first, always.</div>
+      </div>
+      <div class="p-card p-rf">
+        <div class="p-card-num">Type 03</div>
+        <div class="p-card-title">Coach Reflection</div>
+        <div class="p-card-desc">Did the constraint produce the intended behaviour? Was the space right? Did the game afford what I planned? Honest answers improve the next session design.</div>
+      </div>
+      <div class="p-card p-rf">
+        <div class="p-card-num">Principle</div>
+        <div class="p-card-title">Player Speaks First</div>
+        <div class="p-card-desc">The player who evaluates their own performance owns their development. Ask before you tell. Wait. Let the silence work. Then confirm or redirect.</div>
+      </div>
+    </div>
+
+    <div class="thread-strip" style="margin-top:28px;">
+      <div class="ts-label">The Learning Loop Closes Here</div>
+      <div class="ts-text">Every session in this hub is designed to connect back to match performance. Reflection is how the loop closes &mdash; turning practice experience into game understanding. <span>The player who understands why will always outperform the player who was just told what.</span></div>
+    </div>
+
+  </div>
+
+  <!-- DESIGNING PROBLEMS TAB -->
+  
+
+
+  <!-- DESIGNING PROBLEMS TAB -->
+  <div class="tab-panel" data-tab="problems">
+
+    <div class="concept-banner" style="background:rgba(232,216,75,0.05);border:1px solid rgba(232,216,75,0.2);border-left:4px solid var(--prob);">
+      <div class="cb-label" style="color:var(--prob);">&#x1F3AF; Design Tactical Guidelines</div>
+      <div class="cb-title">Designing Problems, Not Giving Solutions</div>
+      <div class="cb-body">
+        The most powerful shift a coach can make is from <strong>solution-giver to problem-designer</strong>. When a coach tells a player what to do, the player executes. When a coach designs a problem that invites the right behaviour, the player <em>discovers</em> it &mdash; and owns it far more deeply.
+        <br><br>
+        This section draws on design tactical guidelines developed by <strong>Mark O&rsquo;Sullivan</strong>. The two frameworks below offer a practical toolkit for designing games that connect to the real problems players face in match conditions.
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- BODC MODEL -->
+    <div style="margin-bottom:28px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.26em;text-transform:uppercase;color:var(--prob);margin-bottom:6px;">Framework 01 &mdash; Task Design Model</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;text-transform:uppercase;color:var(--text);margin-bottom:12px;line-height:1;">Ball &middot; Opponent(s) &middot; Direction &middot; Consequence</div>
+      <div style="font-size:13px;color:#c0bdb8;line-height:1.7;max-width:680px;margin-bottom:20px;">
+        Task design shapes what players perceive and what they are compelled to do. Four elements are the foundations of any well-designed game. The key information in any practice should be <strong>representative of the game</strong> &mdash; if it isn&rsquo;t, players are solving the wrong problem.
+      </div>
+
+      <!-- BODC VISUAL -->
+      <div style="display:flex;justify-content:center;margin:20px 0 28px;">
+        <svg viewBox="0 0 480 340" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:480px;height:auto;">
+          <rect width="480" height="340" fill="#0a0a0a"/>
+          <!-- Outer ring -->
+          <circle cx="240" cy="170" r="130" stroke="#2a2a2a" stroke-width="1.5" fill="none"/>
+          <circle cx="240" cy="170" r="110" stroke="rgba(232,216,75,0.15)" stroke-width="1" fill="rgba(232,216,75,0.02)"/>
+          <!-- Centre circle -->
+          <circle cx="240" cy="170" r="62" fill="#1a1a14" stroke="rgba(232,216,75,0.3)" stroke-width="1.5"/>
+          <text x="240" y="162" text-anchor="middle" font-family="Barlow Condensed" font-size="11" font-weight="700" fill="#c9a84c" letter-spacing="1">REPRESENTATIVE</text>
+          <text x="240" y="178" text-anchor="middle" font-family="Barlow Condensed" font-size="11" font-weight="700" fill="#c9a84c" letter-spacing="1">INFORMATION</text>
+
+          <!-- Connector lines -->
+          <line x1="240" y1="108" x2="240" y2="50" stroke="rgba(232,216,75,0.2)" stroke-width="1" stroke-dasharray="3 3"/>
+          <line x1="302" y1="170" x2="370" y2="170" stroke="rgba(232,216,75,0.2)" stroke-width="1" stroke-dasharray="3 3"/>
+          <line x1="240" y1="232" x2="240" y2="290" stroke="rgba(232,216,75,0.2)" stroke-width="1" stroke-dasharray="3 3"/>
+          <line x1="178" y1="170" x2="110" y2="170" stroke="rgba(232,216,75,0.2)" stroke-width="1" stroke-dasharray="3 3"/>
+
+          <!-- BALL (top) -->
+          <circle cx="240" cy="38" r="28" fill="#0f1a2a" stroke="#4baee8" stroke-width="1.5"/>
+          <text x="240" y="33" text-anchor="middle" font-family="Barlow Condensed" font-size="10" font-weight="700" fill="#4baee8" letter-spacing="1">&#x26BD;</text>
+          <text x="240" y="47" text-anchor="middle" font-family="Barlow Condensed" font-size="11" font-weight="900" fill="#f0ede8">BALL</text>
+
+          <!-- DIRECTION (right) -->
+          <circle cx="392" cy="170" r="34" fill="#0a1f16" stroke="#4be8a0" stroke-width="1.5"/>
+          <text x="392" y="165" text-anchor="middle" font-family="Barlow Condensed" font-size="10" font-weight="700" fill="#4be8a0">&#x2316;</text>
+          <text x="392" y="178" text-anchor="middle" font-family="Barlow Condensed" font-size="11" font-weight="900" fill="#f0ede8">DIRECTION</text>
+
+          <!-- CONSEQUENCE (bottom) -->
+          <circle cx="240" cy="302" r="32" fill="#1a1018" stroke="#e84b8a" stroke-width="1.5"/>
+          <text x="240" y="297" text-anchor="middle" font-family="Barlow Condensed" font-size="10" font-weight="700" fill="#e84b8a">&#x2696;</text>
+          <text x="240" y="314" text-anchor="middle" font-family="Barlow Condensed" font-size="10" font-weight="900" fill="#f0ede8">CONSEQUENCE</text>
+
+          <!-- OPPONENT(S) (left) -->
+          <circle cx="88" cy="170" r="34" fill="#1a0f0a" stroke="#e8724b" stroke-width="1.5"/>
+          <text x="88" y="165" text-anchor="middle" font-family="Barlow Condensed" font-size="9" font-weight="700" fill="#e8724b">&#x1F45A;</text>
+          <text x="88" y="178" text-anchor="middle" font-family="Barlow Condensed" font-size="10" font-weight="900" fill="#f0ede8">OPPONENT(S)</text>
+        </svg>
+      </div>
+
+      <!-- BODC cards -->
+      <div class="principles">
+        <div class="p-card" style="border-top:3px solid #4baee8;">
+          <div class="p-card-num" style="color:#4baee8;">Element 01</div>
+          <div class="p-card-title" style="color:#4baee8;">Ball</div>
+          <div class="p-card-desc">The ball is the primary information source. Its position, trajectory, and possession status drives every decision. Practice must keep the ball central &mdash; not as a prop, but as the key stimulus.</div>
+        </div>
+        <div class="p-card" style="border-top:3px solid #e8724b;">
+          <div class="p-card-num" style="color:#e8724b;">Element 02</div>
+          <div class="p-card-title" style="color:#e8724b;">Opponent(s)</div>
+          <div class="p-card-desc">Opponents create the problem. Their positioning, pressure, and intentions force decisions. Without realistic opposition, players are solving easier problems than the game presents. Co-adaptation of attack and defence is key.</div>
+        </div>
+        <div class="p-card" style="border-top:3px solid #4be8a0;">
+          <div class="p-card-num" style="color:#4be8a0;">Element 03</div>
+          <div class="p-card-title" style="color:#4be8a0;">Direction</div>
+          <div class="p-card-desc">Games have direction &mdash; an end-goal to attack and one to defend. Directionality creates the defensive and offensive tensions of the real game. Remove direction and you remove half the tactical problem.</div>
+        </div>
+        <div class="p-card" style="border-top:3px solid #e84b8a;">
+          <div class="p-card-num" style="color:#e84b8a;">Element 04</div>
+          <div class="p-card-title" style="color:#e84b8a;">Consequence</div>
+          <div class="p-card-desc">Consequence creates stakes. If we lose the ball and don&rsquo;t win it back, the opponent may score. This continuity of attack and defence &mdash; and the cost of losing possession &mdash; must be present in practice design.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- THROUGH / AROUND / OVER -->
+    <div style="margin-bottom:28px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.26em;text-transform:uppercase;color:var(--prob);margin-bottom:6px;">Framework 02 &mdash; Design Principles</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;text-transform:uppercase;color:var(--text);margin-bottom:12px;line-height:1;">Through &middot; Around &middot; Over</div>
+      <div style="font-size:13px;color:#c0bdb8;line-height:1.7;max-width:680px;margin-bottom:20px;">
+        Before designing any game or practice, a coach should ask one simple question: <strong>&ldquo;Will this game invite players to go through, around, or over the opposition?&rdquo;</strong> The intention shapes the design. Keep it simple. Have clear intentions. The game must afford the behaviour you want to develop.
+      </div>
+
+      <!-- THROUGH AROUND OVER VISUAL -->
+      <div style="display:flex;justify-content:center;margin:20px 0 28px;">
+        <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:400px;height:auto;">
+          <rect width="400" height="300" fill="#0a0a0a"/>
+          <!-- Outer yin-yang styled circle -->
+          <circle cx="200" cy="148" r="110" fill="none" stroke="#2a2a2a" stroke-width="1"/>
+          <!-- Around segment (top) -->
+          <path d="M200,148 A55,55 0 0,1 200,38 A110,110 0 0,1 310,148 Z" fill="rgba(232,216,75,0.08)" stroke="rgba(232,216,75,0.2)" stroke-width="1"/>
+          <text x="256" y="96" text-anchor="middle" font-family="Barlow Condensed" font-size="16" font-weight="900" fill="rgba(232,216,75,0.8)">Around</text>
+          <!-- Through segment (left) -->
+          <path d="M200,148 A55,55 0 0,1 145,148 A110,110 0 0,1 200,38 Z" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+          <text x="162" y="136" text-anchor="middle" font-family="Barlow Condensed" font-size="16" font-weight="900" fill="rgba(255,255,255,0.6)">Through</text>
+          <!-- Over segment (bottom) -->
+          <path d="M200,148 A110,110 0 0,1 90,148 A55,55 0 0,0 200,148 Z" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+          <path d="M200,148 A55,55 0 0,0 200,258 A110,110 0 0,1 90,148 Z" fill="rgba(50,50,50,0.5)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+          <path d="M200,148 A55,55 0 0,0 255,148 A110,110 0 0,1 200,258 Z" fill="rgba(30,30,30,0.7)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+          <text x="172" y="220" text-anchor="middle" font-family="Barlow Condensed" font-size="16" font-weight="900" fill="rgba(255,255,255,0.45)">Over</text>
+          <!-- Centre dot -->
+          <circle cx="200" cy="148" r="8" fill="#c9a84c" opacity="0.6"/>
+
+          <!-- Key question -->
+          <text x="200" y="278" text-anchor="middle" font-family="Barlow Condensed" font-size="10" font-weight="700" fill="#6a6560" letter-spacing="1">WILL THE GAME INVITE PLAYING THROUGH, AROUND, OR OVER?</text>
+        </svg>
+      </div>
+
+      <div class="principles">
+        <div class="p-card" style="border-top:3px solid rgba(255,255,255,0.3);">
+          <div class="p-card-num" style="color:rgba(255,255,255,0.5);">Intention 01</div>
+          <div class="p-card-title" style="color:var(--text);">Through</div>
+          <div class="p-card-desc">Playing through the opposition &mdash; penetrating defensive lines, exploiting space between defenders, running directly at the press. Games designed for this will have directional overloads, tight spaces, and high turnover consequence.</div>
+        </div>
+        <div class="p-card" style="border-top:3px solid var(--prob);">
+          <div class="p-card-num" style="color:var(--prob);">Intention 02</div>
+          <div class="p-card-title" style="color:var(--prob);">Around</div>
+          <div class="p-card-desc">Moving the ball around the opposition &mdash; switching, wide play, recycling, finding the far side. Games designed for this will reward patience, width, and ball movement that shifts the defensive shape before committing.</div>
+        </div>
+        <div class="p-card" style="border-top:3px solid #b44be8;">
+          <div class="p-card-num" style="color:#b44be8;">Intention 03</div>
+          <div class="p-card-title" style="color:#b44be8;">Over</div>
+          <div class="p-card-desc">Playing over the top &mdash; high ball delivery, aerial contests, playing in behind. Games designed for this will have deep defensive setups, target players, and contested aerial zones. Requires direction and consequence to be meaningful.</div>
+        </div>
+        <div class="p-card" style="border-top:3px solid var(--gold);">
+          <div class="p-card-num" style="color:var(--gold);">Design Rule</div>
+          <div class="p-card-title" style="color:var(--gold);">Keep It Simple</div>
+          <div class="p-card-desc">One clear intention per game. Know what you want the game to invite before you set it up. If you can&rsquo;t state the intention in one sentence, the design isn&rsquo;t clear enough yet.</div>
+        </div>
+      </div>
+
+      <!-- CREDIT -->
+      <div style="margin-top:20px;background:var(--surface2);border:1px solid var(--border);border-left:4px solid var(--gold);padding:14px 18px;border-radius:2px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.24em;text-transform:uppercase;color:var(--gold);margin-bottom:5px;">Credit</div>
+        <div style="font-size:13px;color:var(--text);font-weight:600;">Mark O&rsquo;Sullivan &mdash; Design Tactical Guidelines</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px;line-height:1.5;">Ball-Opponent(s)-Direction-Consequence task design model. Through / Around / Over design principles. Vaughan &amp; O&rsquo;Sullivan, IFK Stockholm (Vaughan et al., 2021).</div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-brand">Team <span>Training</span> Hub &mdash; Session Design</div>
+  <div class="footer-right">S&amp;C &middot; Skill Acquisition &middot; Team Performance</div>
+</footer>
+
+<script>
+document.querySelectorAll('.tab-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var tab = this.dataset.tab;
+    document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+    this.classList.add('active');
+    document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active');});
+    document.querySelector('.tab-panel[data-tab="'+tab+'"]').classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
