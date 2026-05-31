@@ -20,6 +20,11 @@
     --ee:#4be8d8; /* Explore Exploit */
     --rf:#5be84b; /* Reflection */
     --prob:#e8d84b; /* Problems */
+    --c2a:#4be8d8;  /* C2A */
+    --gm:#4be8a0;   /* Game Model */
+    --aii-att:#4baee8; /* Attention */
+    --aii-int:#4be8a0; /* Intention */
+    --aii-ins:#e84b8a; /* Intensity */
     --tp:#4baee8; /* Task / Problem Design */
   }
   *{margin:0;padding:0;box-sizing:border-box;}
@@ -69,6 +74,12 @@
   .tab-btn[data-tab="reflection"].active::after{background:var(--rf);transform:scaleX(1);}
   .tab-btn[data-tab="problems"].active{color:var(--prob);}
   .tab-btn[data-tab="problems"].active::after{background:var(--prob);transform:scaleX(1);}
+  .tab-btn[data-tab="c2a"].active{color:var(--c2a);}
+  .tab-btn[data-tab="c2a"].active::after{background:var(--c2a);transform:scaleX(1);}
+  .tab-btn[data-tab="gm"].active{color:var(--gm);}
+  .tab-btn[data-tab="gm"].active::after{background:var(--gm);transform:scaleX(1);}
+  .tab-btn[data-tab="aii"].active{color:#e8d84b;}
+  .tab-btn[data-tab="aii"].active::after{background:#e8d84b;transform:scaleX(1);}
   .tab-btn[data-tab="reflection"].active::after{background:var(--rf);transform:scaleX(1);}
   .tab-btn[data-tab="tp"].active{color:var(--tp);}
   .tab-btn[data-tab="tp"].active::after{background:var(--tp);transform:scaleX(1);}
@@ -190,6 +201,30 @@
     .content-wrap{padding-top:20px;}
     footer{padding:14px;}
   }
+
+  /* C2A IMAGE SLOTS */
+  .c2a-img-slot {
+    position: relative; aspect-ratio: 4/3;
+    background: rgba(255,255,255,0.02);
+    border: 1px dashed var(--border2); border-radius: 2px;
+    cursor: pointer; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .c2a-img-slot:hover { border-color: var(--c2a); background: rgba(75,232,216,0.03); }
+  .c2a-img-slot.has-img { border-style: solid; }
+  .c2a-slot-inner { display: flex; flex-direction: column; align-items: center; gap: 6px; pointer-events: none; }
+  .c2a-img-slot.has-img .c2a-slot-inner { display: none; }
+  .c2a-slot-clear {
+    display: none; position: absolute; top: 6px; left: 6px; z-index: 2;
+    font-family: 'Barlow Condensed', sans-serif; font-size: 9px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 7px;
+    background: rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 2px; color: var(--muted); cursor: pointer;
+  }
+  .c2a-slot-clear:hover { color: var(--text); }
+  .c2a-img-slot.has-img .c2a-slot-clear { display: block; }
+
 </style>
 </head>
 <body>
@@ -217,10 +252,13 @@
 <nav class="tab-nav">
   <button class="tab-btn active" data-tab="overview">The Framework</button>
   <button class="tab-btn" data-tab="constraints">Constraints-Led</button>
+  <button class="tab-btn" data-tab="c2a">Constrain to Afford</button>
   <button class="tab-btn" data-tab="dl">Differential Learning</button>
   <button class="tab-btn" data-tab="ee">Explore &amp; Exploit</button>
   <button class="tab-btn" data-tab="reflection">Reflection</button>
   <button class="tab-btn" data-tab="problems">Designing Problems</button>
+  <button class="tab-btn" data-tab="gm">Building a Game Model</button>
+  <button class="tab-btn" data-tab="aii">Attention &middot; Intention &middot; Intensity</button>
 </nav>
 
 <div class="content-wrap">
@@ -687,6 +725,754 @@
 
   </div>
 
+  <!-- CONSTRAIN TO AFFORD TAB -->
+  <div class="tab-panel" data-tab="c2a">
+
+    <!-- BANNER -->
+    <div class="concept-banner" style="background:rgba(75,232,216,0.05);border:1px solid rgba(75,232,216,0.18);border-left:4px solid var(--c2a);">
+      <div class="cb-label" style="color:var(--c2a);">&#x1F3AF; Practice Design Method</div>
+      <div class="cb-title">Constrain to Afford</div>
+      <div class="cb-body">
+        The word <strong>afford</strong> comes from James Gibson&rsquo;s ecological psychology &mdash; an affordance is a possibility for action that an environment makes available. In sport, when you change a rule, alter the numbers, or restructure the space, you don&rsquo;t just change what players <em>can</em> do &mdash; you change what they <em>naturally want to do</em>.
+        <br><br>
+        That&rsquo;s the mechanism. You&rsquo;re not telling them what to do. <strong>You&rsquo;re making the right action the most available one.</strong>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- KEY DISTINCTION -->
+    <div style="margin-bottom:28px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.26em;text-transform:uppercase;color:var(--c2a);margin-bottom:8px;">The Key Distinction</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">
+        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:2px;padding:16px 18px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Traditional coaching</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:900;text-transform:uppercase;color:var(--text);margin-bottom:6px;">Info TO the player</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.55;">Instruction, feedback, demonstration. The coach is the source. The player executes what they&rsquo;re told.</div>
+        </div>
+        <div style="background:rgba(75,232,216,0.04);border:1px solid rgba(75,232,216,0.18);border-radius:2px;padding:16px 18px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--c2a);margin-bottom:6px;">Constrain to Afford</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:900;text-transform:uppercase;color:var(--text);margin-bottom:6px;">Info INTO the environment</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.55;">The player reads the situation and responds. The coach designs the problem &mdash; not the solution.</div>
+        </div>
+      </div>
+      <div style="margin-top:12px;background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.18);border-left:3px solid var(--gold);border-radius:2px;padding:12px 16px;font-size:13px;color:#d8c080;line-height:1.6;">
+        The question changes from <strong>&ldquo;How do I get them to do this?&rdquo;</strong> to <strong>&ldquo;What constraint would make this the obvious thing to do?&rdquo;</strong>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- THREE LEVERS -->
+    <div style="margin-bottom:28px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.26em;text-transform:uppercase;color:var(--c2a);margin-bottom:8px;">The Three Levers &mdash; and What Each Affords</div>
+
+      <!-- TASK -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:2px;margin-bottom:2px;overflow:hidden;">
+        <div style="padding:14px 18px 0;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--c2a);margin-bottom:3px;">Lever 01</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:900;text-transform:uppercase;color:var(--text);margin-bottom:8px;">Task Constraints</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:4px;font-style:italic;">Rules &middot; scoring structures &middot; time windows &middot; problems given to the group</div>
+        </div>
+        <div style="padding:10px 18px 16px;font-size:13px;color:#c0bdb8;line-height:1.75;">
+          A <strong>15-second window to score in the central lane or between the posts</strong> is a task constraint &mdash; it&rsquo;s a problem given to the attackers to solve, not a skill limit imposed on them. The game still runs; the time window is the challenge. This is a classic <em>Explore &rarr; Exploit</em> bridge: players first discover ways to get the ball forward quickly, then learn to exploit the patterns that work under pressure.
+          <br><br>
+          A <strong>bonus point for a score created from wide</strong> is another task constraint. The game is unchanged but the reward structure now affords wide play. Players seek width naturally because the environment rewards it &mdash; not because they were told to.
+          <br><br>
+          <strong>These constraints don&rsquo;t limit skill. They create problems that skill is required to solve.</strong>
+        </div>
+      </div>
+
+      <!-- ENVIRONMENTAL -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:2px;margin-bottom:2px;overflow:hidden;">
+        <div style="padding:14px 18px 0;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--c2a);margin-bottom:3px;">Lever 02</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:900;text-transform:uppercase;color:var(--text);margin-bottom:8px;">Environmental Constraints</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:4px;font-style:italic;">Space &middot; numbers &middot; lanes &middot; zones &middot; goals &middot; starting positions</div>
+        </div>
+        <div style="padding:10px 18px 16px;font-size:13px;color:#c0bdb8;line-height:1.75;">
+          <strong>Constraining the defence to keep a set number of players in the central lane</strong> affords overloads and space on the wide channels &mdash; without telling attackers to go wide. The environment produces the opportunity; the attacker reads and responds.
+          <br><br>
+          A numerical overload (3v2, 4v3) affords attacking confidence and forces defenders into prioritisation decisions. Removing the goalkeeper affords finishing in front of goal without the psychological barrier of a keeper.
+          <br><br>
+          Asking a defender to hold a specific starting position before engaging &mdash; such as on the arc before every play &mdash; is an environmental constraint that affords timing and space advantages for attackers while giving the defender their own problem to solve.
+        </div>
+      </div>
+
+      <!-- INDIVIDUAL -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:2px;margin-bottom:0;overflow:hidden;">
+        <div style="padding:14px 18px 0;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--c2a);margin-bottom:3px;">Lever 03</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:900;text-transform:uppercase;color:var(--text);margin-bottom:8px;">Individual Constraints</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:4px;font-style:italic;">Roles &middot; areas of responsibility &middot; starting positions &middot; physical capacity</div>
+        </div>
+        <div style="padding:10px 18px 16px;font-size:13px;color:#c0bdb8;line-height:1.75;">
+          A player constrained to a specific zone, role, or starting position is not being limited &mdash; they&rsquo;re being given a focused problem. A physically dominant player afforded more 1v1 situations develops that quality through the constraint of repeated exposure. A player who tends to drift centrally, constrained to wide channels, must develop new movement and decision-making patterns. The constraint is individual; the adaptation is specific.
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- TACTICAL C2A -->
+    <div style="margin-bottom:28px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.26em;text-transform:uppercase;color:var(--c2a);margin-bottom:8px;">Tactical C2A &mdash; Two Directions</div>
+      <div style="font-size:13px;color:#c0bdb8;line-height:1.75;margin-bottom:16px;">
+        At the tactical level, Constrain to Afford works in two directions. The choice depends on which unit you want to develop and which unit you want to use as the constraint.
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">
+        <div style="background:rgba(75,174,232,0.05);border:1px solid rgba(75,174,232,0.18);border-radius:2px;padding:16px 18px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#4baee8;margin-bottom:6px;">Direction 01</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;text-transform:uppercase;color:var(--text);margin-bottom:8px;">Constrain the Defence</div>
+          <div style="font-size:12.5px;color:#a8cce0;line-height:1.6;">Set the defence as man-to-man, zonal, or holding a specific line. Watch what the attackers find and create in response. The defensive structure is the constraint; the attack has the problem to solve.</div>
+        </div>
+        <div style="background:rgba(232,75,138,0.05);border:1px solid rgba(232,75,138,0.18);border-radius:2px;padding:16px 18px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#e84b8a;margin-bottom:6px;">Direction 02</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;text-transform:uppercase;color:var(--text);margin-bottom:8px;">Constrain the Attack</div>
+          <div style="font-size:12.5px;color:#d898b8;line-height:1.6;">Tell the attack they must go through, around, or over. Watch how the defence reads, organises, and adapts in response. The attacking intention is the constraint; the defence has the problem to solve.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- PRACTICAL EXAMPLES -->
+    <div style="margin-bottom:28px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.26em;text-transform:uppercase;color:var(--c2a);margin-bottom:16px;">Practical Examples</div>
+
+      <!-- EXAMPLE 1 -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:2px;margin-bottom:12px;overflow:hidden;">
+        <div style="height:3px;background:linear-gradient(90deg,#4baee8,#4be8a0);"></div>
+        <div style="padding:16px 20px 6px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Example 01</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:900;text-transform:uppercase;color:var(--text);margin-bottom:10px;">Playing Through the Press</div>
+          <div style="font-size:13px;color:#c0bdb8;line-height:1.7;margin-bottom:14px;">Three constraints that each afford play through the press &mdash; not because players are told to, but because each one makes penetration the natural response.</div>
+        </div>
+        <div style="padding:0 20px 16px;display:flex;flex-direction:column;gap:10px;">
+
+          <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border2);border-radius:2px;padding:12px 14px;">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#4baee8;margin-bottom:4px;">Constraint A</div>
+            <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px;">Man-to-man &mdash; tackle your own man only</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.55;">Defenders are locked to their player. Attackers have a clear read on who they&rsquo;re facing. Off-ball movement to create angles becomes the natural solution because the structure makes space predictable and exploitable.</div>
+          </div>
+
+          <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border2);border-radius:2px;padding:12px 14px;">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#4baee8;margin-bottom:4px;">Constraint B</div>
+            <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px;">Score in middle lane only &middot; within 20 / 18 / 15 seconds</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.55;">The lane constraint affords central penetration. The time window builds urgency and escalates as players develop. Attackers must find the route through the press, not around it. A classic Explore &rarr; Exploit progression.</div>
+          </div>
+
+          <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border2);border-radius:2px;padding:12px 14px;">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#4baee8;margin-bottom:4px;">Constraint C &mdash; Higher Challenge</div>
+            <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px;">Defenders must hit a line before engaging</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.55;">Defenders start on the arc and must touch either the endline or the halfway line before play engages. Attackers receive from the defender&rsquo;s kick and attack immediately. Deliberately chaotic &mdash; disrupts defensive structure, creates space, and forces attackers to read and react quickly. Best applied once base patterns are established.</div>
+          </div>
+        </div>
+
+        <!-- Image slot 1 -->
+        <div id="img-zone-ex1" style="margin:0 20px 16px;border:1px dashed var(--border2);border-radius:2px;background:rgba(255,255,255,0.02);overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80px;cursor:pointer;position:relative;" onclick="document.getElementById('img-file-ex1').click()">
+          <img id="img-el-ex1" src="" alt="" style="width:100%;display:none;border-radius:2px;">
+          <div id="img-placeholder-ex1" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:18px;">
+            <div style="font-size:18px;opacity:0.15;">&#x25A3;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);">Add Practice Diagram</div>
+            <div style="font-size:11px;color:var(--muted2);">Upload your PNG &mdash; fixed in place as a coaching example</div>
+          </div>
+          <button onclick="clearImg('ex1',event)" id="img-clear-ex1" style="display:none;position:absolute;top:8px;left:10px;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:3px 8px;background:rgba(0,0,0,0.8);border:1px solid rgba(255,255,255,0.1);border-radius:2px;color:var(--muted);cursor:pointer;">&#x2715; Remove</button>
+        </div>
+        <input type="file" id="img-file-ex1" accept="image/*" style="display:none;" onchange="loadImg('ex1',this)">
+      </div>
+
+      <!-- EXAMPLE 2 -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:2px;margin-bottom:12px;overflow:hidden;">
+        <div style="height:3px;background:linear-gradient(90deg,#e84b8a,#b44be8);"></div>
+        <div style="padding:16px 20px 6px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Example 02</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:900;text-transform:uppercase;color:var(--text);margin-bottom:10px;">Defenders Holding Shape &mdash; Separation Game</div>
+          <div style="font-size:13px;color:#c0bdb8;line-height:1.7;margin-bottom:14px;">The Separation Game creates the structural constraint. But the constraint alone is incomplete without a principle to organise it.</div>
+        </div>
+        <div style="padding:0 20px 6px;display:flex;flex-direction:column;gap:10px;">
+
+          <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border2);border-radius:2px;padding:12px 14px;">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#e84b8a;margin-bottom:4px;">The Constraint</div>
+            <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px;">Man-to-man &middot; tackle your own man only</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.55;">Every restart stopped until man-to-man is fully set. Defenders are responsible only for their own player. This affords positional discipline and forces defenders to track movement without chasing the ball.</div>
+          </div>
+
+          <!-- SUB-PRINCIPLE CALLOUT -->
+          <div style="background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.25);border-left:3px solid var(--gold);border-radius:2px;padding:14px 16px;">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">&#x1F4CB; Sub-Principle</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;text-transform:uppercase;color:var(--text);margin-bottom:6px;">&ldquo;Meet Them When They Come In&rdquo;</div>
+            <div style="font-size:12.5px;color:#d8c080;line-height:1.65;">A defender does not follow their attacker everywhere. If the attacker drifts into a non-dangerous area far from the ball, the defender stays compact and monitors. When the attacker moves toward danger &mdash; toward the ball, toward the goal, toward an area of threat &mdash; the defender engages.
+            <br><br>
+            This sub-principle works <em>with</em> the constraint. Without it, defenders chase every run and lose their shape. With it, they develop the skill of <strong>ball and man awareness simultaneously</strong> &mdash; scanning regularly, protecting the danger zone in front of goal, and making the decision about when to leave off and when to engage.</div>
+          </div>
+
+          <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border2);border-radius:2px;padding:12px 14px;">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#e84b8a;margin-bottom:4px;">What This Develops</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.55;">Scanning &middot; Positional discipline &middot; Ball &amp; man awareness &middot; Danger zone protection &middot; Decision-making about when to engage</div>
+          </div>
+        </div>
+
+        <!-- Image slot 2 -->
+        <div id="img-zone-ex2" style="margin:16px 20px 16px;border:1px dashed var(--border2);border-radius:2px;background:rgba(255,255,255,0.02);overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80px;cursor:pointer;position:relative;" onclick="document.getElementById('img-file-ex2').click()">
+          <img id="img-el-ex2" src="" alt="" style="width:100%;display:none;border-radius:2px;">
+          <div id="img-placeholder-ex2" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:18px;">
+            <div style="font-size:18px;opacity:0.15;">&#x25A3;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);">Add Practice Diagram</div>
+            <div style="font-size:11px;color:var(--muted2);">Upload your PNG &mdash; fixed in place as a coaching example</div>
+          </div>
+          <button onclick="clearImg('ex2',event)" id="img-clear-ex2" style="display:none;position:absolute;top:8px;left:10px;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:3px 8px;background:rgba(0,0,0,0.8);border:1px solid rgba(255,255,255,0.1);border-radius:2px;color:var(--muted);cursor:pointer;">&#x2715; Remove</button>
+        </div>
+        <input type="file" id="img-file-ex2" accept="image/*" style="display:none;" onchange="loadImg('ex2',this)">
+      </div>
+
+      <!-- EXTRA IMAGE SLOTS -->
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);margin:20px 0 10px;">Additional Practice Diagrams</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">
+        <div id="img-zone-ex3" style="border:1px dashed var(--border2);border-radius:2px;background:rgba(255,255,255,0.02);overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:140px;cursor:pointer;position:relative;" onclick="document.getElementById('img-file-ex3').click()">
+          <img id="img-el-ex3" src="" alt="" style="width:100%;display:none;border-radius:2px;">
+          <div id="img-placeholder-ex3" style="display:flex;flex-direction:column;align-items:center;gap:5px;padding:16px;text-align:center;">
+            <div style="font-size:18px;opacity:0.12;">&#x25A3;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted2);">Add Diagram</div>
+          </div>
+          <button onclick="clearImg('ex3',event)" id="img-clear-ex3" style="display:none;position:absolute;top:6px;left:8px;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:2px 7px;background:rgba(0,0,0,0.8);border:1px solid rgba(255,255,255,0.1);border-radius:2px;color:var(--muted);cursor:pointer;">&#x2715;</button>
+        </div>
+        <input type="file" id="img-file-ex3" accept="image/*" style="display:none;" onchange="loadImg('ex3',this)">
+
+        <div id="img-zone-ex4" style="border:1px dashed var(--border2);border-radius:2px;background:rgba(255,255,255,0.02);overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:140px;cursor:pointer;position:relative;" onclick="document.getElementById('img-file-ex4').click()">
+          <img id="img-el-ex4" src="" alt="" style="width:100%;display:none;border-radius:2px;">
+          <div id="img-placeholder-ex4" style="display:flex;flex-direction:column;align-items:center;gap:5px;padding:16px;text-align:center;">
+            <div style="font-size:18px;opacity:0.12;">&#x25A3;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted2);">Add Diagram</div>
+          </div>
+          <button onclick="clearImg('ex4',event)" id="img-clear-ex4" style="display:none;position:absolute;top:6px;left:8px;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:2px 7px;background:rgba(0,0,0,0.8);border:1px solid rgba(255,255,255,0.1);border-radius:2px;color:var(--muted);cursor:pointer;">&#x2715;</button>
+        </div>
+        <input type="file" id="img-file-ex4" accept="image/*" style="display:none;" onchange="loadImg('ex4',this)">
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- DESIGN QUESTIONS -->
+    <div style="margin-bottom:28px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.26em;text-transform:uppercase;color:var(--c2a);margin-bottom:12px;">The Design Questions</div>
+      <div style="font-size:13px;color:#c0bdb8;margin-bottom:14px;line-height:1.6;">Before setting up any practice, a coach using C2A asks:</div>
+      <div style="display:flex;flex-direction:column;gap:2px;">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:12px 16px;display:flex;gap:14px;align-items:flex-start;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;color:var(--c2a);flex-shrink:0;line-height:1;">01</div>
+          <div style="font-size:13px;color:var(--text);line-height:1.5;">What behaviour do I want to see more of?</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:12px 16px;display:flex;gap:14px;align-items:flex-start;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;color:var(--c2a);flex-shrink:0;line-height:1;">02</div>
+          <div style="font-size:13px;color:var(--text);line-height:1.5;">What constraint would make that behaviour the path of least resistance?</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:12px 16px;display:flex;gap:14px;align-items:flex-start;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;color:var(--c2a);flex-shrink:0;line-height:1;">03</div>
+          <div style="font-size:13px;color:var(--text);line-height:1.5;">What does this game currently afford &mdash; and is that what I want?</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:12px 16px;display:flex;gap:14px;align-items:flex-start;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;color:var(--c2a);flex-shrink:0;line-height:1;">04</div>
+          <div style="font-size:13px;color:var(--text);line-height:1.5;">What unintended behaviour might this constraint invite?</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- WHAT TO AVOID -->
+    <div style="margin-bottom:28px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.26em;text-transform:uppercase;color:var(--c2a);margin-bottom:12px;">What to Avoid</div>
+      <div class="principles" style="margin-top:0;">
+
+        <div class="p-card" style="border-top:3px solid var(--c2a);">
+          <div class="p-card-num" style="color:var(--c2a);">Avoid</div>
+          <div class="p-card-title" style="color:var(--c2a);">Over-Constraining</div>
+          <div class="p-card-desc">Stacking too many rules creates confusion rather than clarity. One clear constraint per game. More constraints = less information available to the player.</div>
+        </div>
+
+        <div class="p-card" style="border-top:3px solid var(--c2a);">
+          <div class="p-card-num" style="color:var(--c2a);">Avoid</div>
+          <div class="p-card-title" style="color:var(--c2a);">Constraints as Punishment</div>
+          <div class="p-card-desc">A constraint should invite a behaviour, not penalise failure. Sitting out for losing the ball is discipline, not design. The two are different tools for different purposes.</div>
+        </div>
+
+        <div class="p-card" style="border-top:3px solid var(--c2a);">
+          <div class="p-card-num" style="color:var(--c2a);">Avoid</div>
+          <div class="p-card-title" style="color:var(--c2a);">Not Observing</div>
+          <div class="p-card-desc">The constraint generates information about your players and your design. If you&rsquo;re not watching, you&rsquo;re wasting the practice. Observe before you intervene.</div>
+        </div>
+
+      </div>
+
+      <!-- TIME CONSTRAINT NOTE -->
+      <div style="margin-top:12px;background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.18);border-left:4px solid var(--gold);border-radius:2px;padding:16px 18px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">&#x1F4CC; On Time-Based Scoring Constraints</div>
+        <div style="font-size:13px;color:#d8c080;line-height:1.7;">
+          It is valid to constrain around scoring &mdash; scoring is the point of the game. But there is an important distinction in how you apply time pressure:
+          <br><br>
+          A <strong>hard cutoff</strong> (&ldquo;score in 10 seconds or the ball is dead&rdquo;) asks for very direct and usually difficult solutions. This can be useful for high-level teams or as a competitive challenge between groups. It tends to produce urgent, decisive play &mdash; useful stimulus at the right moment.
+          <br><br>
+          A <strong>bonus point</strong> for scoring within a time window &mdash; while the game continues regardless &mdash; is a softer version of the same constraint. Players are incentivised toward speed without being forced into poor decisions. Both are valid C2A. The key is knowing which you are using and why. <strong>The bonus model invites the behaviour. The hard cutoff demands it.</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- PROGRESSION LOGIC -->
+    <div style="margin-bottom:28px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.26em;text-transform:uppercase;color:var(--c2a);margin-bottom:12px;">Progression Logic</div>
+      <div style="display:flex;flex-direction:column;gap:2px;">
+        <div style="background:rgba(75,232,216,0.04);border:1px solid rgba(75,232,216,0.15);border-radius:2px;padding:14px 18px;display:flex;gap:16px;align-items:flex-start;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;text-transform:uppercase;color:var(--c2a);flex-shrink:0;min-width:80px;">Explore</div>
+          <div style="font-size:12.5px;color:#a0e8d8;line-height:1.55;">Loose constraint, many solutions, player-led discovery. The practice affords exploration of the problem. Coach observes. Phases 01&ndash;02.</div>
+        </div>
+        <div style="background:rgba(75,232,216,0.06);border:1px solid rgba(75,232,216,0.2);border-radius:2px;padding:14px 18px;display:flex;gap:16px;align-items:flex-start;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;text-transform:uppercase;color:var(--c2a);flex-shrink:0;min-width:80px;">Direct</div>
+          <div style="font-size:12.5px;color:#a0e8d8;line-height:1.55;">Tighter constraint, fewer solutions, the desired behaviour becomes prominent. The practice affords a specific response. Coach names what they see. Phase 03.</div>
+        </div>
+        <div style="background:rgba(75,232,216,0.09);border:1px solid rgba(75,232,216,0.28);border-radius:2px;padding:14px 18px;display:flex;gap:16px;align-items:flex-start;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;text-transform:uppercase;color:var(--c2a);flex-shrink:0;min-width:80px;">Challenge</div>
+          <div style="font-size:12.5px;color:#a0e8d8;line-height:1.55;">Game-realistic constraint. The behaviour must now work under opposition pressure and fatigue. This is Phase 04 &mdash; the tactical conditioned game. The constraint is the match itself.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CREDIT -->
+    <div style="background:var(--surface2);border:1px solid var(--border);border-left:4px solid var(--gold);border-radius:2px;padding:14px 18px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.24em;text-transform:uppercase;color:var(--gold);margin-bottom:5px;">Credit</div>
+      <div style="font-size:13px;color:var(--text);font-weight:600;">Keith Davids &middot; Ian Renshaw &middot; Danny Newcombe</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:3px;line-height:1.5;">Constrain to Afford &mdash; Constraints-Led Approach to practice design in sport. Ecological dynamics framework.</div>
+    </div>
+
+  </div>
+
+
+
+
+  <!-- BUILDING A GAME MODEL TAB -->
+  <div class="tab-panel" data-tab="gm">
+
+    <!-- BANNER -->
+    <div class="concept-banner" style="background:rgba(75,232,160,0.05);border:1px solid rgba(75,232,160,0.18);border-left:4px solid var(--gm);">
+      <div class="cb-label" style="color:var(--gm);">&#x1F3C6; Ecological Dynamics &mdash; Game Model Design</div>
+      <div class="cb-title">Building a Game Model in an Ecological Way</div>
+      <div class="cb-body">
+        A game model in the ecological dynamics framework is not a playbook. It is a <strong>flexible scaffold</strong> &mdash; a set of principles, intentions, and environmental conditions that guide how players and teams adapt to the ever-changing demands of the game. Players and teams co-adapt to the game environment rather than executing predetermined patterns.
+        <br><br>
+        The shift is from <em>prescribing what to do</em> to <em>designing conditions in which the right behaviours emerge</em>.
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- TRADITIONAL vs ECOLOGICAL -->
+    <div style="margin-bottom:28px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.26em;text-transform:uppercase;color:var(--gm);margin-bottom:14px;">Two Approaches to the Game Model</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">
+
+        <!-- TRADITIONAL -->
+        <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:2px;overflow:hidden;">
+          <div style="padding:14px 18px 10px;border-bottom:1px solid var(--border);">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Traditional</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:900;text-transform:uppercase;color:var(--muted);">Playbook Model</div>
+          </div>
+          <div style="padding:12px 18px 16px;">
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="font-size:12.5px;color:#808080;line-height:1.45;padding-left:10px;border-left:2px solid var(--border2);">Reductionist &amp; deterministic approaches</div>
+              <div style="font-size:12.5px;color:#808080;line-height:1.45;padding-left:10px;border-left:2px solid var(--border2);">Prescriptive &amp; predetermined &mdash; fixed patterns of play</div>
+              <div style="font-size:12.5px;color:#808080;line-height:1.45;padding-left:10px;border-left:2px solid var(--border2);">Coach-led directives &mdash; players comply</div>
+              <div style="font-size:12.5px;color:#808080;line-height:1.45;padding-left:10px;border-left:2px solid var(--border2);">Simplified environments &mdash; rehearsal &amp; repetition</div>
+              <div style="font-size:12.5px;color:#808080;line-height:1.45;padding-left:10px;border-left:2px solid var(--border2);">Automatisation &mdash; limited adaptability</div>
+              <div style="font-size:12.5px;color:#808080;line-height:1.45;padding-left:10px;border-left:2px solid var(--border2);">Reduced exposure to complexity &mdash; constrained decision-making</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ECOLOGICAL -->
+        <div style="background:rgba(75,232,160,0.04);border:1px solid rgba(75,232,160,0.18);border-radius:2px;overflow:hidden;">
+          <div style="padding:14px 18px 10px;border-bottom:1px solid rgba(75,232,160,0.15);">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gm);margin-bottom:4px;">Ecological</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:900;text-transform:uppercase;color:var(--gm);">Adaptive Model</div>
+          </div>
+          <div style="padding:12px 18px 16px;">
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="font-size:12.5px;color:#a0d8b8;line-height:1.45;padding-left:10px;border-left:2px solid rgba(75,232,160,0.3);">Flexible scaffold &mdash; not a blueprint to follow</div>
+              <div style="font-size:12.5px;color:#a0d8b8;line-height:1.45;padding-left:10px;border-left:2px solid rgba(75,232,160,0.3);">Adaptive &amp; emergent &mdash; shaped through interaction</div>
+              <div style="font-size:12.5px;color:#a0d8b8;line-height:1.45;padding-left:10px;border-left:2px solid rgba(75,232,160,0.3);">Player-environment interaction &mdash; perception-action coupling</div>
+              <div style="font-size:12.5px;color:#a0d8b8;line-height:1.45;padding-left:10px;border-left:2px solid rgba(75,232,160,0.3);">Representative learning &mdash; rich, information-dense practice</div>
+              <div style="font-size:12.5px;color:#a0d8b8;line-height:1.45;padding-left:10px;border-left:2px solid rgba(75,232,160,0.3);">Decision-making &mdash; exploration &amp; problem solving</div>
+              <div style="font-size:12.5px;color:#a0d8b8;line-height:1.45;padding-left:10px;border-left:2px solid rgba(75,232,160,0.3);">Exposure to informational complexity &mdash; flexible, context-sensitive behaviour</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- THE SHIFT CALLOUT -->
+      <div style="margin-top:2px;background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.2);border-left:4px solid var(--gold);border-radius:2px;padding:16px 20px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+        <div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.24em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;">The Shift</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;text-transform:uppercase;color:var(--text);line-height:1;">From Playbook<br>to Adaptive Performance</div>
+        </div>
+        <div style="flex:1;min-width:200px;font-size:13px;color:#d8c080;line-height:1.65;">Players and teams co-adapt to the ever-changing game environment. The model does not prescribe what will happen &mdash; it creates the conditions in which the right things can happen.</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- GAME AS CONTINUOUS FLOW DIAGRAM -->
+    <div style="margin-bottom:28px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.26em;text-transform:uppercase;color:var(--gm);margin-bottom:6px;">The Game as a Continuous Flow</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:18px;">Football is not a sequence of separate phases &mdash; it is a continuous, evolving system with augmented information flowing across all moments of the game.</div>
+
+      <!-- SVG FLOW DIAGRAM -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:20px;overflow:hidden;">
+        <svg viewBox="0 0 760 380" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:760px;display:block;margin:0 auto;">
+
+          <!-- ATTACKING ELLIPSE (left, green) -->
+          <ellipse cx="240" cy="190" rx="175" ry="115" fill="rgba(75,232,160,0.08)" stroke="rgba(75,232,160,0.3)" stroke-width="1.5"/>
+
+          <!-- DEFENDING ELLIPSE (right, pink/red) -->
+          <ellipse cx="520" cy="190" rx="175" ry="115" fill="rgba(232,75,138,0.08)" stroke="rgba(232,75,138,0.3)" stroke-width="1.5"/>
+
+          <!-- TRANSITION NEXUS centre circle -->
+          <circle cx="380" cy="190" r="58" fill="rgba(201,168,76,0.12)" stroke="rgba(201,168,76,0.4)" stroke-width="1.5"/>
+          <circle cx="380" cy="190" r="48" fill="rgba(201,168,76,0.06)" stroke="rgba(201,168,76,0.2)" stroke-width="1"/>
+
+          <!-- Flow arrows — clockwise outer loop -->
+          <!-- Top: Attacking → Defending -->
+          <path d="M 300 100 Q 380 60 460 100" stroke="#4be8a0" stroke-width="1.5" fill="none" stroke-dasharray="5 3" opacity="0.6" marker-end="url(#gm-arrow-green)"/>
+          <!-- Bottom: Defending → Attacking -->
+          <path d="M 460 280 Q 380 320 300 280" stroke="#e84b8a" stroke-width="1.5" fill="none" stroke-dasharray="5 3" opacity="0.6" marker-end="url(#gm-arrow-pink)"/>
+          <!-- Left inner: into Transition from Attacking -->
+          <path d="M 320 190 Q 345 170 332 190" stroke="#4be8a0" stroke-width="1" fill="none" opacity="0.4"/>
+          <!-- Right inner: out of Transition to Defending -->
+          <path d="M 428 190 Q 415 170 440 190" stroke="#e84b8a" stroke-width="1" fill="none" opacity="0.4"/>
+
+          <!-- Arrow markers -->
+          <defs>
+            <marker id="gm-arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <path d="M2 1L8 5L2 9" fill="none" stroke="#4be8a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </marker>
+            <marker id="gm-arrow-pink" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <path d="M2 1L8 5L2 9" fill="none" stroke="#e84b8a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </marker>
+            <marker id="gm-arrow-gold" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <path d="M2 1L8 5L2 9" fill="none" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </marker>
+          </defs>
+
+          <!-- SET PIECES (top) -->
+          <rect x="322" y="18" width="116" height="28" rx="2" fill="rgba(75,174,232,0.1)" stroke="rgba(75,174,232,0.3)" stroke-width="1"/>
+          <text x="380" y="36" text-anchor="middle" font-family="Barlow Condensed" font-size="11" font-weight="700" fill="#4baee8" letter-spacing="1">SET PIECES</text>
+          <line x1="380" y1="46" x2="380" y2="76" stroke="#4baee8" stroke-width="1" stroke-dasharray="3 3" opacity="0.5" marker-end="url(#gm-arrow-gold)"/>
+
+          <!-- INTERVENTIONS (bottom) -->
+          <rect x="298" y="334" width="164" height="28" rx="2" fill="rgba(180,75,232,0.1)" stroke="rgba(180,75,232,0.3)" stroke-width="1"/>
+          <text x="380" y="352" text-anchor="middle" font-family="Barlow Condensed" font-size="11" font-weight="700" fill="#b44be8" letter-spacing="1">INTERVENTIONS</text>
+          <line x1="380" y1="334" x2="380" y2="304" stroke="#b44be8" stroke-width="1" stroke-dasharray="3 3" opacity="0.5" marker-end="url(#gm-arrow-gold)"/>
+
+          <!-- ATTACKING label -->
+          <text x="168" y="168" text-anchor="middle" font-family="Barlow Condensed" font-size="15" font-weight="900" fill="#4be8a0" letter-spacing="1">ATTACKING</text>
+          <text x="168" y="186" text-anchor="middle" font-family="Barlow Condensed" font-size="9" font-weight="700" fill="#4be8a0" opacity="0.6" letter-spacing="2">IN-POSSESSION</text>
+
+          <!-- Building up sub-label -->
+          <text x="168" y="228" text-anchor="middle" font-family="Barlow Condensed" font-size="10" font-weight="700" fill="#4be8a0" opacity="0.45" letter-spacing="0">Building Up &amp;</text>
+          <text x="168" y="242" text-anchor="middle" font-family="Barlow Condensed" font-size="10" font-weight="700" fill="#4be8a0" opacity="0.45" letter-spacing="0">Scoring Phase</text>
+
+          <!-- DEFENDING label -->
+          <text x="592" y="168" text-anchor="middle" font-family="Barlow Condensed" font-size="15" font-weight="900" fill="#e84b8a" letter-spacing="1">DEFENDING</text>
+          <text x="592" y="186" text-anchor="middle" font-family="Barlow Condensed" font-size="9" font-weight="700" fill="#e84b8a" opacity="0.6" letter-spacing="2">OUT-OF-POSSESSION</text>
+
+          <!-- Disturbing sub-label -->
+          <text x="592" y="228" text-anchor="middle" font-family="Barlow Condensed" font-size="10" font-weight="700" fill="#e84b8a" opacity="0.45" letter-spacing="0">Disturbing &amp;</text>
+          <text x="592" y="242" text-anchor="middle" font-family="Barlow Condensed" font-size="10" font-weight="700" fill="#e84b8a" opacity="0.45" letter-spacing="0">Regaining Phase</text>
+
+          <!-- TRANSITION NEXUS label -->
+          <text x="380" y="180" text-anchor="middle" font-family="Barlow Condensed" font-size="11" font-weight="900" fill="#c9a84c" letter-spacing="1">TRANSITION</text>
+          <text x="380" y="196" text-anchor="middle" font-family="Barlow Condensed" font-size="11" font-weight="900" fill="#c9a84c" letter-spacing="1">NEXUS</text>
+          <text x="380" y="211" text-anchor="middle" font-family="Barlow Condensed" font-size="8" font-weight="700" fill="#c9a84c" opacity="0.55" letter-spacing="1">RECALIBRATION</text>
+
+        </svg>
+      </div>
+
+      <!-- TRANSITION NEXUS DESCRIPTION -->
+      <div style="margin-top:2px;background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.18);border-left:3px solid var(--gold);border-radius:2px;padding:14px 18px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:5px;">The Transition Nexus</div>
+        <div style="font-size:13px;color:#d8c080;line-height:1.65;font-style:italic;">&ldquo;The Transition Nexus is where the game is most fragile and most creative. It is the moment of attunement, recalibration and reorganisation where perception, intention and action converge.&rdquo;</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:6px;">Jones et al., 2026</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- WHAT THIS MEANS FOR COACHES -->
+    <div style="margin-bottom:28px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.26em;text-transform:uppercase;color:var(--gm);margin-bottom:14px;">What This Means for Coaches</div>
+      <div style="display:flex;flex-direction:column;gap:2px;">
+
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:14px 18px;display:flex;gap:16px;align-items:flex-start;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;text-transform:uppercase;color:var(--gm);flex-shrink:0;min-width:28px;line-height:1.2;">01</div>
+          <div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;text-transform:uppercase;color:var(--text);margin-bottom:4px;">Design Environments, Not Instructions</div>
+            <div style="font-size:12.5px;color:var(--muted);line-height:1.55;">Create conditions that afford the right behaviours. The practice design does the teaching &mdash; not the instruction.</div>
+          </div>
+        </div>
+
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:14px 18px;display:flex;gap:16px;align-items:flex-start;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;text-transform:uppercase;color:var(--gm);flex-shrink:0;min-width:28px;line-height:1.2;">02</div>
+          <div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;text-transform:uppercase;color:var(--text);margin-bottom:4px;">Guide Attention, Not Movements</div>
+            <div style="font-size:12.5px;color:var(--muted);line-height:1.55;">Use tactical principles as attentional anchors. Direct where players look and what they notice &mdash; the movement follows.</div>
+          </div>
+        </div>
+
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:14px 18px;display:flex;gap:16px;align-items:flex-start;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;text-transform:uppercase;color:var(--gm);flex-shrink:0;min-width:28px;line-height:1.2;">03</div>
+          <div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;text-transform:uppercase;color:var(--text);margin-bottom:4px;">Use Feedback That Informs Decisions</div>
+            <div style="font-size:12.5px;color:var(--muted);line-height:1.55;">Questioning, prompts, and images over telling. Ask before you tell. Let players evaluate before the coach delivers a verdict.</div>
+          </div>
+        </div>
+
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:14px 18px;display:flex;gap:16px;align-items:flex-start;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;text-transform:uppercase;color:var(--gm);flex-shrink:0;min-width:28px;line-height:1.2;">04</div>
+          <div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;text-transform:uppercase;color:var(--text);margin-bottom:4px;">Embrace Variability and Emergence</div>
+            <div style="font-size:12.5px;color:var(--muted);line-height:1.55;">Promote exploration, adaptation and co-adaptation. The unpredictable moment in practice is where the learning lives &mdash; not something to be eliminated.</div>
+          </div>
+        </div>
+
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:14px 18px;display:flex;gap:16px;align-items:flex-start;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;text-transform:uppercase;color:var(--gm);flex-shrink:0;min-width:28px;line-height:1.2;">05</div>
+          <div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;text-transform:uppercase;color:var(--text);margin-bottom:4px;">Develop Players, Not Just Patterns</div>
+            <div style="font-size:12.5px;color:var(--muted);line-height:1.55;">Build perception, decision-making and adaptability. A player who understands the game will always outperform a player who only knows their role in a pattern.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- TACTICAL PRINCIPLES AS ATTENTIONAL ANCHORS -->
+    <div style="margin-bottom:28px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.26em;text-transform:uppercase;color:var(--gm);margin-bottom:6px;">Tactical Principles as Attentional Anchors</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:14px;">Principles don&rsquo;t prescribe movement &mdash; they direct attention. A player anchored to a principle will find their own solution within it.</div>
+
+      <div class="principles" style="margin-top:0;">
+
+        <div class="p-card" style="border-top:3px solid var(--gm);">
+          <div class="p-card-num" style="color:var(--gm);">Anchor 01</div>
+          <div class="p-card-title" style="color:var(--gm);">Perception</div>
+          <div class="p-card-desc">See the information that matters. The first skill is knowing <em>what to look at</em> before deciding what to do. Tactical principles focus the perceptual search.</div>
+        </div>
+
+        <div class="p-card" style="border-top:3px solid var(--game-blue);">
+          <div class="p-card-num" style="color:var(--game-blue);">Anchor 02</div>
+          <div class="p-card-title" style="color:var(--game-blue);">Decision-Making</div>
+          <div class="p-card-desc">Select viable options. Not the perfect option &mdash; a viable one. Decision-making under pressure improves through exposure to representative problems in practice.</div>
+        </div>
+
+        <div class="p-card" style="border-top:3px solid var(--gold);">
+          <div class="p-card-num" style="color:var(--gold);">Anchor 03</div>
+          <div class="p-card-title" style="color:var(--gold);">Action</div>
+          <div class="p-card-desc">Execute with intent. A good decision executed with commitment is more effective than a better decision executed hesitantly. Intention is part of the action.</div>
+        </div>
+
+        <div class="p-card" style="border-top:3px solid var(--att);">
+          <div class="p-card-num" style="color:var(--att);">Anchor 04</div>
+          <div class="p-card-title" style="color:var(--att);">Co-Adaptation</div>
+          <div class="p-card-desc">Interact and influence each other. Players co-adapt in real time &mdash; the attacker shapes the defender, the defender shapes the attacker. This is the game.</div>
+        </div>
+
+        <div class="p-card" style="border-top:3px solid var(--vo2);">
+          <div class="p-card-num" style="color:var(--vo2);">Anchor 05</div>
+          <div class="p-card-title" style="color:var(--vo2);">Emergence</div>
+          <div class="p-card-desc">Adaptive behaviours emerge from the system. You cannot prescribe every solution &mdash; you create the conditions and let the behaviour emerge from the interaction.</div>
+        </div>
+
+        <div class="p-card" style="border-top:3px solid var(--gm);">
+          <div class="p-card-num" style="color:var(--gm);">Anchor 06</div>
+          <div class="p-card-title" style="color:var(--gm);">Principles</div>
+          <div class="p-card-desc">Tactical principles as affordance-based intentions. A principle tells players what to look for and what it affords &mdash; not where to stand or what to do.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CREDIT -->
+    <div style="background:var(--surface2);border:1px solid var(--border);border-left:4px solid var(--gm);border-radius:2px;padding:14px 18px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.24em;text-transform:uppercase;color:var(--gm);margin-bottom:5px;">Credit</div>
+      <div style="font-size:13px;color:var(--text);font-weight:600;">G&eacute;rard Jones &mdash; Jones et al., 2026</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:3px;line-height:1.55;">Game Models in Football Coaching: An Ecological Dynamics Perspective. International Journal of Performance Analysis in Sport. Special Issue: Applied Football Science in Coaching and Performance &mdash; Reconceptualising Game Models in Football.</div>
+      <div style="margin-top:8px;"><a href="https://doi.org/10.1080/24748668.2026.2679371" target="_blank" rel="noopener" style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--gm);opacity:0.7;text-decoration:none;border-bottom:1px solid rgba(75,232,160,0.3);">doi.org/10.1080/24748668.2026.2679371 &rarr;</a></div>
+    </div>
+
+  </div>
+
+
+  <!-- ATTENTION · INTENTION · INTENSITY TAB -->
+  <div class="tab-panel" data-tab="aii">
+
+    <!-- BANNER -->
+    <div class="concept-banner" style="background:rgba(232,216,75,0.05);border:1px solid rgba(232,216,75,0.18);border-left:4px solid #e8d84b;">
+      <div class="cb-label" style="color:#e8d84b;">&#x26A1; The Competitive Mindset Framework</div>
+      <div class="cb-title">Attention &middot; Intention &middot; Intensity</div>
+      <div class="cb-body">
+        These three qualities sit beneath everything that happens in competition and in practice. They are not tactics or techniques &mdash; they are the mental architecture that determines how a player engages with the game. <strong>Great competitors train all three, and great coaches design for all three.</strong>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ATTENTION -->
+    <div style="background:var(--surface);border:1px solid rgba(75,174,232,0.25);border-radius:2px;overflow:hidden;margin-bottom:2px;">
+      <div style="height:4px;background:linear-gradient(90deg,#4baee8,#4be8d8);"></div>
+      <div style="padding:20px 22px 14px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.26em;text-transform:uppercase;color:#4baee8;margin-bottom:6px;">Quality 01</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;text-transform:uppercase;color:#4baee8;line-height:1;margin-bottom:4px;">Attention</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#4baee8;opacity:0.55;margin-bottom:16px;">The Bedrock of Mindset</div>
+        <div style="font-size:13.5px;color:#c0bdb8;line-height:1.8;">
+          The most important mental skill you have. Great competitors learn over days, weeks, and years to <strong style="color:var(--text);">amplify and flex their attention</strong>. They go again, refusing to give in to distraction. They go again, determined to stay connected to the game.
+        </div>
+      </div>
+
+      <!-- Attention types -->
+      <div style="padding:0 22px 14px;display:grid;grid-template-columns:1fr 1fr;gap:2px;">
+        <div style="background:rgba(75,174,232,0.05);border:1px solid rgba(75,174,232,0.14);border-radius:2px;padding:11px 14px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#4baee8;margin-bottom:5px;">Teammates</div>
+          <div style="font-size:12px;color:#a8cce0;line-height:1.5;">An attention trained towards your teammates &mdash; reading movement, anticipating needs, staying connected.</div>
+        </div>
+        <div style="background:rgba(75,174,232,0.05);border:1px solid rgba(75,174,232,0.14);border-radius:2px;padding:11px 14px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#4baee8;margin-bottom:5px;">Opposition</div>
+          <div style="font-size:12px;color:#a8cce0;line-height:1.5;">An attention homing in on the opposition &mdash; their shape, their cues, their intentions.</div>
+        </div>
+        <div style="background:rgba(75,174,232,0.05);border:1px solid rgba(75,174,232,0.14);border-radius:2px;padding:11px 14px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#4baee8;margin-bottom:5px;">Space &amp; Ball</div>
+          <div style="font-size:12px;color:#a8cce0;line-height:1.5;">An attention divided between space and ball &mdash; the dual scan that separates the perceptive from the reactive.</div>
+        </div>
+        <div style="background:rgba(75,174,232,0.05);border:1px solid rgba(75,174,232,0.14);border-radius:2px;padding:11px 14px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#4baee8;margin-bottom:5px;">Game Plan</div>
+          <div style="font-size:12px;color:#a8cce0;line-height:1.5;">An attention directed towards game plans, responsibilities and actions &mdash; the collective intention held in mind.</div>
+        </div>
+      </div>
+
+      <div style="margin:0 22px 18px;background:rgba(75,174,232,0.06);border:1px solid rgba(75,174,232,0.18);border-left:3px solid #4baee8;border-radius:2px;padding:12px 16px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#4baee8;margin-bottom:5px;">Coaching Application</div>
+        <div style="font-size:12.5px;color:#a8cce0;line-height:1.6;">The coach draws attention to what is important &mdash; through analysis, feedback, reflection and practice design. Every coaching decision is a choice about where attention goes.</div>
+      </div>
+    </div>
+
+    <!-- INTENTION -->
+    <div style="background:var(--surface);border:1px solid rgba(75,232,160,0.25);border-radius:2px;overflow:hidden;margin-bottom:2px;">
+      <div style="height:4px;background:linear-gradient(90deg,#4be8a0,#4be8d8);"></div>
+      <div style="padding:20px 22px 14px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.26em;text-transform:uppercase;color:#4be8a0;margin-bottom:6px;">Quality 02</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;text-transform:uppercase;color:#4be8a0;line-height:1;margin-bottom:4px;">Intention</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#4be8a0;opacity:0.55;margin-bottom:16px;">A Mind-Body State</div>
+        <div style="font-size:13.5px;color:#c0bdb8;line-height:1.8;">
+          Constantly influencing the style in which you execute your actions. Great competitors feel the direction of their energy through the experience of being in their bodies &mdash; and they do all they can to <strong style="color:var(--text);">position it forward</strong>.
+        </div>
+      </div>
+
+      <!-- Intention qualities -->
+      <div style="padding:0 22px 14px;display:flex;flex-direction:column;gap:2px;">
+        <div style="background:rgba(75,232,160,0.05);border:1px solid rgba(75,232,160,0.14);border-radius:2px;padding:10px 14px;display:flex;gap:12px;align-items:flex-start;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:900;text-transform:uppercase;color:#4be8a0;flex-shrink:0;min-width:80px;">Purposeful</div>
+          <div style="font-size:12px;color:#90c8a8;line-height:1.5;">Purposeful with ambition &mdash; positive with movements &mdash; proactive with gameplay. Embracing the opportunities and attacking the dangers.</div>
+        </div>
+        <div style="background:rgba(75,232,160,0.05);border:1px solid rgba(75,232,160,0.14);border-radius:2px;padding:10px 14px;display:flex;gap:12px;align-items:flex-start;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:900;text-transform:uppercase;color:#4be8a0;flex-shrink:0;min-width:80px;">Free</div>
+          <div style="font-size:12px;color:#90c8a8;line-height:1.5;">Free from inhibition. Shrugging off feelings of passiveness. Refusing the limitations of hesitancy.</div>
+        </div>
+        <div style="background:rgba(75,232,160,0.05);border:1px solid rgba(75,232,160,0.14);border-radius:2px;padding:10px 14px;display:flex;gap:12px;align-items:flex-start;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:900;text-transform:uppercase;color:#4be8a0;flex-shrink:0;min-width:80px;">Forward</div>
+          <div style="font-size:12px;color:#90c8a8;line-height:1.5;">Competing with a high level of intent &mdash; <em>energy-forward</em>. In control and in charge.</div>
+        </div>
+      </div>
+
+      <!-- Shared Intentionality callout -->
+      <div style="margin:0 22px 18px;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.22);border-left:3px solid var(--gold);border-radius:2px;padding:14px 16px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">&#x1F4CB; Shared Intentionality</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;text-transform:uppercase;color:var(--text);margin-bottom:8px;">&ldquo;As a team we share an intention&rdquo;</div>
+        <div style="font-size:12.5px;color:#d8c080;line-height:1.65;">In a practice sense, intention works best when players and coaches come to a shared idea of what the intention is &mdash; now, in the near future, and for the big picture. This is <strong>shared intentionality</strong>. It operates in a micro sense (this moment, this play) and a macro sense (this season, this team).</div>
+      </div>
+    </div>
+
+    <!-- INTENSITY -->
+    <div style="background:var(--surface);border:1px solid rgba(232,75,138,0.25);border-radius:2px;overflow:hidden;margin-bottom:0;">
+      <div style="height:4px;background:linear-gradient(90deg,#e84b8a,#e8724b);"></div>
+      <div style="padding:20px 22px 14px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.26em;text-transform:uppercase;color:#e84b8a;margin-bottom:6px;">Quality 03</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;text-transform:uppercase;color:#e84b8a;line-height:1;margin-bottom:4px;">Intensity</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#e84b8a;opacity:0.55;margin-bottom:16px;">A Psychological Ferocity</div>
+        <div style="font-size:13.5px;color:#c0bdb8;line-height:1.8;">
+          The mental engagement to accompany physical effort. Great competitors exhibit an intensity that is <strong style="color:var(--text);">impervious</strong> to goals and scores against, to mistakes made and moments of brilliance from hard-worn opponents. They go again with an optimal level of intensity: <strong style="color:var(--text);">alert and ready</strong>.
+        </div>
+      </div>
+
+      <!-- The optimal zone -->
+      <div style="padding:0 22px 14px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#e84b8a;margin-bottom:8px;">The Optimal Zone</div>
+        <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:2px;padding:14px 18px;">
+          <!-- Zone diagram -->
+          <div style="display:flex;align-items:center;gap:0;margin-bottom:12px;height:32px;border-radius:2px;overflow:hidden;">
+            <div style="flex:1;background:rgba(180,75,232,0.25);display:flex;align-items:center;justify-content:center;">
+              <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#b44be8;">Too Low</div>
+            </div>
+            <div style="flex:1.6;background:rgba(232,75,138,0.3);border-left:2px solid #e84b8a;border-right:2px solid #e84b8a;display:flex;align-items:center;justify-content:center;">
+              <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:900;letter-spacing:0.08em;text-transform:uppercase;color:#e84b8a;">Optimal</div>
+            </div>
+            <div style="flex:1;background:rgba(232,114,75,0.25);display:flex;align-items:center;justify-content:center;">
+              <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#e8724b;">Too High</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div>
+              <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#b44be8;margin-bottom:4px;">Refuse to drop too low</div>
+              <div style="font-size:12px;color:#c0bdb8;line-height:1.5;">Lethargy &mdash; complacency &mdash; despondency. Giving in to the feeling that the moment doesn&rsquo;t matter.</div>
+            </div>
+            <div>
+              <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#e8724b;margin-bottom:4px;">Refuse to rise too high</div>
+              <div style="font-size:12px;color:#c0bdb8;line-height:1.5;">Anxiety &mdash; anger &mdash; frustration. Giving in to the feeling that the moment is too much.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin:0 22px 18px;background:rgba(232,75,138,0.05);border:1px solid rgba(232,75,138,0.18);border-left:3px solid #e84b8a;border-radius:2px;padding:12px 16px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#e84b8a;margin-bottom:5px;">Coaching Application</div>
+        <div style="font-size:12.5px;color:#d898b8;line-height:1.6;">Intensity is at the crossover of <strong>clever practice design</strong> and the <strong>player&rsquo;s desire to bring it</strong>. The coach creates the conditions &mdash; the competitive stakes, the standards, the culture of the session &mdash; and the player chooses to meet them.</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- THE THREE TOGETHER -->
+    <div style="background:rgba(232,216,75,0.04);border:1px solid rgba(232,216,75,0.18);border-left:4px solid #e8d84b;border-radius:2px;padding:16px 20px;margin-bottom:28px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.24em;text-transform:uppercase;color:#e8d84b;margin-bottom:8px;">Why All Three Matter Together</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px;">
+        <div style="text-align:center;padding:8px 4px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;text-transform:uppercase;color:#4baee8;margin-bottom:3px;">Attention</div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.4;">without Intention is scattered focus</div>
+        </div>
+        <div style="text-align:center;padding:8px 4px;border-left:1px solid var(--border);border-right:1px solid var(--border);">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;text-transform:uppercase;color:#4be8a0;margin-bottom:3px;">Intention</div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.4;">without Intensity is direction without drive</div>
+        </div>
+        <div style="text-align:center;padding:8px 4px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;text-transform:uppercase;color:#e84b8a;margin-bottom:3px;">Intensity</div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.4;">without Attention is effort without wisdom</div>
+        </div>
+      </div>
+      <div style="font-size:13px;color:#d0cc80;line-height:1.65;border-top:1px solid rgba(232,216,75,0.12);padding-top:10px;">All three working together creates the competitor who is <strong>connected to the game, positioned forward, and operating at the right pitch</strong> &mdash; alert and ready, every time.</div>
+    </div>
+
+  </div>
+
 </div>
 
 <footer>
@@ -704,6 +1490,88 @@ document.querySelectorAll('.tab-btn').forEach(function(btn) {
     document.querySelector('.tab-panel[data-tab="'+tab+'"]').classList.add('active');
   });
 });
+
+/* ── C2A IMAGE SLOTS ─────────────────────────────────── */
+var c2aActiveSlot = null;
+
+function triggerC2AUpload(slot) {
+  c2aActiveSlot = slot;
+  document.getElementById('c2a-file-input').click();
+}
+
+function handleC2AFile(input) {
+  var file = input.files[0];
+  if (!file || !c2aActiveSlot) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var img = document.getElementById('c2a-img-' + c2aActiveSlot);
+    var slot = document.querySelector('.c2a-img-slot[data-slot="' + c2aActiveSlot + '"]');
+    if (img && slot) {
+      img.src = e.target.result;
+      img.style.display = 'block';
+      slot.classList.add('has-img');
+      // save to localStorage
+      try { localStorage.setItem('c2a-img-' + c2aActiveSlot, e.target.result); } catch(e){}
+    }
+  };
+  reader.readAsDataURL(file);
+  input.value = '';
+}
+
+function clearC2ASlot(slot, e) {
+  e.stopPropagation();
+  var img = document.getElementById('c2a-img-' + slot);
+  var slotEl = document.querySelector('.c2a-img-slot[data-slot="' + slot + '"]');
+  if (img) { img.src = ''; img.style.display = 'none'; }
+  if (slotEl) slotEl.classList.remove('has-img');
+  try { localStorage.removeItem('c2a-img-' + slot); } catch(e){}
+}
+
+// Restore saved images on load
+(function() {
+  var slots = ['ex1-0','ex1-1','ex1-2','ex2-0','ex2-1','ex2-2'];
+  slots.forEach(function(slot) {
+    try {
+      var saved = localStorage.getItem('c2a-img-' + slot);
+      if (saved) {
+        var img = document.getElementById('c2a-img-' + slot);
+        var slotEl = document.querySelector('.c2a-img-slot[data-slot="' + slot + '"]');
+        if (img && slotEl) {
+          img.src = saved; img.style.display = 'block';
+          slotEl.classList.add('has-img');
+        }
+      }
+    } catch(e) {}
+  });
+})();
+
+
+/* ── C2A IMAGE SLOTS ──────────────────────────────────── */
+function loadImg(id, input) {
+  var file = input.files[0]; if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var img = document.getElementById('img-el-'+id);
+    var ph  = document.getElementById('img-placeholder-'+id);
+    var clr = document.getElementById('img-clear-'+id);
+    img.src = e.target.result;
+    img.style.display = 'block';
+    ph.style.display  = 'none';
+    clr.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+function clearImg(id, e) {
+  e.stopPropagation();
+  var img = document.getElementById('img-el-'+id);
+  var ph  = document.getElementById('img-placeholder-'+id);
+  var clr = document.getElementById('img-clear-'+id);
+  var fi  = document.getElementById('img-file-'+id);
+  img.src = ''; img.style.display = 'none';
+  ph.style.display = 'flex';
+  clr.style.display = 'none';
+  if(fi) fi.value = '';
+}
 </script>
 </body>
 </html>
