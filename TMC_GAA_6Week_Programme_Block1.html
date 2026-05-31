@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>6-Week Gaelic Football Conditioning Programme</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:           #0f0f0f;
+    --surface:      #181818;
+    --border:       #2a2a2a;
+    --text:         #f0ede8;
+    --muted:        #7a7570;
+    --green:        #2ecc71;
+    --green-dk:     #27ae60;
+    --blue:         #3498db;
+    --gold:         #f1c40f;
+    --red:          #e74c3c;
+    --gym:          #e8b84b;
+    --pitch-sprint: #4be8a0;
+    --pitch-tempo:  #4baee8;
+    --gym2:         #e86b4b;
+    --cond:         #b44be8;
+    --warmup:       #4be8d8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* ─── HEADER ──────────────────────────────────────────── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 28px 32px 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .session-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(28px, 5.5vw, 48px);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    line-height: 1;
+    color: var(--text);
+  }
+
+  h1 span { color: var(--pitch-sprint); }
+
+  .meta-chips {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .chip {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--muted);
+  }
+
+  .chip.highlight {
+    border-color: var(--pitch-sprint);
+    color: var(--pitch-sprint);
+    background: rgba(75,232,160,0.07);
+  }
+
+  /* ─── INTENT CARDS ────────────────────────────────────── */
+  .intent {
+    max-width: 1400px;
+    margin: 24px auto 0;
+    padding: 0 24px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .intent-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 14px 18px;
+    flex: 1;
+    min-width: 180px;
+  }
+
+  .intent-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 5px;
+  }
+
+  .intent-text {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.45;
+  }
+
+  /* ─── TIMELINE ────────────────────────────────────────── */
+  .session-timeline {
+    max-width: 1400px;
+    margin: 24px auto 0;
+    padding: 0 24px;
+  }
+
+  .tl-full {
+    display: flex;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    height: 40px;
+    margin-top: 18px;
+  }
+
+  .tl-block {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #000;
+    border-right: 1px solid rgba(0,0,0,0.25);
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  .tl-block:last-child { border-right: none; }
+
+  .tl-ramp  { background: var(--warmup);       flex: 12; }
+  .tl-run1  { background: var(--pitch-sprint); flex: 10; }
+  .tl-gym   { background: var(--gym);          flex: 12; color: #000; }
+
+  .tl-labels {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+  }
+
+  .tl-lbl {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* ─── PHASES GRID ─────────────────────────────────────── */
+  .phases {
+    padding: 28px 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* ─── PHASE CARD ──────────────────────────────────────── */
+  .phase {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .phase-header {
+    padding: 20px 22px 16px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+
+  .phase-number {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .phase-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+    color: var(--text);
+  }
+
+  .phase-duration {
+    position: absolute;
+    top: 20px;
+    right: 22px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+
+  .phase-accent {
+    position: absolute;
+    bottom: 0; left: 0;
+    height: 3px;
+    width: 100%;
+  }
+
+  /* Phase colour theming */
+  .phase-wu   .phase-number { color: var(--warmup); }
+  .phase-wu   .phase-accent { background: var(--warmup); }
+  .phase-run  .phase-number { color: var(--pitch-sprint); }
+  .phase-run  .phase-accent { background: var(--pitch-sprint); }
+  .phase-tempo .phase-number { color: var(--pitch-tempo); }
+  .phase-tempo .phase-accent { background: var(--pitch-tempo); }
+  .phase-gym  .phase-number { color: var(--gym); }
+  .phase-gym  .phase-accent { background: var(--gym); }
+  .phase-cycle .phase-number { color: var(--cond); }
+  .phase-cycle .phase-accent { background: var(--cond); }
+
+  /* ─── BLOCK & EXERCISES ───────────────────────────────── */
+  .phase-body { padding: 0; }
+  .block { border-bottom: 1px solid var(--border); }
+  .block:last-child { border-bottom: none; }
+
+  .block-label {
+    padding: 12px 22px 0;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .exercises {
+    list-style: none;
+    padding: 8px 0 14px;
+  }
+
+  .exercises li {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    padding: 6px 22px;
+    gap: 16px;
+    font-size: 14.5px;
+    line-height: 1.35;
+  }
+
+  .ex-name { font-weight: 500; color: var(--text); }
+
+  .ex-name a {
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: 1px dashed rgba(255,255,255,0.15);
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .ex-name a:hover { color: var(--gym); border-color: var(--gym); }
+
+  .yt-icon { font-size: 9px; opacity: 0.35; margin-left: 3px; }
+
+  .ex-scheme {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+    letter-spacing: 0.04em;
+  }
+
+  .phase-wu    .ex-scheme { color: var(--warmup); }
+  .phase-run   .ex-scheme { color: var(--pitch-sprint); }
+  .phase-tempo .ex-scheme { color: var(--pitch-tempo); }
+  .phase-gym   .ex-scheme { color: var(--gym); }
+  .phase-cycle .ex-scheme { color: var(--cond); }
+
+  /* ─── NOTE / REST TAGS ────────────────────────────────── */
+  .note-tag {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin: 0 22px 14px;
+    padding: 8px 12px;
+    border-radius: 2px;
+    font-size: 12.5px;
+    font-weight: 500;
+    line-height: 1.45;
+  }
+
+  .note-tag.rest {
+    background: rgba(255,255,255,0.04);
+    border-left: 2px solid var(--border);
+    color: var(--muted);
+  }
+
+  .note-tag.key {
+    background: rgba(255,255,255,0.04);
+    border-left: 2px solid var(--muted);
+    color: #b0ada8;
+  }
+
+  .note-tag.green {
+    background: rgba(75,232,160,0.05);
+    border-left: 2px solid var(--pitch-sprint);
+    color: #a0e0c0;
+  }
+
+  .note-tag.gold {
+    background: rgba(241,196,15,0.06);
+    border-left: 2px solid var(--gold);
+    color: #c8b040;
+  }
+
+  .note-tag.red {
+    background: rgba(231,76,60,0.06);
+    border-left: 2px solid var(--red);
+    color: #cc7070;
+  }
+
+  .note-tag.opt {
+    background: rgba(232,184,75,0.05);
+    border-left: 2px solid var(--gym);
+    color: #c0a870;
+  }
+
+  /* ─── COACHING CUES ───────────────────────────────────── */
+  .cues { padding: 10px 22px 16px; }
+
+  .cue-item {
+    display: flex;
+    gap: 10px;
+    padding: 4px 0;
+    font-size: 13px;
+    color: #9a9590;
+    line-height: 1.45;
+  }
+
+  .cue-dot {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    margin-top: 7px;
+    flex-shrink: 0;
+    background: var(--muted);
+  }
+
+  /* ─── CYCLE TABLE ─────────────────────────────────────── */
+  .cycle-table {
+    width: calc(100% - 44px);
+    margin: 8px 22px 14px;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .cycle-table th {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+  }
+
+  .cycle-table td {
+    padding: 7px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: top;
+    line-height: 1.4;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .cycle-table tr:last-child td { border-bottom: none; }
+
+  .cycle-table .wk-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+
+  .cycle-table .wk-label.foundation { color: var(--blue); }
+  .cycle-table .wk-label.transition  { color: var(--gold); }
+  .cycle-table .wk-label.peak        { color: var(--red); }
+  .cycle-table .wk-label.taper       { color: var(--muted); }
+
+  .cycle-table .session-type {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+
+  .s-vo2   { color: var(--red); }
+  .s-tempo { color: var(--gold); }
+
+  /* ─── STRENGTH TABLE ──────────────────────────────────── */
+  .strength-table {
+    width: calc(100% - 44px);
+    margin: 8px 22px 14px;
+    border-collapse: collapse;
+    font-size: 12.5px;
+  }
+
+  .strength-table th {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+  }
+
+  .strength-table td {
+    padding: 7px 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: middle;
+    line-height: 1.4;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .strength-table tr:last-child td { border-bottom: none; }
+
+  .pattern-badge {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--pitch-sprint);
+    white-space: nowrap;
+  }
+
+  .prog-cell {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    color: var(--gym);
+  }
+
+  /* ─── TRACKER TABLE ───────────────────────────────────── */
+  .tracker-table {
+    width: calc(100% - 44px);
+    margin: 8px 22px 14px;
+    border-collapse: collapse;
+    font-size: 12.5px;
+  }
+
+  .tracker-table th {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+  }
+
+  .tracker-table td {
+    padding: 8px 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: middle;
+    color: var(--text);
+    font-weight: 500;
+    font-size: 12px;
+  }
+
+  .tracker-table tr:last-child td { border-bottom: none; }
+
+  .tracker-wk {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    text-align: center;
+  }
+
+  .done-box {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  /* ─── CONSTRAINT LIST ─────────────────────────────────── */
+  .constraint-list {
+    list-style: none;
+    padding: 4px 22px 14px;
+  }
+
+  .constraint-list li {
+    display: flex;
+    gap: 10px;
+    padding: 5px 0;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text);
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    line-height: 1.4;
+  }
+
+  .constraint-list li:last-child { border-bottom: none; }
+
+  .c-marker {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    color: var(--pitch-sprint);
+    padding-top: 2px;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .c-note {
+    font-size: 11.5px;
+    color: var(--muted);
+    display: block;
+    margin-top: 1px;
+  }
+
+  /* ─── RESPONSIVE ──────────────────────────────────────── */
+  @media (max-width: 600px) {
+    header { padding: 20px 16px 16px; }
+    .phases, .intent, .session-timeline { padding-left: 12px; padding-right: 12px; }
+    .cycle-table, .strength-table, .tracker-table { font-size: 11.5px; }
+    .strength-table th, .tracker-table th { font-size: 9px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ════════════════════════════════════════════════════ -->
+<header>
+  <div>
+    <div class="session-label">Gaelic Football · Individual Conditioning Programme</div>
+    <h1>6-Week <span>Gaelic Football</span><br>Conditioning Block</h1>
+  </div>
+  <div class="meta-chips">
+    <div class="chip highlight">Senior Field Player</div>
+    <div class="chip">6 Weeks · 3 Cycles</div>
+    <div class="chip">2 Run Days</div>
+    <div class="chip">2 Gym Days</div>
+  </div>
+</header>
+
+<!-- ═══ INTENT CARDS ══════════════════════════════════════════════ -->
+<div class="intent">
+  <div class="intent-card">
+    <div class="intent-label">Programme Goal</div>
+    <div class="intent-text">Build field sport readiness through progressive aerobic-speed development. Two dedicated running sessions and two full-body strength sessions per week build every quality needed for game day.</div>
+  </div>
+  <div class="intent-card">
+    <div class="intent-label">Structure</div>
+    <div class="intent-text">Three 2-week cycles — Foundation (1:1), Transition (2:1), Peak (3:1) — with progressive overload built in across all sessions. Volume and density increase each cycle.</div>
+  </div>
+  <div class="intent-card">
+    <div class="intent-label">Running Days</div>
+    <div class="intent-text">Day 1: VO2 Max intervals — high intensity, strict work:rest. Day 2: Tempo runs — sub-maximal, rhythmical, mechanically sound. Every running session opens with a 12-minute RAMP warm-up.</div>
+  </div>
+  <div class="intent-card">
+    <div class="intent-label">Gym Days</div>
+    <div class="intent-text">Day A (Tue) and Day B (Fri). Each session opens with an extensive plyo circuit, then works through Squat, Hinge, Push, Pull, Rotate, Brace and Land/Jump. Log your weights every session.</div>
+  </div>
+</div>
+
+<!-- ═══ WEEKLY STRUCTURE TIMELINE ════════════════════════════════ -->
+<div class="session-timeline">
+  <div class="tl-full">
+    <div class="tl-block tl-ramp" style="flex:10">MON<br>VO2 RUN</div>
+    <div class="tl-block tl-gym"  style="flex:11">TUE<br>GYM A</div>
+    <div class="tl-block" style="flex:9;background:#1a1a1a;color:#555;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">WED<br>SKILLS</div>
+    <div class="tl-block tl-run1" style="flex:10">THU<br>TEMPO</div>
+    <div class="tl-block tl-gym"  style="flex:11">FRI<br>GYM B</div>
+    <div class="tl-block" style="flex:9;background:#1a1a1a;color:#555;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">SAT<br>MATCH</div>
+    <div class="tl-block" style="flex:6;background:#141414;color:#444;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">SUN<br>REST</div>
+  </div>
+  <div class="tl-labels">
+    <div class="tl-lbl">Mon</div>
+    <div class="tl-lbl">Sun</div>
+  </div>
+</div>
+
+<!-- ═══ PHASES ════════════════════════════════════════════════════ -->
+<div class="phases">
+
+  <!-- ── PHASE 1: RAMP WARM-UP ─────────────────────────────────── -->
+  <div class="phase phase-wu">
+    <div class="phase-header">
+      <div class="phase-number">Running Days · All Sessions</div>
+      <div class="phase-title">RAMP<br>Warm-Up</div>
+      <div class="phase-duration">~12 min</div>
+      <div class="phase-accent"></div>
+    </div>
+    <div class="phase-body">
+
+      <div class="block">
+        <div class="block-label">R — Raise (4 min)</div>
+        <ul class="exercises">
+          <li>
+            <span class="ex-name"><a href="https://www.youtube.com/results?search_query=jogging+warm+up+field+sport" target="_blank">Easy jog 2 laps of pitch <span class="yt-icon">▶</span></a></span>
+            <span class="ex-scheme">Continuous</span>
+          </li>
+          <li>
+            <span class="ex-name"><a href="https://www.youtube.com/results?search_query=high+knees+butt+kicks+warm+up" target="_blank">High knees / Butt kicks <span class="yt-icon">▶</span></a></span>
+            <span class="ex-scheme">× 20m each</span>
+          </li>
+          <li>
+            <span class="ex-name">Lateral shuffle + arm circles</span>
+            <span class="ex-scheme">× 20m e/s</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="block">
+        <div class="block-label">A — Activate (4 min)</div>
+        <ul class="exercises">
+          <li>
+            <span class="ex-name"><a href="https://www.youtube.com/results?search_query=glute+bridge+activation" target="_blank">Glute bridges <span class="yt-icon">▶</span></a></span>
+            <span class="ex-scheme">× 15 reps</span>
+          </li>
+          <li>
+            <span class="ex-name"><a href="https://www.youtube.com/results?search_query=bodyweight+squat+warm+up" target="_blank">Bodyweight squats <span class="yt-icon">▶</span></a></span>
+            <span class="ex-scheme">× 15 reps</span>
+          </li>
+          <li>
+            <span class="ex-name"><a href="https://www.youtube.com/results?search_query=walking+lunge+hip+flexor+stretch" target="_blank">Walking lunges + kneeling hip flexor <span class="yt-icon">▶</span></a></span>
+            <span class="ex-scheme">× 10 e/s</span>
+          </li>
+          <li>
+            <span class="ex-name"><a href="https://www.youtube.com/results?search_query=leg+swings+hip+mobility+warm+up" target="_blank">Leg swings — front/back + lateral <span class="yt-icon">▶</span></a></span>
+            <span class="ex-scheme">× 10 e/s</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="block">
+        <div class="block-label">M — Mobilise (2 min)</div>
+        <ul class="exercises">
+          <li>
+            <span class="ex-name"><a href="https://www.youtube.com/results?search_query=worlds+greatest+stretch+mobility" target="_blank">World's greatest stretch <span class="yt-icon">▶</span></a></span>
+            <span class="ex-scheme">× 5 e/s</span>
+          </li>
+          <li>
+            <span class="ex-name"><a href="https://www.youtube.com/results?search_query=inchworm+exercise+warm+up" target="_blank">Inchworm <span class="yt-icon">▶</span></a></span>
+            <span class="ex-scheme">× 5 reps</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="block">
+        <div class="block-label">P — Potentiate (2 min)</div>
+        <ul class="exercises">
+          <li>
+            <span class="ex-name"><a href="https://www.youtube.com/results?search_query=running+strides+speed+activation" target="_blank">Strides at 80% <span class="yt-icon">▶</span></a></span>
+            <span class="ex-scheme">× 2 × 60m</span>
+          </li>
+          <li>
+            <span class="ex-name">2–3 bounding steps into short acceleration</span>
+            <span class="ex-scheme">Ready to run</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="cues">
+        <div class="cue-item"><div class="cue-dot"></div>Never skip this — it's the difference between quality work and junk reps</div>
+        <div class="cue-item"><div class="cue-dot"></div>The strides are the bridge: you're switching your system from warm-up to performance</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── PHASE 2: RUNNING PROGRAMME — CYCLES 1–3 ──────────────── -->
+  <div class="phase phase-cycle">
+    <div class="phase-header">
+      <div class="phase-number">Running Programme · 6 Weeks · 3 Cycles</div>
+      <div class="phase-title">VO2 Max &amp;<br>Tempo Runs</div>
+      <div class="phase-duration">See table</div>
+      <div class="phase-accent"></div>
+    </div>
+    <div class="phase-body">
+
+      <div class="block">
+        <div class="block-label">Intensity Key</div>
+        <ul class="exercises">
+          <li>
+            <span class="ex-name" style="color:var(--red)">VO2 Max (Day 1)</span>
+            <span class="ex-scheme" style="color:var(--red)">RPE 8–9</span>
+          </li>
+          <li>
+            <span class="ex-name" style="color:var(--gold)">Tempo (Day 2)</span>
+            <span class="ex-scheme" style="color:var(--gold)">70–80% max velocity</span>
+          </li>
+        </ul>
+        <div class="note-tag rest">⏱ Active rest only between intervals — walk or light jog, never stand still.</div>
+      </div>
+
+      <div class="block">
+        <div class="block-label">Cycle 1 — Foundation · Wks 1–2 · Work:Rest 1:1</div>
+        <table class="cycle-table">
+          <thead>
+            <tr>
+              <th>Week</th>
+              <th><span class="s-vo2">Day 1 · VO2</span></th>
+              <th><span class="s-tempo">Day 2 · Tempo</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="wk-label foundation">WK 1</span></td>
+              <td>4–5 reps × 2:00 ON / 2:00 OFF<br><span style="font-size:11.5px;color:var(--muted)">Find consistent pace — RPE 8</span></td>
+              <td>10–12 reps × <a href="https://www.youtube.com/results?search_query=100m+tempo+run+field+sport" target="_blank" style="color:var(--text);border-bottom:1px dashed rgba(255,255,255,0.15)">100m <span class="yt-icon">▶</span></a> · 65–70% pace<br><span style="font-size:11.5px;color:var(--muted)">Rest: 45–60s walkback</span></td>
+            </tr>
+            <tr>
+              <td><span class="wk-label foundation">WK 2</span></td>
+              <td>5–6 reps × 2:00 ON / 2:00 OFF<br><span style="font-size:11.5px;color:var(--muted)">Hold pace across all reps</span></td>
+              <td>12–14 reps × 100m · 65–75% pace<br><span style="font-size:11.5px;color:var(--muted)">Rest: 45–60s walkback</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="block">
+        <div class="block-label">Cycle 2 — Transition · Wks 3–4 · Work:Rest 2:1</div>
+        <table class="cycle-table">
+          <thead>
+            <tr>
+              <th>Week</th>
+              <th><span class="s-vo2">Day 1 · VO2</span></th>
+              <th><span class="s-tempo">Day 2 · Tempo</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="wk-label transition">WK 3</span></td>
+              <td>4–5 reps × 3:00 ON / 1:30 OFF<br><span style="font-size:11.5px;color:var(--muted)">Quality over rep count</span></td>
+              <td>3 reps × 100m × 2 sets · 70–75%<br><span style="font-size:11.5px;color:var(--muted)">50m walk between reps · 100m walk between sets</span></td>
+            </tr>
+            <tr>
+              <td><span class="wk-label transition">WK 4</span></td>
+              <td>5–6 reps × 3:00 ON / 1:00 OFF<br><span style="font-size:11.5px;color:var(--muted)">Compress rest, hold pace</span></td>
+              <td>4 reps × 100m × 2 sets · 70–75%<br><span style="font-size:11.5px;color:var(--muted)">50m walk between reps · 100m walk between sets</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="block">
+        <div class="block-label">Cycle 3 — Peak · Wks 5–6 · Work:Rest 3:1</div>
+        <table class="cycle-table">
+          <thead>
+            <tr>
+              <th>Week</th>
+              <th><span class="s-vo2">Day 1 · VO2</span></th>
+              <th><span class="s-tempo">Day 2 · Tempo</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="wk-label peak">WK 5</span></td>
+              <td>3 reps × 4:00 ON / 2:00 OFF<br><span style="font-size:11.5px;color:var(--muted)">Near-max sustained effort</span></td>
+              <td>3 reps × <a href="https://www.youtube.com/results?search_query=150m+intensive+tempo+conditioning+run" target="_blank" style="color:var(--text);border-bottom:1px dashed rgba(255,255,255,0.15)">150m <span class="yt-icon">▶</span></a> × 3 sets · 70–75%<br><span style="font-size:11.5px;color:var(--muted)">50m walk between reps · 100m walk between sets</span></td>
+            </tr>
+            <tr>
+              <td><span class="wk-label taper">WK 6<br><span style="font-size:9px;font-weight:400;color:var(--muted)">TAPER</span></span></td>
+              <td>2 reps × 3:00 ON / 1:30 OFF<br><span style="font-size:11.5px;color:var(--muted)">Sharpening — fast, not long</span></td>
+              <td>10–12 reps × 100m · 70–75%<br><span style="font-size:11.5px;color:var(--muted)">Rest: 45s — return to volume</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="cues">
+        <div class="cue-item"><div class="cue-dot"></div>If mechanics break down mid-set — stop. Form failure is the signal, not a target</div>
+        <div class="cue-item"><div class="cue-dot"></div>Week 6 is a sharpening taper — lower volume, same quality, legs should feel good by Saturday</div>
+        <div class="cue-item"><div class="cue-dot"></div>Cool-down: 5–10 min easy jog + static stretching after every running session</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── PHASE 3: GYM DAY A ─────────────────────────────────────── -->
+  <div class="phase phase-gym">
+    <div class="phase-header">
+      <div class="phase-number">Phase 03 · Gym · Tuesday — Day A</div>
+      <div class="phase-title">Full-Body<br>Strength A</div>
+      <div class="phase-duration">~50 min</div>
+      <div class="phase-accent"></div>
+    </div>
+    <div class="phase-body">
+
+      <div class="block">
+        <div class="block-label">Block A · Extensive Plyo Circuit · 2 Rounds</div>
+        <ul class="exercises">
+          <li>
+            <span class="ex-name"><a href="https://www.youtube.com/results?search_query=bilateral+broad+jump+plyometric" target="_blank">Bilateral Broad Jumps <span class="yt-icon">▶</span></a></span>
+            <span class="ex-scheme">× 5</span>
+          </li>
+          <li>
+            <span class="ex-name"><a href="https://www.youtube.com/results?search_query=lateral+bounds+plyometric+training" target="_blank">Lateral Bounds <span class="yt-icon">▶</span></a></span>
+            <span class="ex-scheme">× 5 e/s</span>
+          </li>
+          <li>
+            <span class="ex-name">Skipping</span>
+            <span class="ex-scheme">30 secs</span>
+          </li>
+          <li>
+            <span class="ex-name"><a href="https://www.youtube.com/results?search_query=ankle+hops+plyometric" target="_blank">Ankle Hops <span class="yt-icon">▶</span></a></span>
+            <span class="ex-scheme">× 10</span>
+          </li>
+          <li>
+            <span class="ex-name"><a href="https://www.youtube.com/results?search_query=knee+tuck+jump+plyometric" target="_blank">Knee-Tuck Jumps <span class="yt-icon">▶</span></a></span>
+            <span class="ex-scheme">× 5</span>
+          </li>
+        </ul>
+        <div class="note-tag green">⚡ Easy-moderate intensity. Relaxed landings. Focus on rhythm — not height. 30s rest between exercises.</div>
+      </div>
+
+      <div class="block">
+        <div class="block-label">Block B · Squat + Hinge Superset</div>
+        <table class="strength-table">
+          <thead>
+            <tr>
+              <th>Pattern</th>
+              <th>Exercise</th>
+              <th>Wks 1–2</th>
+              <th>Wks 3–4</th>
+              <th>Wks 5–6</th>
+              <th>Rest</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="pattern-badge">Squat</span></td>
+              <td><a href="https://www.youtube.com/results?search_query=goblet+squat+technique" target="_blank" style="color:var(--text);border-bottom:1px dashed rgba(255,255,255,0.15)">Goblet Squat <span class="yt-icon">▶</span></a></td>
+              <td class="prog-cell">3 × 8</td>
+              <td class="prog-cell">3 × 10</td>
+              <td class="prog-cell">4 × 8 ↑</td>
+              <td class="prog-cell">90s</td>
+            </tr>
+            <tr>
+              <td><span class="pattern-badge">Hinge</span></td>
+              <td><a href="https://www.youtube.com/results?search_query=romanian+deadlift+dumbbell+technique" target="_blank" style="color:var(--text);border-bottom:1px dashed rgba(255,255,255,0.15)">Romanian Deadlift (DB) <span class="yt-icon">▶</span></a></td>
+              <td class="prog-cell">3 × 8</td>
+              <td class="prog-cell">3 × 10</td>
+              <td class="prog-cell">4 × 8 ↑</td>
+              <td class="prog-cell">90s</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="note-tag rest">⏱ Do both exercises back-to-back, then rest 90s.</div>
+      </div>
+
+      <div class="block">
+        <div class="block-label">Block C · Push + Pull Superset</div>
+        <table class="strength-table">
+          <thead>
+            <tr>
+              <th>Pattern</th>
+              <th>Exercise</th>
+              <th>Wks 1–2</th>
+              <th>Wks 3–4</th>
+              <th>Wks 5–6</th>
+              <th>Rest</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="pattern-badge">Push</span></td>
+              <td><a href="https://www.youtube.com/results?search_query=push+up+tempo+technique+strength" target="_blank" style="color:var(--text);border-bottom:1px dashed rgba(255,255,255,0.15)">Push-Up (3-1-1 tempo) <span class="yt-icon">▶</span></a></td>
+              <td class="prog-cell">3 × 10</td>
+              <td class="prog-cell">3 × 12</td>
+              <td class="prog-cell">4 × 10</td>
+              <td class="prog-cell">60s</td>
+            </tr>
+            <tr>
+              <td><span class="pattern-badge">Pull</span></td>
+              <td><a href="https://www.youtube.com/results?search_query=inverted+row+band+row+technique" target="_blank" style="color:var(--text);border-bottom:1px dashed rgba(255,255,255,0.15)">Inverted Row / Band Row <span class="yt-icon">▶</span></a></td>
+              <td class="prog-cell">3 × 10</td>
+              <td class="prog-cell">3 × 12</td>
+              <td class="prog-cell">4 × 10</td>
+              <td class="prog-cell">60s</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="block">
+        <div class="block-label">Block D · Rotate + Brace + Land/Jump Circuit</div>
+        <table class="strength-table">
+          <thead>
+            <tr>
+              <th>Pattern</th>
+              <th>Exercise</th>
+              <th>Wks 1–2</th>
+              <th>Wks 3–4</th>
+              <th>Wks 5–6</th>
+              <th>Rest</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="pattern-badge">Rotate</span></td>
+              <td><a href="https://www.youtube.com/results?search_query=pallof+press+band+anti+rotation" target="_blank" style="color:var(--text);border-bottom:1px dashed rgba(255,255,255,0.15)">Pallof Press (band) <span class="yt-icon">▶</span></a></td>
+              <td class="prog-cell">3 × 10 e/s</td>
+              <td class="prog-cell">3 × 12 e/s</td>
+              <td class="prog-cell">3 × 12 e/s</td>
+              <td class="prog-cell">45s</td>
+            </tr>
+            <tr>
+              <td><span class="pattern-badge">Brace</span></td>
+              <td><a href="https://www.youtube.com/results?search_query=dead+bug+core+exercise" target="_blank" style="color:var(--text);border-bottom:1px dashed rgba(255,255,255,0.15)">Dead Bug <span class="yt-icon">▶</span></a></td>
+              <td class="prog-cell">3 × 8 e/s</td>
+              <td class="prog-cell">3 × 10 e/s</td>
+              <td class="prog-cell">3 × 10 e/s</td>
+              <td class="prog-cell">45s</td>
+            </tr>
+            <tr>
+              <td><span class="pattern-badge">Land</span></td>
+              <td><a href="https://www.youtube.com/results?search_query=drop+landing+deceleration+mechanics" target="_blank" style="color:var(--text);border-bottom:1px dashed rgba(255,255,255,0.15)">Drop Landing (controlled) <span class="yt-icon">▶</span></a></td>
+              <td class="prog-cell">3 × 5</td>
+              <td class="prog-cell">3 × 6</td>
+              <td class="prog-cell">3 × 6</td>
+              <td class="prog-cell">45s</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="note-tag key">📌 Complete all three as a circuit. Keep tempo controlled — 3 seconds down, pause, 1 second up on strength exercises.</div>
+      </div>
+
+      <div class="cues">
+        <div class="cue-item"><div class="cue-dot"></div>Tempo: 3 seconds eccentric, 1 second pause, 1 second concentric on all strength exercises</div>
+        <div class="cue-item"><div class="cue-dot"></div>Log the weight for every exercise. You should be progressing within each cycle</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── PHASE 4: GYM DAY B ─────────────────────────────────────── -->
+  <div class="phase phase-gym">
+    <div class="phase-header">
+      <div class="phase-number">Phase 04 · Gym · Friday — Day B</div>
+      <div class="phase-title">Full-Body<br>Strength B</div>
+      <div class="phase-duration">~50 min</div>
+      <div class="phase-accent"></div>
+    </div>
+    <div class="phase-body">
+
+      <div class="block">
+        <div class="block-label">Block A · Extensive Plyo Circuit · 2 Rounds</div>
+        <ul class="exercises">
+          <li>
+            <span class="ex-name"><a href="https://www.youtube.com/results?search_query=single+leg+hop+plyometric+training" target="_blank">Single-Leg Hops <span class="yt-icon">▶</span></a></span>
+            <span class="ex-scheme">× 5 e/s</span>
+          </li>
+          <li>
+            <span class="ex-name"><a href="https://www.youtube.com/results?search_query=power+skip+sprint+mechanics" target="_blank">Power Skip <span class="yt-icon">▶</span></a></span>
+            <span class="ex-scheme">× 20m</span>
+          </li>
+          <li>
+            <span class="ex-name"><a href="https://www.youtube.com/results?search_query=box+step+up+jump+plyometric" target="_blank">Box Step-Up Jump <span class="yt-icon">▶</span></a></span>
+            <span class="ex-scheme">× 5 e/s</span>
+          </li>
+          <li>
+            <span class="ex-name"><a href="https://www.youtube.com/results?search_query=hurdle+run+through+agility+drill" target="_blank">Low Hurdle Run-Through <span class="yt-icon">▶</span></a></span>
+            <span class="ex-scheme">× 4</span>
+          </li>
+          <li>
+            <span class="ex-name">Shuffle-and-Sprint</span>
+            <span class="ex-scheme">× 10m</span>
+          </li>
+        </ul>
+        <div class="note-tag green">⚡ Soft landings. Emphasise rhythm and coordination. 30s rest between exercises.</div>
+      </div>
+
+      <div class="block">
+        <div class="block-label">Block B · Squat + Hinge Superset</div>
+        <table class="strength-table">
+          <thead>
+            <tr>
+              <th>Pattern</th>
+              <th>Exercise</th>
+              <th>Wks 1–2</th>
+              <th>Wks 3–4</th>
+              <th>Wks 5–6</th>
+              <th>Rest</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="pattern-badge">Squat</span></td>
+              <td><a href="https://www.youtube.com/results?search_query=split+squat+dumbbell+technique" target="_blank" style="color:var(--text);border-bottom:1px dashed rgba(255,255,255,0.15)">Split Squat (DB) <span class="yt-icon">▶</span></a></td>
+              <td class="prog-cell">3 × 8 e/s</td>
+              <td class="prog-cell">3 × 10 e/s</td>
+              <td class="prog-cell">4 × 8 e/s ↑</td>
+              <td class="prog-cell">90s</td>
+            </tr>
+            <tr>
+              <td><span class="pattern-badge">Hinge</span></td>
+              <td><a href="https://www.youtube.com/results?search_query=single+leg+RDL+dumbbell+technique" target="_blank" style="color:var(--text);border-bottom:1px dashed rgba(255,255,255,0.15)">Single-Leg RDL (DB) <span class="yt-icon">▶</span></a></td>
+              <td class="prog-cell">3 × 8 e/s</td>
+              <td class="prog-cell">3 × 10 e/s</td>
+              <td class="prog-cell">4 × 8 e/s ↑</td>
+              <td class="prog-cell">90s</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="block">
+        <div class="block-label">Block C · Press + Pull Superset</div>
+        <table class="strength-table">
+          <thead>
+            <tr>
+              <th>Pattern</th>
+              <th>Exercise</th>
+              <th>Wks 1–2</th>
+              <th>Wks 3–4</th>
+              <th>Wks 5–6</th>
+              <th>Rest</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="pattern-badge">Press</span></td>
+              <td><a href="https://www.youtube.com/results?search_query=dumbbell+shoulder+press+technique" target="_blank" style="color:var(--text);border-bottom:1px dashed rgba(255,255,255,0.15)">DB Shoulder Press <span class="yt-icon">▶</span></a></td>
+              <td class="prog-cell">3 × 10</td>
+              <td class="prog-cell">3 × 12</td>
+              <td class="prog-cell">4 × 10</td>
+              <td class="prog-cell">60s</td>
+            </tr>
+            <tr>
+              <td><span class="pattern-badge">Pull</span></td>
+              <td><a href="https://www.youtube.com/results?search_query=single+arm+dumbbell+row+technique" target="_blank" style="color:var(--text);border-bottom:1px dashed rgba(255,255,255,0.15)">Single-Arm DB Row <span class="yt-icon">▶</span></a></td>
+              <td class="prog-cell">3 × 10 e/s</td>
+              <td class="prog-cell">3 × 12 e/s</td>
+              <td class="prog-cell">4 × 10 e/s</td>
+              <td class="prog-cell">60s</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="block">
+        <div class="block-label">Block D · Rotate + Brace + Jump Circuit</div>
+        <table class="strength-table">
+          <thead>
+            <tr>
+              <th>Pattern</th>
+              <th>Exercise</th>
+              <th>Wks 1–2</th>
+              <th>Wks 3–4</th>
+              <th>Wks 5–6</th>
+              <th>Rest</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="pattern-badge">Rotate</span></td>
+              <td><a href="https://www.youtube.com/results?search_query=med+ball+rotational+slam+core+power" target="_blank" style="color:var(--text);border-bottom:1px dashed rgba(255,255,255,0.15)">Med Ball Rotational Slam <span class="yt-icon">▶</span></a></td>
+              <td class="prog-cell">3 × 8 e/s</td>
+              <td class="prog-cell">3 × 10 e/s</td>
+              <td class="prog-cell">3 × 10 e/s</td>
+              <td class="prog-cell">45s</td>
+            </tr>
+            <tr>
+              <td><span class="pattern-badge">Brace</span></td>
+              <td><a href="https://www.youtube.com/results?search_query=plank+hold+feet+elevated+core+stability" target="_blank" style="color:var(--text);border-bottom:1px dashed rgba(255,255,255,0.15)">Plank Hold (feet elevated Wk 5–6) <span class="yt-icon">▶</span></a></td>
+              <td class="prog-cell">3 × 25s</td>
+              <td class="prog-cell">3 × 35s</td>
+              <td class="prog-cell">3 × 45s</td>
+              <td class="prog-cell">45s</td>
+            </tr>
+            <tr>
+              <td><span class="pattern-badge">Jump</span></td>
+              <td><a href="https://www.youtube.com/results?search_query=broad+jump+for+distance+plyometric" target="_blank" style="color:var(--text);border-bottom:1px dashed rgba(255,255,255,0.15)">Broad Jump × reps (for distance) <span class="yt-icon">▶</span></a></td>
+              <td class="prog-cell">3 × 4</td>
+              <td class="prog-cell">3 × 5</td>
+              <td class="prog-cell">3 × 5</td>
+              <td class="prog-cell">60s</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="note-tag key">📌 Day B is later in the week — push a little harder on loads than Day A. You have the weekend to recover. The Jump block finishes the session — quality of movement, not speed through reps.</div>
+      </div>
+
+      <div class="cues">
+        <div class="cue-item"><div class="cue-dot"></div>Hinge pattern is the priority at this point in the week after all the running volume</div>
+        <div class="cue-item"><div class="cue-dot"></div>RIR 2–3 on strength exercises — not to failure. You're building, not burning out</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── PHASE 5: 6-WEEK TRACKER ───────────────────────────────── -->
+  <div class="phase phase-run">
+    <div class="phase-header">
+      <div class="phase-number">Phase 05 · Programme Management</div>
+      <div class="phase-title">6-Week<br>Tracker</div>
+      <div class="phase-accent"></div>
+    </div>
+    <div class="phase-body">
+
+      <div class="block">
+        <div class="block-label">Weekly Log — Print &amp; Tick</div>
+        <table class="tracker-table">
+          <thead>
+            <tr>
+              <th style="text-align:center">Wk</th>
+              <th>Cycle</th>
+              <th>Day 1 · VO2</th>
+              <th>Day 2 · Tempo</th>
+              <th>Gym Days</th>
+              <th>Date</th>
+              <th style="text-align:center">✓</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="tracker-wk" style="color:var(--blue)">1</span></td>
+              <td style="font-size:11px;color:var(--muted)">Foundation</td>
+              <td>4–5 × 2:00/2:00</td>
+              <td>10–12 × 100m</td>
+              <td>A + B</td>
+              <td style="color:var(--muted);font-size:11px">_________</td>
+              <td class="done-box">[ ]</td>
+            </tr>
+            <tr>
+              <td><span class="tracker-wk" style="color:var(--blue)">2</span></td>
+              <td style="font-size:11px;color:var(--muted)">Foundation</td>
+              <td>5–6 × 2:00/2:00</td>
+              <td>12–14 × 100m</td>
+              <td>A + B</td>
+              <td style="color:var(--muted);font-size:11px">_________</td>
+              <td class="done-box">[ ]</td>
+            </tr>
+            <tr>
+              <td><span class="tracker-wk" style="color:var(--gold)">3</span></td>
+              <td style="font-size:11px;color:var(--muted)">Transition</td>
+              <td>4–5 × 3:00/1:30</td>
+              <td>3 × 100m × 2 sets</td>
+              <td>↑ load/reps</td>
+              <td style="color:var(--muted);font-size:11px">_________</td>
+              <td class="done-box">[ ]</td>
+            </tr>
+            <tr>
+              <td><span class="tracker-wk" style="color:var(--gold)">4</span></td>
+              <td style="font-size:11px;color:var(--muted)">Transition</td>
+              <td>5–6 × 3:00/1:00</td>
+              <td>4 × 100m × 2 sets</td>
+              <td>↑ load/reps</td>
+              <td style="color:var(--muted);font-size:11px">_________</td>
+              <td class="done-box">[ ]</td>
+            </tr>
+            <tr>
+              <td><span class="tracker-wk" style="color:var(--red)">5</span></td>
+              <td style="font-size:11px;color:var(--muted)">Peak</td>
+              <td>3 × 4:00/2:00</td>
+              <td>3 × 150m × 3 sets</td>
+              <td>4 × 8 ↑ load</td>
+              <td style="color:var(--muted);font-size:11px">_________</td>
+              <td class="done-box">[ ]</td>
+            </tr>
+            <tr>
+              <td><span class="tracker-wk" style="color:var(--muted)">6</span></td>
+              <td style="font-size:11px;color:var(--muted)">Taper</td>
+              <td>2 × 3:00/1:30</td>
+              <td>10–12 × 100m</td>
+              <td>Maintenance</td>
+              <td style="color:var(--muted);font-size:11px">_________</td>
+              <td class="done-box">[ ]</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="note-tag opt">💡 Print this page. Write the date you start each block. Note how you felt. That feedback is your coaching tool. Retest MAS (Modified Cooper Test) before Week 1 and after Week 6 — target: 1–2 km/h improvement.</div>
+      </div>
+
+      <div class="block">
+        <div class="block-label">Game Principles — Non-Negotiables</div>
+        <ul class="constraint-list">
+          <li>
+            <span class="c-marker">P1</span>
+            <div>
+              Progressive Overload
+              <span class="c-note">Volume and density increase every 2 weeks. This is deliberate. Each new cycle is harder than the last — trust the process and do not skip ahead.</span>
+            </div>
+          </li>
+          <li>
+            <span class="c-marker">P2</span>
+            <div>
+              Form First
+              <span class="c-note">If running mechanics break down or lifting form deteriorates — stop the set immediately. Fatigued poor movement creates injury, not adaptation.</span>
+            </div>
+          </li>
+          <li>
+            <span class="c-marker">P3</span>
+            <div>
+              Active Rest Only
+              <span class="c-note">Between run intervals, walk or light jog. Never stand static. Active rest keeps the aerobic system engaged — it is part of the protocol.</span>
+            </div>
+          </li>
+          <li>
+            <span class="c-marker">P4</span>
+            <div>
+              Context Management
+              <span class="c-note">In-season: reduce run volume to the lower rep range. Match week: shift sessions earlier. Pre-season: execute full programme as written.</span>
+            </div>
+          </li>
+          <li>
+            <span class="c-marker">P5</span>
+            <div>
+              Retest Protocol
+              <span class="c-note">Complete a 6-Minute Modified Cooper Test before Week 1 and after Week 6. MAS = Distance ÷ 100. Target improvement: 1–2 km/h over the block.</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="cues">
+        <div class="cue-item"><div class="cue-dot"></div>Skills and tactical sessions are managed by your coaching staff — integrate around them</div>
+        <div class="cue-item"><div class="cue-dot"></div>Cool-down every session: 5–10 min easy movement + static stretching</div>
+        <div class="cue-item"><div class="cue-dot"></div>Sleep, nutrition and hydration are training variables — treat them as such</div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- end phases -->
+
+</body>
+</html>
