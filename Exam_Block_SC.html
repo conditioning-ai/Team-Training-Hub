@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exam Block · S&amp;C · Field Sport · TMC Performance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#141414;--surface:#1c1c1c;--surface-2:#242424;--border:#2e2e2e;
+  --text:#f5f5f5;--muted:#9a9a9a;--gold:#c9a24c;--gold-soft:#e2c275;
+  --success:#4ade80;--warn:#f59e0b;--power:#60a5fa;--mcgill:#a78bfa;
+  --strength:#f87171;--conditioning:#34d399;--zone2:#38bdf8;--hict:#fb923c;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+
+/* HEADER */
+.page-header{background:linear-gradient(160deg,#1a1a1a 0%,#111 100%);border-bottom:1px solid var(--border);padding:20px 16px 24px;position:relative;overflow:hidden}
+.page-header::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,rgba(201,162,76,.12) 0%,transparent 70%);pointer-events:none}
+.chip-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.chip{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:3px;border:1px solid}
+.chip-gold{color:var(--gold);border-color:rgba(201,162,76,.35);background:rgba(201,162,76,.08)}
+.chip-muted{color:var(--muted);border-color:var(--border);background:transparent}
+.chip-red{color:var(--strength);border-color:rgba(248,113,113,.3);background:rgba(248,113,113,.07)}
+.chip-green{color:var(--conditioning);border-color:rgba(52,211,153,.3);background:rgba(52,211,153,.07)}
+.page-title{font-family:'Bebas Neue',sans-serif;font-size:38px;line-height:1;letter-spacing:.03em;color:var(--text);margin-bottom:4px}
+.page-title span{color:var(--gold)}
+.page-subtitle{font-size:13px;color:var(--muted);font-weight:400}
+
+/* INTRO */
+.intro-section{padding:20px 16px;border-bottom:1px solid var(--border)}
+.intro-section h2{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.05em;color:var(--gold-soft);margin-bottom:12px}
+.intro-section p{font-size:13px;color:#d0d0d0;line-height:1.65;margin-bottom:10px}
+.intro-section p:last-child{margin-bottom:0}
+
+/* LEGEND */
+.legend-section{padding:16px;border-bottom:1px solid var(--border);background:var(--surface)}
+.legend-title{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:.05em;color:var(--muted);margin-bottom:10px}
+.legend-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.legend-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text)}
+.legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+
+/* ── SESSION TABS (lateral toggle, sticky) ────────────────────────── */
+.day-tabs-wrap{position:sticky;top:0;z-index:10;background:var(--surface);border-bottom:1px solid var(--border);padding:0 8px}
+.day-tabs{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
+.day-tabs::-webkit-scrollbar{display:none}
+.day-tab{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:3px;padding:12px 14px 10px;cursor:pointer;background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);transition:color .18s,border-color .18s,background .18s;-webkit-tap-highlight-color:transparent;position:relative}
+.day-tab:active{background:rgba(255,255,255,.03)}
+.day-tab .dt-day{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:.04em;line-height:1}
+.day-tab .dt-label{font-family:'DM Mono',monospace;font-size:10px;color:inherit;opacity:.6;line-height:1;letter-spacing:.04em;text-transform:uppercase}
+.day-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.day-tab.active .dt-label{opacity:1}
+
+/* SESSION PANELS */
+.session-panels{padding:0}
+.session-panel{display:none}
+.session-panel.active{display:block}
+.session-intro{padding:16px 16px 4px}
+.sections-wrap{padding:8px 16px 12px}
+
+/* PHASE BADGE */
+.phase-badge{display:inline-block;font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;padding:4px 10px;border-radius:4px;line-height:1.3}
+.phase-a{background:rgba(248,113,113,.12);color:var(--strength);border:1px solid rgba(248,113,113,.2)}
+.phase-b{background:rgba(52,211,153,.12);color:var(--conditioning);border:1px solid rgba(52,211,153,.2)}
+.phase-r{background:rgba(74,222,128,.12);color:var(--success);border:1px solid rgba(74,222,128,.2)}
+
+/* ── BLOCK DROPDOWN (accordion within a session) ──────────────────── */
+.week-block{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;overflow:hidden}
+.week-toggle{width:100%;background:none;border:none;cursor:pointer;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;color:var(--text);text-align:left;-webkit-tap-highlight-color:transparent}
+.week-toggle-left{display:flex;align-items:center;gap:12px;min-width:0}
+.sec-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+.week-meta{text-align:left;min-width:0}
+.week-label{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:.04em;color:var(--text);line-height:1.05;margin-bottom:3px}
+.week-tag{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;line-height:1.3}
+.chevron{width:18px;height:18px;color:var(--muted);transition:transform .25s ease;flex-shrink:0;margin-left:8px}
+.week-block.open .chevron{transform:rotate(180deg)}
+.week-content{display:none;border-top:1px solid var(--border);padding:4px 12px 10px}
+.week-block.open .week-content{display:block}
+
+/* EXERCISE ROWS */
+.exercise-list{padding:4px 0}
+.exercise-row{display:flex;align-items:stretch;border-bottom:1px solid rgba(46,46,46,.6);min-height:46px}
+.exercise-row:last-child{border-bottom:none}
+.ex-type-bar{width:3px;flex-shrink:0;border-radius:2px}
+.bar-power{background:var(--power)}
+.bar-mcgill{background:var(--mcgill)}
+.bar-strength{background:var(--strength)}
+.bar-conditioning{background:var(--conditioning)}
+.bar-zone2{background:var(--zone2)}
+.bar-hict{background:var(--hict)}
+.bar-restore{background:var(--success)}
+.bar-tempo{background:var(--gold)}
+.bar-sm{background:var(--muted)}
+.ex-body{flex:1;padding:8px 10px;min-width:0}
+.ex-top{display:flex;align-items:flex-start;justify-content:space-between;gap:6px;margin-bottom:4px}
+.ex-name{font-size:13px;font-weight:600;color:var(--text);line-height:1.3;flex:1;min-width:0}
+.ex-block-tag{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;letter-spacing:.06em;padding:1px 5px;border-radius:2px;text-transform:uppercase;flex-shrink:0;margin-top:1px}
+.tag-power{background:rgba(96,165,250,.15);color:var(--power)}
+.tag-mcgill{background:rgba(167,139,250,.15);color:var(--mcgill)}
+.tag-strength{background:rgba(248,113,113,.15);color:var(--strength)}
+.tag-conditioning{background:rgba(52,211,153,.15);color:var(--conditioning)}
+.tag-zone2{background:rgba(56,189,248,.12);color:var(--zone2)}
+.tag-hict{background:rgba(251,146,60,.15);color:var(--hict)}
+.tag-restore{background:rgba(74,222,128,.12);color:var(--success)}
+.tag-tempo{background:rgba(201,162,76,.15);color:var(--gold-soft)}
+.tag-sm{background:rgba(154,154,154,.12);color:var(--muted)}
+.ex-stats{display:flex;flex-wrap:wrap;gap:4px 10px}
+.stat-pill{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);display:flex;align-items:center;gap:3px}
+.stat-pill .stat-label{font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:rgba(154,154,154,.6)}
+.stat-pill .stat-val{color:var(--text);font-weight:500}
+.ex-load{font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);font-weight:500;margin-top:3px}
+.ex-cue{font-size:11px;color:var(--muted);font-style:italic;margin-top:4px;line-height:1.4;padding:4px 8px;background:rgba(255,255,255,.03);border-radius:4px;border-left:2px solid var(--border)}
+
+/* OPTIONS */
+.option-note{font-family:'DM Mono',monospace;font-size:10px;color:var(--warn);letter-spacing:.04em;padding:6px 10px 2px;text-transform:uppercase}
+
+/* COACHING NOTES */
+.coaching-notes{background:rgba(201,162,76,.06);border:1px solid rgba(201,162,76,.2);border-radius:8px;padding:12px;margin:6px 0}
+.coaching-notes h4{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.06em;color:var(--gold);margin-bottom:8px}
+.coaching-notes ul{list-style:none;display:flex;flex-direction:column;gap:5px}
+.coaching-notes li{font-size:12px;color:#c8c8c8;line-height:1.5;padding-left:14px;position:relative}
+.coaching-notes li::before{content:'›';position:absolute;left:0;color:var(--gold);font-size:14px;line-height:1.2}
+
+/* RESTORE BANNER */
+.restore-banner{background:linear-gradient(90deg,rgba(74,222,128,.08) 0%,transparent 100%);border:1px solid rgba(74,222,128,.2);border-radius:8px;padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;gap:10px}
+.restore-banner-icon{font-size:20px}
+.restore-banner-text h3{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:.05em;color:var(--success)}
+.restore-banner-text p{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.45}
+
+/* FOOTER */
+.page-footer{margin-top:16px;padding:20px 16px;border-top:1px solid var(--border);text-align:center}
+.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:.08em;color:var(--gold);margin-bottom:4px}
+.footer-sub{font-size:11px;color:var(--muted);margin-bottom:8px}
+.footer-email{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-decoration:none;border-bottom:1px solid var(--border);padding-bottom:1px}
+.footer-divider{width:40px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:12px auto}
+.asr-footer-note{font-size:11px;color:rgba(154,154,154,.6);font-style:italic;margin-top:6px}
+
+/* EXERCISE LINKS */
+a.ex-link{color:inherit;text-decoration:none;border-bottom:1px dashed rgba(201,162,76,0.35);transition:color 0.15s,border-color 0.15s}
+a.ex-link:hover{color:var(--gold-soft);border-bottom-color:var(--gold)}
+a.ex-link:visited{color:inherit}
+
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="chip-row">
+    <span class="chip chip-gold">TMC Performance</span>
+    <span class="chip chip-green">Field Sport</span>
+    <span class="chip chip-muted">All Profiles</span>
+    <span class="chip chip-muted">Exam Block</span>
+    <span class="chip chip-red">No Contact · No Games</span>
+  </div>
+  <h1 class="page-title">Exam Block <span>S&amp;C</span></h1>
+  <p class="page-subtitle">2 Sessions · 1 Optional Restore Day · Maintenance · No Progressions</p>
+</header>
+
+<section class="intro-section">
+  <h2>Coach's Notes</h2>
+  <p>This programme is for field sport athletes who cannot participate in games or contact training during an exam period. The goal is to <strong>maintain</strong> — not develop. Keep the aerobic engine ticking, speed patterns sharp, and the body strong, without accumulating the fatigue that impairs cognitive performance.</p>
+  <p>Toggle between sessions across the top. Inside each session, tap any block to expand it — Warm-Up, Prep, Plyos, Strength and so on. Every exercise name links to a YouTube search demo.</p>
+  <p>Do not train to failure. Do not push beyond prescribed intensities. Do not add volume. The exam block is for staying ready — not for adaptation.</p>
+</section>
+
+<section class="legend-section">
+  <p class="legend-title">Block Key</p>
+  <div class="legend-grid">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--success)"></div>Prep / Prehab / Accessory</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--zone2)"></div>Extensive Plyos (low intensity)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--power)"></div>Intensive Plyos (high intent)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--strength)"></div>Speed / Acceleration</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--hict)"></div>Main Strength</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--conditioning)"></div>Conditioning / VO2</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--muted)"></div>Accessory / Tendon</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div>Warm-Up / Restore</div>
+  </div>
+</section>
+
+<!-- ── SESSION TOGGLE (lateral, sticky) ─────────────────────────────── -->
+<div class="day-tabs-wrap"><div class="day-tabs" id="session-tabs">
+  <button class="day-tab active" data-idx="0" onclick="switchSession(this)"><span class="dt-day">Session A</span><span class="dt-label">Speed + Gym</span></button>
+  <button class="day-tab" data-idx="1" onclick="switchSession(this)"><span class="dt-day">Session B</span><span class="dt-label">VO2 + Plyos</span></button>
+  <button class="day-tab" data-idx="2" onclick="switchSession(this)"><span class="dt-day">Restore</span><span class="dt-label">Optional</span></button>
+</div></div>
+
+<div class="session-panels">
+  <div class="session-panel active" data-idx="0">
+    <div class="session-intro"><span class="phase-badge phase-a">Session A — Speed, Extensive Plyos &amp; Gym · ~50 min · Mon / Tue</span></div>
+    <div class="sections-wrap"><div class="week-block open">
+  <button class="week-toggle" onclick="toggleWeek(this)">
+    <div class="week-toggle-left">
+      <div class="sec-dot" style="background:var(--gold)"></div>
+      <div class="week-meta">
+        <div class="week-label">Warm-Up (RAMP)</div>
+        <div class="week-tag">Raise → Mobilise → Activate → Prime · ~8–10 min · Do first</div>
+      </div>
+    </div>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>
+  <div class="week-content"><div class="exercise-list"><div class="exercise-row"><div class="ex-type-bar bar-tempo"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=easy+jog+warm+up+running" target="_blank" rel="noopener" class="ex-link">Easy Jog / Bike / Skip</a></div><span class="ex-block-tag tag-tempo">Raise</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Duration</span><span class="stat-val">3–4 min</span></span><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">Easy</span></span></div>
+      <div class="ex-cue">Get warm and breathing. Light sweat is the target.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-tempo"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=skipping+side+shuffle+carioca+warm+up+drill" target="_blank" rel="noopener" class="ex-link">Skips / Side-Shuffle / Carioca</a></div><span class="ex-block-tag tag-tempo">Raise</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">1</span></span><span class="stat-pill"><span class="stat-label">Distance</span><span class="stat-val">2 × 15m</span></span><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">Light</span></span></div>
+      <div class="ex-cue">Move in all directions. Wake the legs up.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-tempo"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=worlds+greatest+stretch+full+body+mobility" target="_blank" rel="noopener" class="ex-link">World&#x27;s Greatest Stretch</a></div><span class="ex-block-tag tag-tempo">Mob</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">1</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">4 e/side</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Smooth</span></span></div>
+      <div class="ex-cue">Lunge, rotate, reach. Opens hips and upper back.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-tempo"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=leg+swings+dynamic+hip+mobility+warm+up" target="_blank" rel="noopener" class="ex-link">Leg Swings (front/back &amp; side)</a></div><span class="ex-block-tag tag-tempo">Mob</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">1</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">8 e/way</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Controlled</span></span></div>
+      <div class="ex-cue">Hold something for balance. Open the hips fully.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-tempo"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=walking+spiderman+lunge+mobility+exercise" target="_blank" rel="noopener" class="ex-link">Walking Spiderman + Reach</a></div><span class="ex-block-tag tag-tempo">Mob</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">1</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">5 e/side</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Smooth</span></span></div>
+      <div class="ex-cue">Deep lunge, reach to the sky. Whole-body prep.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-restore"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=glute+bridge+exercise+activation" target="_blank" rel="noopener" class="ex-link">Glute Bridge</a></div><span class="ex-block-tag tag-restore">Act</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">1</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">10</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">2-1-2</span></span></div>
+      <div class="ex-cue">Squeeze glutes hard at the top, ribs down.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-restore"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=lateral+band+walk+hip+abductor+activation" target="_blank" rel="noopener" class="ex-link">Band Walk (lateral)</a></div><span class="ex-block-tag tag-restore">Act</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">1</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">10 e/way</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Controlled</span></span></div>
+      <div class="ex-cue">Band above knees. Hip and outer-thigh activation.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-restore"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=scapular+push+up+shoulder+blade+activation" target="_blank" rel="noopener" class="ex-link">Scapular Push-Up</a></div><span class="ex-block-tag tag-restore">Act</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">1</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">10</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Controlled</span></span></div>
+      <div class="ex-cue">Shoulder-blade control for pressing &amp; landing.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-zone2"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=pogo+hops+ankle+stiffness+plyometric" target="_blank" rel="noopener" class="ex-link">Pogo Hops</a></div><span class="ex-block-tag tag-zone2">Prime</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">2</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">8</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Quick</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">30&quot;</span></span></div>
+      <div class="ex-cue">Short, snappy bounces. Prime the ankles.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-zone2"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=A+skip+sprint+mechanics+drill" target="_blank" rel="noopener" class="ex-link">A-Skip</a></div><span class="ex-block-tag tag-zone2">Prime</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">2</span></span><span class="stat-pill"><span class="stat-label">Distance</span><span class="stat-val">15m</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Tall</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">30&quot;</span></span></div>
+      <div class="ex-cue">Sprint mechanics primer — toe up, knee up, tall.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-strength"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=build+up+runs+stride+sprint+warm+up" target="_blank" rel="noopener" class="ex-link">2 × Build-Up Runs</a></div><span class="ex-block-tag tag-strength">Prime</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">1</span></span><span class="stat-pill"><span class="stat-label">Distance</span><span class="stat-val">2 × 20m</span></span><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">Build to ~80%</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">Walk back</span></span></div>
+      <div class="ex-cue">Gradually rise to ~80% each run. Smooth and controlled.</div>
+    </div></div></div></div>
+</div><div class="week-block">
+  <button class="week-toggle" onclick="toggleWeek(this)">
+    <div class="week-toggle-left">
+      <div class="sec-dot" style="background:var(--success)"></div>
+      <div class="week-meta">
+        <div class="week-label">Prep / Prehab</div>
+        <div class="week-tag">Posterior chain &amp; trunk · A blocks</div>
+      </div>
+    </div>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>
+  <div class="week-content"><div class="exercise-list"><div class="exercise-row"><div class="ex-type-bar bar-restore"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=glute+bridge+exercise+posterior+chain" target="_blank" rel="noopener" class="ex-link">Glute Bridge</a></div><span class="ex-block-tag tag-restore">A1</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">RIR 3</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">2</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">10</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">2-1-2</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">30&quot;</span></span></div>
+      <div class="ex-cue">Squeeze glutes hard at the top, ribs down. Activates the posterior chain before lifting &amp; sprinting.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-restore"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=copenhagen+plank+adductor+groin+prehab" target="_blank" rel="noopener" class="ex-link">Copenhagen Plank (short lever)</a></div><span class="ex-block-tag tag-restore">A2</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">Hold</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">2</span></span><span class="stat-pill"><span class="stat-label">Duration</span><span class="stat-val">15s e/side</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Isometric</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">30&quot;</span></span></div>
+      <div class="ex-cue">Adductor / groin prehab. Top knee bent — don&#x27;t skip this during reduced training load.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-restore"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=dead+bug+exercise+core+stability" target="_blank" rel="noopener" class="ex-link">Dead Bug</a></div><span class="ex-block-tag tag-restore">A3</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">Controlled</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">2</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">6 e/side</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Slow</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">30&quot;</span></span></div>
+      <div class="ex-cue">Trunk control. Keep low back flat to the floor. No breath-holding.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-restore"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=lateral+band+walk+hip+activation" target="_blank" rel="noopener" class="ex-link">Band Walk (lateral)</a></div><span class="ex-block-tag tag-restore">A4</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">Light</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">1</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">10 e/way</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Controlled</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">–</span></span></div>
+      <div class="ex-cue">Band above knees. Hip abductor activation for lateral deceleration patterns.</div>
+    </div></div></div></div>
+</div><div class="week-block">
+  <button class="week-toggle" onclick="toggleWeek(this)">
+    <div class="week-toggle-left">
+      <div class="sec-dot" style="background:var(--strength)"></div>
+      <div class="week-meta">
+        <div class="week-label">Speed / Acceleration</div>
+        <div class="week-tag">Fresh CNS required · SP blocks</div>
+      </div>
+    </div>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>
+  <div class="week-content"><div class="exercise-list"><div class="exercise-row"><div class="ex-type-bar bar-strength"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=sprint+acceleration+wall+drive+mechanics" target="_blank" rel="noopener" class="ex-link">Acceleration Wall Drive</a></div><span class="ex-block-tag tag-strength">SP1</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">Technique</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">2</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">5 e/leg</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Crisp</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">45&quot;</span></span></div>
+      <div class="ex-cue">Drive the knee, punch the ground. Rehearse the first-step sprint position against a wall before going live.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-strength"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=20m+acceleration+sprint+mechanics" target="_blank" rel="noopener" class="ex-link">20m Acceleration</a></div><span class="ex-block-tag tag-strength">SP2</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">~80%</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">3</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">1 per set</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Fast &amp; smooth</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">Walk back ~90s</span></span></div>
+      <div class="ex-cue">Not max — tall, relaxed, smooth. Push out low for first steps, gradually rise. Full recovery between every rep.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-strength"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=30m+sprint+acceleration+field+sport" target="_blank" rel="noopener" class="ex-link">30m Acceleration</a></div><span class="ex-block-tag tag-strength">SP3</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">80–85%</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">2</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">1 per set</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Fast</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">Walk back ~2 min</span></span></div>
+      <div class="ex-cue">Slightly longer and a touch faster than SP2. Smooth rise to speed. Stop if mechanics fall apart.</div>
+    </div></div></div></div>
+</div><div class="week-block">
+  <button class="week-toggle" onclick="toggleWeek(this)">
+    <div class="week-toggle-left">
+      <div class="sec-dot" style="background:var(--zone2)"></div>
+      <div class="week-meta">
+        <div class="week-label">Extensive Plyometrics</div>
+        <div class="week-tag">Low intensity, high quality contact · J blocks</div>
+      </div>
+    </div>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>
+  <div class="week-content"><div class="exercise-list"><div class="exercise-row"><div class="ex-type-bar bar-zone2"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=pogo+hops+ankle+stiffness+reactive+plyometric" target="_blank" rel="noopener" class="ex-link">Pogo Hops (in place)</a></div><span class="ex-block-tag tag-zone2">J1</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">Springy</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">3</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">10</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Quick off floor</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">45&quot;</span></span></div>
+      <div class="ex-cue">Stiff ankles, minimal knee bend. Reactive spring — not a jump. Maintain ankle stiffness throughout.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-zone2"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=standing+broad+jump+horizontal+power+plyometric" target="_blank" rel="noopener" class="ex-link">Standing Broad Jump</a></div><span class="ex-block-tag tag-zone2">J2</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">Max intent</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">3</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">3</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Explosive</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">75&quot;</span></span></div>
+      <div class="ex-cue">Stick and hold the landing 2 seconds. Quality over distance — a controlled landing beats extra centimetres.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-zone2"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=lateral+bound+stick+landing+single+leg+plyometric" target="_blank" rel="noopener" class="ex-link">Lateral Bound (stick landing)</a></div><span class="ex-block-tag tag-zone2">J3</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">Max intent</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">2</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">3 e/side</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Explosive</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">60&quot;</span></span></div>
+      <div class="ex-cue">Push off the outside leg, stick the landing on the other foot. Hold 2 seconds. Side-to-side power.</div>
+    </div></div></div></div>
+</div><div class="week-block">
+  <button class="week-toggle" onclick="toggleWeek(this)">
+    <div class="week-toggle-left">
+      <div class="sec-dot" style="background:var(--hict)"></div>
+      <div class="week-meta">
+        <div class="week-label">Strength &amp; Accessory</div>
+        <div class="week-tag">RIR 3 throughout · S / ACC blocks</div>
+      </div>
+    </div>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>
+  <div class="week-content"><div class="exercise-list"><div class="exercise-row"><div class="ex-type-bar bar-hict"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=kettlebell+goblet+squat+technique" target="_blank" rel="noopener" class="ex-link">KB Goblet Squat</a></div><span class="ex-block-tag tag-hict">S1</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Load</span><span class="stat-val">Light-Mid KB · RIR 3</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">3</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">8</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">3-0-1</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">75&quot;</span></span></div>
+      <div class="ex-cue">Hold KB at chest. Tall chest, knees track over toes, depth you can control. Stop 3 reps before failure.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-hict"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=kettlebell+romanian+deadlift+RDL" target="_blank" rel="noopener" class="ex-link">KB Romanian Deadlift</a></div><span class="ex-block-tag tag-hict">S2</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Load</span><span class="stat-val">Light-Mid KB · RIR 3</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">3</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">8</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">3-0-1</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">75&quot;</span></span></div>
+      <div class="ex-cue">Hinge at hips, soft knees, flat back. Feel the hamstrings load — not the lower back.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-hict"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=push+up+proper+form+technique" target="_blank" rel="noopener" class="ex-link">Push-Up</a></div><span class="ex-block-tag tag-hict">S3</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">RIR 3</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">3</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">8–10</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Controlled</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">60&quot;</span></span></div>
+      <div class="ex-cue">Body in a straight line head to heel. Hands on a bench to scale. Never let hips sag.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-hict"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=kettlebell+bent+over+row+technique" target="_blank" rel="noopener" class="ex-link">KB Bent-Over Row</a></div><span class="ex-block-tag tag-hict">S4</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Load</span><span class="stat-val">Light-Mid KB · RIR 3</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">3</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">8 e/side</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">2-0-1</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">60&quot;</span></span></div>
+      <div class="ex-cue">Flat back, pull KB to the hip, control it back down. Upper back works — not momentum.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-sm"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=single+leg+calf+raise+achilles+tendon" target="_blank" rel="noopener" class="ex-link">Single-Leg Calf Raise</a></div><span class="ex-block-tag tag-sm">ACC1</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">RIR 3</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">2</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">12 e/side</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">2-1-2</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">30&quot;</span></span></div>
+      <div class="ex-cue">Achilles &amp; ankle strength. Slow and controlled. The engine for jumps and sprints.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-sm"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=side+plank+lateral+core" target="_blank" rel="noopener" class="ex-link">Side Plank</a></div><span class="ex-block-tag tag-sm">ACC2</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">Hold</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">2</span></span><span class="stat-pill"><span class="stat-label">Duration</span><span class="stat-val">20s e/side</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Isometric</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">30&quot;</span></span></div>
+      <div class="ex-cue">Hips high, straight line head to heel. Strong lateral trunk keeps sprint mechanics honest.</div>
+    </div></div></div></div>
+</div><div class="week-block">
+  <button class="week-toggle" onclick="toggleWeek(this)">
+    <div class="week-toggle-left">
+      <div class="sec-dot" style="background:var(--gold)"></div>
+      <div class="week-meta">
+        <div class="week-label">Session A — Coaching Notes</div>
+        <div class="week-tag">Key reminders</div>
+      </div>
+    </div>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>
+  <div class="week-content"><div class="coaching-notes"><h4>📋 Session A — Coaching Notes</h4><ul><li><strong>Order is non-negotiable:</strong> Warm-Up → Prep → Speed → Extensive Plyos → Gym. CNS-demanding work always first.</li><li><strong>Speed at 80–85% only.</strong> Maintenance, not testing. Smooth mechanics beat raw effort during exam block.</li><li><strong>Extensive plyos = low intensity, high contact quality.</strong> Pogos are about ankle stiffness; broad jumps about landing quality.</li><li><strong>Gym: RIR 3 on everything.</strong> Finish each set feeling 3+ reps left in the tank. Never grind to failure.</li><li>Feeling mentally flat? Cut to Warm-Up + Prep + Speed (~25 min). That's a valid exam-block session.</li><li>Best days: Monday or Tuesday. Leave at least one full day before Session B.</li></ul></div></div>
+</div></div>
+  </div>
+  <div class="session-panel" data-idx="1">
+    <div class="session-intro"><span class="phase-badge phase-b">Session B — VO2 Conditioning &amp; Intensive Plyos · ~50 min · Thu / Fri</span></div>
+    <div class="sections-wrap"><div class="week-block open">
+  <button class="week-toggle" onclick="toggleWeek(this)">
+    <div class="week-toggle-left">
+      <div class="sec-dot" style="background:var(--gold)"></div>
+      <div class="week-meta">
+        <div class="week-label">Warm-Up (RAMP)</div>
+        <div class="week-tag">Raise → Mobilise → Activate → Prime · ~8–10 min · Do first</div>
+      </div>
+    </div>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>
+  <div class="week-content"><div class="exercise-list"><div class="exercise-row"><div class="ex-type-bar bar-tempo"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=easy+jog+warm+up+running" target="_blank" rel="noopener" class="ex-link">Easy Jog / Bike / Skip</a></div><span class="ex-block-tag tag-tempo">Raise</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Duration</span><span class="stat-val">3–4 min</span></span><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">Easy</span></span></div>
+      <div class="ex-cue">Get warm and breathing. Light sweat is the target.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-tempo"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=skipping+side+shuffle+carioca+warm+up+drill" target="_blank" rel="noopener" class="ex-link">Skips / Side-Shuffle / Carioca</a></div><span class="ex-block-tag tag-tempo">Raise</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">1</span></span><span class="stat-pill"><span class="stat-label">Distance</span><span class="stat-val">2 × 15m</span></span><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">Light</span></span></div>
+      <div class="ex-cue">Move in all directions. Wake the legs up.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-tempo"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=worlds+greatest+stretch+full+body+mobility" target="_blank" rel="noopener" class="ex-link">World&#x27;s Greatest Stretch</a></div><span class="ex-block-tag tag-tempo">Mob</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">1</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">4 e/side</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Smooth</span></span></div>
+      <div class="ex-cue">Lunge, rotate, reach. Opens hips and upper back.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-tempo"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=leg+swings+dynamic+hip+mobility+warm+up" target="_blank" rel="noopener" class="ex-link">Leg Swings (front/back &amp; side)</a></div><span class="ex-block-tag tag-tempo">Mob</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">1</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">8 e/way</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Controlled</span></span></div>
+      <div class="ex-cue">Hold something for balance. Open the hips fully.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-tempo"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=walking+spiderman+lunge+mobility+exercise" target="_blank" rel="noopener" class="ex-link">Walking Spiderman + Reach</a></div><span class="ex-block-tag tag-tempo">Mob</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">1</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">5 e/side</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Smooth</span></span></div>
+      <div class="ex-cue">Deep lunge, reach to the sky. Whole-body prep.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-restore"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=glute+bridge+exercise+activation" target="_blank" rel="noopener" class="ex-link">Glute Bridge</a></div><span class="ex-block-tag tag-restore">Act</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">1</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">10</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">2-1-2</span></span></div>
+      <div class="ex-cue">Squeeze glutes hard at the top, ribs down.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-restore"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=lateral+band+walk+hip+abductor+activation" target="_blank" rel="noopener" class="ex-link">Band Walk (lateral)</a></div><span class="ex-block-tag tag-restore">Act</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">1</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">10 e/way</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Controlled</span></span></div>
+      <div class="ex-cue">Band above knees. Hip and outer-thigh activation.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-restore"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=scapular+push+up+shoulder+blade+activation" target="_blank" rel="noopener" class="ex-link">Scapular Push-Up</a></div><span class="ex-block-tag tag-restore">Act</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">1</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">10</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Controlled</span></span></div>
+      <div class="ex-cue">Shoulder-blade control for pressing &amp; landing.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-zone2"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=pogo+hops+ankle+stiffness+plyometric" target="_blank" rel="noopener" class="ex-link">Pogo Hops</a></div><span class="ex-block-tag tag-zone2">Prime</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">2</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">8</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Quick</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">30&quot;</span></span></div>
+      <div class="ex-cue">Short, snappy bounces. Prime the ankles.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-zone2"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=A+skip+sprint+mechanics+drill" target="_blank" rel="noopener" class="ex-link">A-Skip</a></div><span class="ex-block-tag tag-zone2">Prime</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">2</span></span><span class="stat-pill"><span class="stat-label">Distance</span><span class="stat-val">15m</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Tall</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">30&quot;</span></span></div>
+      <div class="ex-cue">Sprint mechanics primer — toe up, knee up, tall.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-strength"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=build+up+runs+stride+sprint+warm+up" target="_blank" rel="noopener" class="ex-link">2 × Build-Up Runs</a></div><span class="ex-block-tag tag-strength">Prime</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">1</span></span><span class="stat-pill"><span class="stat-label">Distance</span><span class="stat-val">2 × 20m</span></span><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">Build to ~80%</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">Walk back</span></span></div>
+      <div class="ex-cue">Gradually rise to ~80% each run. Smooth and controlled.</div>
+    </div></div></div></div>
+</div><div class="week-block">
+  <button class="week-toggle" onclick="toggleWeek(this)">
+    <div class="week-toggle-left">
+      <div class="sec-dot" style="background:var(--success)"></div>
+      <div class="week-meta">
+        <div class="week-label">Prep / Prehab</div>
+        <div class="week-tag">Reactive spring &amp; trunk · A blocks</div>
+      </div>
+    </div>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>
+  <div class="week-content"><div class="exercise-list"><div class="exercise-row"><div class="ex-type-bar bar-restore"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=travelling+pogo+hops+reactive+plyometric" target="_blank" rel="noopener" class="ex-link">Travelling Pogos (fwd/back)</a></div><span class="ex-block-tag tag-restore">A1</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">Springy</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">2</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">10</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Quick</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">45&quot;</span></span></div>
+      <div class="ex-cue">Stiff-ankle bounce drifting forward and back. Soft and rhythmic. Prime the ankle spring for plyos ahead.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-restore"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=single+leg+glute+bridge+hip+extension" target="_blank" rel="noopener" class="ex-link">Single-Leg Glute Bridge</a></div><span class="ex-block-tag tag-restore">A2</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">RIR 3</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">2</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">8 e/side</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">2-1-2</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">30&quot;</span></span></div>
+      <div class="ex-cue">Keep hips level — don&#x27;t let the free hip drop. Drive through the heel and squeeze at the top.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-restore"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=bird+dog+core+stability+anti+rotation" target="_blank" rel="noopener" class="ex-link">Bird Dog</a></div><span class="ex-block-tag tag-restore">A3</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">Controlled</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">2</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">6 e/side</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Slow</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">30&quot;</span></span></div>
+      <div class="ex-cue">Reach long, zero rotation in the hips. Balance, trunk stability, posterior chain in one movement.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-restore"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=reverse+nordic+curl+quad+prehab+knee" target="_blank" rel="noopener" class="ex-link">Reverse Nordic (partial)</a></div><span class="ex-block-tag tag-restore">A4</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">Controlled</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">2</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">6</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Slow</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">45&quot;</span></span></div>
+      <div class="ex-cue">Knees down, lean back only as far as you can control. Quad &amp; knee prehab — essential before intensive plyos.</div>
+    </div></div></div></div>
+</div><div class="week-block">
+  <button class="week-toggle" onclick="toggleWeek(this)">
+    <div class="week-toggle-left">
+      <div class="sec-dot" style="background:var(--power)"></div>
+      <div class="week-meta">
+        <div class="week-label">Intensive Plyometrics</div>
+        <div class="week-tag">High intent, full recovery · J blocks</div>
+      </div>
+    </div>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>
+  <div class="week-content"><div class="exercise-list"><div class="exercise-row"><div class="ex-type-bar bar-power"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=hurdle+hops+double+leg+reactive+plyometric" target="_blank" rel="noopener" class="ex-link">Low Hurdle Hops (double-leg)</a></div><span class="ex-block-tag tag-power">J1</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">Max intent</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">3</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">5 hurdles</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Quick &amp; tall</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">75&quot;</span></span></div>
+      <div class="ex-cue">Small hurdles, double-leg, fast off the ground. Knees up, soft landings. Minimal ground contact time.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-power"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=depth+drop+landing+mechanics+plyometric" target="_blank" rel="noopener" class="ex-link">Depth Drop → Stick (low box)</a></div><span class="ex-block-tag tag-power">J2</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">Controlled</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">2</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">4</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Step off → freeze</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">60&quot;</span></span></div>
+      <div class="ex-cue">Step off a low box, land soft &amp; completely frozen. Teaches force absorption — high return at low CNS cost.</div>
+    </div></div></div></div>
+</div><div class="week-block">
+  <button class="week-toggle" onclick="toggleWeek(this)">
+    <div class="week-toggle-left">
+      <div class="sec-dot" style="background:var(--conditioning)"></div>
+      <div class="week-meta">
+        <div class="week-label">VO2 / Conditioning</div>
+        <div class="week-tag">Aerobic maintenance · C blocks</div>
+      </div>
+    </div>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>
+  <div class="week-content"><div class="option-note">Choose Option 1 (tempo runs) OR Option 2 (MAS) — not both</div><div class="exercise-list"><div class="exercise-row"><div class="ex-type-bar bar-conditioning"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=build+up+runs+aerobic+primer+sprint" target="_blank" rel="noopener" class="ex-link">Build-Up Runs (aerobic primer)</a></div><span class="ex-block-tag tag-conditioning">C1</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">Build to ~75%</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">1</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">3 × 80m</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Easy to fast</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">Walk back</span></span></div>
+      <div class="ex-cue">Aerobic primer before the main block. Rise gradually each rep. Not max. Always do this first.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-conditioning"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=tempo+runs+70+percent+MSS+aerobic+conditioning+field+sport" target="_blank" rel="noopener" class="ex-link">Option 1: Tempo Runs @ ~75% MSS</a></div><span class="ex-block-tag tag-conditioning">C2</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">Controlled-Hard</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">6</span></span><span class="stat-pill"><span class="stat-label">Distance</span><span class="stat-val">200m</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Consistent</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">90&quot; walk/jog</span></span></div>
+      <div class="ex-load">Target 70–80% max sprint speed · HR 75–80% MaxHR · all 6 reps same pace</div><div class="ex-cue">Conversational-hard — not a sprint, not a jog. If the last 2 reps slow significantly, drop to 4 reps.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-conditioning"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=MAS+intervals+VO2+max+aerobic+conditioning" target="_blank" rel="noopener" class="ex-link">Option 2: MAS Intervals (track access)</a></div><span class="ex-block-tag tag-conditioning">C2</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">90% MAS</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">4</span></span><span class="stat-pill"><span class="stat-label">Duration</span><span class="stat-val">3 min</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Consistent</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">3 min jog</span></span></div>
+      <div class="ex-load">Use only if you know your MAS — needs a measured distance to pace correctly</div><div class="ex-cue">4 reps × 3 min at 90% MAS, 3 min jog rest. Swap with tempo runs above — do NOT do both.</div>
+    </div></div></div></div>
+</div><div class="week-block">
+  <button class="week-toggle" onclick="toggleWeek(this)">
+    <div class="week-toggle-left">
+      <div class="sec-dot" style="background:var(--hict)"></div>
+      <div class="week-meta">
+        <div class="week-label">Light Gym Finish</div>
+        <div class="week-tag">2 sets only after conditioning · S / ACC blocks</div>
+      </div>
+    </div>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>
+  <div class="week-content"><div class="exercise-list"><div class="exercise-row"><div class="ex-type-bar bar-hict"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=kettlebell+reverse+lunge+technique" target="_blank" rel="noopener" class="ex-link">KB / BW Reverse Lunge</a></div><span class="ex-block-tag tag-hict">S1</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Load</span><span class="stat-val">Light KB or BW · RIR 3</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">2</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">8 e/side</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Controlled</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">60&quot;</span></span></div>
+      <div class="ex-cue">Step back, tall torso, control the knee. Use bodyweight if tired from conditioning — that&#x27;s the right call.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-hict"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=half+kneeling+kettlebell+press+shoulder" target="_blank" rel="noopener" class="ex-link">Half-Kneeling KB Press</a></div><span class="ex-block-tag tag-hict">S2</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Load</span><span class="stat-val">Light-Mid KB · RIR 3</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">2</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">8 e/side</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Controlled</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">60&quot;</span></span></div>
+      <div class="ex-cue">Ribs down, press tall, don&#x27;t arch the lower back. Half-kneeling keeps the trunk honest.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-hict"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=inverted+row+body+row+horizontal+pull" target="_blank" rel="noopener" class="ex-link">Inverted Row (bar / rings / TRX)</a></div><span class="ex-block-tag tag-hict">S3</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">RIR 3</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">2</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">8–10</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">2-0-1</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">60&quot;</span></span></div>
+      <div class="ex-cue">Body straight, pull chest to bar. Raise the bar height to reduce difficulty if tired after conditioning.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-sm"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=tibialis+anterior+raise+shin+strength" target="_blank" rel="noopener" class="ex-link">Tibialis Raise (toes up)</a></div><span class="ex-block-tag tag-sm">ACC1</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">Controlled</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">2</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">15</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">2-0-2</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">30&quot;</span></span></div>
+      <div class="ex-cue">Shin strength — protects the knee and ankle when landing and sprinting. Easy to neglect, high return.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-sm"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=pallof+press+anti+rotation+core+band" target="_blank" rel="noopener" class="ex-link">Pallof Press (band)</a></div><span class="ex-block-tag tag-sm">ACC2</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">Controlled</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">2</span></span><span class="stat-pill"><span class="stat-label">Reps</span><span class="stat-val">8 e/side</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Slow</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">30&quot;</span></span></div>
+      <div class="ex-cue">Resist the rotation. Tall posture, hips square. Strong anti-twist trunk.</div>
+    </div></div></div></div>
+</div><div class="week-block">
+  <button class="week-toggle" onclick="toggleWeek(this)">
+    <div class="week-toggle-left">
+      <div class="sec-dot" style="background:var(--gold)"></div>
+      <div class="week-meta">
+        <div class="week-label">Session B — Coaching Notes</div>
+        <div class="week-tag">Key reminders</div>
+      </div>
+    </div>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>
+  <div class="week-content"><div class="coaching-notes"><h4>📋 Session B — Coaching Notes</h4><ul><li><strong>Intensive plyos before conditioning — always.</strong> Hurdle hops and depth drops need a fresh CNS. Never after a run.</li><li><strong>Tempo runs: pick one option.</strong> Option 1 (tempo runs) suits field athletes. Option 2 (MAS) needs a measured distance.</li><li><strong>Conditioning is controlled-hard — not a test.</strong> All 6 reps similar. If the last 2 slow, drop to 4 without guilt.</li><li>The light gym finish is intentionally short. 2 sets after conditioning is maintenance — more risks unnecessary fatigue.</li><li>Very fatigued after exams? Do Warm-Up + Prep + Plyos and skip conditioning. A reduced session beats no session.</li><li>Best days: Thursday or Friday. Minimum 2 days after Session A for CNS recovery.</li></ul></div></div>
+</div></div>
+  </div>
+  <div class="session-panel" data-idx="2">
+    <div class="session-intro"><span class="phase-badge phase-r">Restore Day — Optional · use only when fatigued or stressed</span></div>
+    <div class="sections-wrap"><div class="restore-banner">
+  <div class="restore-banner-icon">🌿</div>
+  <div class="restore-banner-text">
+    <h3>Goal: Leave feeling better than you arrived</h3>
+    <p>Parasympathetic activation — reduce cortisol, not accumulate load. Push beyond these and you've missed the point.</p>
+  </div>
+</div><div class="week-block open">
+  <button class="week-toggle" onclick="toggleWeek(this)">
+    <div class="week-toggle-left">
+      <div class="sec-dot" style="background:var(--success)"></div>
+      <div class="week-meta">
+        <div class="week-label">Restore Session</div>
+        <div class="week-tag">~35–40 min total · low intensity only</div>
+      </div>
+    </div>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>
+  <div class="week-content"><div class="exercise-list"><div class="exercise-row"><div class="ex-type-bar bar-restore"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=zone+2+cardiac+output+easy+jog+aerobic" target="_blank" rel="noopener" class="ex-link">Easy Cardiac Output Jog / Bike</a></div><span class="ex-block-tag tag-restore">REST1</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">65–70% MaxHR</span></span><span class="stat-pill"><span class="stat-label">Duration</span><span class="stat-val">20–25 min</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Conversational</span></span></div>
+      <div class="ex-cue">Hold a full conversation throughout. Not tempo. Pure aerobic flush. Slow down if breathing gets heavy at all.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-restore"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=full+body+mobility+flow+routine+hip+thoracic" target="_blank" rel="noopener" class="ex-link">Full-Body Mobility Flow</a></div><span class="ex-block-tag tag-restore">MOB1</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">Flow</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">2</span></span><span class="stat-pill"><span class="stat-label">Duration</span><span class="stat-val">Once through</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Smooth</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">60&quot;</span></span></div>
+      <div class="ex-cue">Hips, ankles, thoracic spine, shoulders. Move gently — spend extra time anywhere that feels tight.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-restore"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=isometric+lunge+hold+hip+flexor+stretch" target="_blank" rel="noopener" class="ex-link">Iso Lunge Hold (each side)</a></div><span class="ex-block-tag tag-restore">ISO1</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">Static</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">1</span></span><span class="stat-pill"><span class="stat-label">Duration</span><span class="stat-val">45s e/side</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Hold</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">30&quot;</span></span></div>
+      <div class="ex-cue">Long, deep lunge hold. Breathe slowly and deeply. Hip flexor release and parasympathetic cue.</div>
+    </div></div><div class="exercise-row"><div class="ex-type-bar bar-restore"></div><div class="ex-body">
+      <div class="ex-top"><div class="ex-name"><a href="https://www.youtube.com/results?search_query=plank+hold+isometric+core" target="_blank" rel="noopener" class="ex-link">Iso Push-Up / Plank Hold (top position)</a></div><span class="ex-block-tag tag-restore">ISO2</span></div>
+      <div class="ex-stats"><span class="stat-pill"><span class="stat-label">Intensity</span><span class="stat-val">Static</span></span><span class="stat-pill"><span class="stat-label">Sets</span><span class="stat-val">2</span></span><span class="stat-pill"><span class="stat-label">Duration</span><span class="stat-val">20s</span></span><span class="stat-pill"><span class="stat-label">Tempo</span><span class="stat-val">Hold</span></span><span class="stat-pill"><span class="stat-label">Rest</span><span class="stat-val">30&quot;</span></span></div>
+      <div class="ex-cue">Top of push-up — essentially a plank. Core braced, breathe slowly. Low-load trunk maintenance, zero fatigue cost.</div>
+    </div></div></div></div>
+</div><div class="week-block">
+  <button class="week-toggle" onclick="toggleWeek(this)">
+    <div class="week-toggle-left">
+      <div class="sec-dot" style="background:var(--gold)"></div>
+      <div class="week-meta">
+        <div class="week-label">Restore — Coaching Notes</div>
+        <div class="week-tag">When &amp; how to use</div>
+      </div>
+    </div>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>
+  <div class="week-content"><div class="coaching-notes"><h4>📋 Restore — Coaching Notes</h4><ul><li><strong>When to use:</strong> Poor sleep multiple nights, HRV below baseline, high exam stress, or significant soreness.</li><li><strong>When NOT to use:</strong> If you feel normal. This replaces a session on a bad week, or fills a third day if the schedule allows.</li><li><strong>Alternatives:</strong> 40-min hilly walk · light swim or pool walk · gentle yoga. Rule: leave feeling better, never exceed 70% MaxHR.</li><li>The cardiac output jog should feel genuinely easy — 'embarrassingly slow' is correct. Resist the urge to push.</li><li>Built on Joel Jamieson's restoration framework — the aerobic system is the primary recovery mechanism. Keep it aerobic.</li></ul></div></div>
+</div></div>
+  </div>
+</div>
+
+<footer class="page-footer">
+  <div class="footer-divider"></div>
+  <div class="footer-logo">TMC Performance</div>
+  <div class="footer-sub">Exam Block S&amp;C · Field Sport Athletes · All Profiles</div>
+  <a href="mailto:themovementcoach.km@gmail.com" class="footer-email">themovementcoach.km@gmail.com</a>
+  <p class="asr-footer-note">2 sessions · 1 optional restore day · Maintain, don't develop · No progressions</p>
+  <div class="footer-divider"></div>
+</footer>
+
+<script>
+function switchSession(tab){
+  document.querySelectorAll('#session-tabs .day-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.session-panel').forEach(p=>p.classList.remove('active'));
+  tab.classList.add('active');
+  document.querySelector('.session-panel[data-idx="'+tab.dataset.idx+'"]').classList.add('active');
+  tab.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function toggleWeek(btn){
+  btn.closest('.week-block').classList.toggle('open');
+}
+</script>
+</body>
+</html>
